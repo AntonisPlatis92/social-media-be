@@ -1,6 +1,8 @@
 package com.socialmedia.services;
 
 import com.socialmedia.repositories.UserRepository;
+import com.socialmedia.utils.authentication.JwtUtils;
+import com.socialmedia.utils.encoders.PasswordEncoder;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.EntityNotFoundException;
@@ -13,7 +15,7 @@ public class LoginUserService {
         this.userRepository = userRepository;
     }
 
-    public boolean loginUser(String email, String password) {
+    public String loginUser(String email, String password) {
 
         var userInDb = userRepository.findById(email);
 
@@ -21,6 +23,8 @@ public class LoginUserService {
             throw new EntityNotFoundException("User doesn't exist.");
         }
 
-        return BCrypt.checkpw(password, userInDb.getHashedPassword());
+        boolean passwordMatch = PasswordEncoder.checkIfMatch(password, userInDb.getHashedPassword());
+
+        return (passwordMatch) ? JwtUtils.createToken(email) : null;
     }
 }

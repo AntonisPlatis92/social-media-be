@@ -20,13 +20,13 @@ public class LoginUserController {
                 ctx.status(400).result("Invalid request body");
             }
 
-            boolean userLoginSuccessful = service.loginUser(
+            String loginToken = service.loginUser(
                     loginUserVM.email(),
                     loginUserVM.password()
             );
 
-            if (userLoginSuccessful) {
-                ctx.status(201).result("User login successful.");
+            if (loginToken != null) {
+                ctx.status(200).result(loginToken);
             } else {
                 ctx.status(400).result("User login failed.");
             }

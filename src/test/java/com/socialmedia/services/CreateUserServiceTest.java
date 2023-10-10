@@ -3,6 +3,7 @@ package com.socialmedia.services;
 
 import com.socialmedia.entities.User;
 import com.socialmedia.repositories.UserRepository;
+import com.socialmedia.utils.clock.ClockConfig;
 import com.socialmedia.utils.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.utils.exceptions.UserAlreadyCreatedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ class CreateUserServiceTest {
                 BCrypt.hashpw(password, BCrypt.gensalt()),
                 false,
                 roleId,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -64,7 +65,7 @@ class CreateUserServiceTest {
                 BCrypt.hashpw(password, BCrypt.gensalt()),
                 false,
                 roleId,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.findById(email)).thenReturn(user);
 

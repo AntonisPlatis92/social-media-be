@@ -2,10 +2,10 @@ package com.socialmedia.services;
 
 import com.socialmedia.entities.User;
 import com.socialmedia.repositories.UserRepository;
+import com.socialmedia.utils.clock.ClockConfig;
+import com.socialmedia.utils.encoders.PasswordEncoder;
 import com.socialmedia.utils.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.utils.exceptions.UserAlreadyCreatedException;
-import org.mindrot.jbcrypt.BCrypt;
-
 import java.time.Instant;
 
 public class CreateUserService {
@@ -25,14 +25,14 @@ public class CreateUserService {
             throw new UserAlreadyCreatedException("User is already created.");
         }
 
-        var hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        var hashedPassword = PasswordEncoder.encode(password);
 
         var user = new User(
                 email,
                 hashedPassword,
                 false,
                 roleId,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         var createdUser = userRepository.save(user);
 

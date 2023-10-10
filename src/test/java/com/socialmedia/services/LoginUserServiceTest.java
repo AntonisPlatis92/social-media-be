@@ -2,6 +2,7 @@ package com.socialmedia.services;
 
 import com.socialmedia.entities.User;
 import com.socialmedia.repositories.UserRepository;
+import com.socialmedia.utils.clock.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -38,15 +39,15 @@ public class LoginUserServiceTest {
                 hashedPassword,
                 true,
                 1L,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.findById(email)).thenReturn(userInDb);
 
         // When
-        var userLoginSuccessful = sut.loginUser(email, password);
+        String userToken = sut.loginUser(email, password);
 
         // Then
-        assertTrue(userLoginSuccessful);
+        assertNotNull(userToken);
     }
 
     @Test
@@ -61,15 +62,15 @@ public class LoginUserServiceTest {
                 hashedPassword+"1",
                 true,
                 1L,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.findById(email)).thenReturn(userInDb);
 
         // When
-        var userLoginSuccessful = sut.loginUser(email, password);
+        String userToken = sut.loginUser(email, password);
 
         // Then
-        assertFalse(userLoginSuccessful);
+        assertNull(userToken);
     }
 
     @Test

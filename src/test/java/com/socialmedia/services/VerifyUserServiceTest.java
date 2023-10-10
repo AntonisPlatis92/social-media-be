@@ -2,6 +2,7 @@ package com.socialmedia.services;
 
 import com.socialmedia.entities.User;
 import com.socialmedia.repositories.UserRepository;
+import com.socialmedia.utils.clock.ClockConfig;
 import com.socialmedia.utils.exceptions.UserAlreadyVerifiedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class VerifyUserServiceTest {
                 "hashedPassword",
                 false,
                 1L,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.findById(email)).thenReturn(userInDb);
 
@@ -65,7 +66,7 @@ public class VerifyUserServiceTest {
                 "hashedPassword",
                 true,
                 1L,
-                Instant.now()
+                Instant.now(ClockConfig.utcClock())
         );
         when(userRepository.findById(email)).thenReturn(userInDb);
 
