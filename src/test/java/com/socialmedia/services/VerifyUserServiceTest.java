@@ -37,9 +37,9 @@ public class VerifyUserServiceTest {
     @Test
     public void verifyUser_whenUserExistsAndUnverified_shouldVerify() {
         //  Given
-        var email = "test@test.com";
+        String email = "test@test.com";
 
-        var userInDb = new User(
+        User userInDb = new User(
                 email,
                 "hashedPassword",
                 false,
@@ -58,9 +58,9 @@ public class VerifyUserServiceTest {
     @Test
     public void verifyUser_whenUserExistsAndUnverified_shouldThrowUserAlreadyVerified() {
         //  Given
-        var email = "test@test.com";
+        String email = "test@test.com";
 
-        var userInDb = new User(
+        User userInDb = new User(
                 email,
                 "hashedPassword",
                 true,
@@ -76,7 +76,7 @@ public class VerifyUserServiceTest {
     @Test
     public void verifyUser_whenUserDoesNotExist_shouldThrowEntityNotFound() {
         //  Given
-        var email = "test@test.com";
+        String email = "test@test.com";
         when(loadUserPort.loadUser(email)).thenReturn(null);
 
         // When

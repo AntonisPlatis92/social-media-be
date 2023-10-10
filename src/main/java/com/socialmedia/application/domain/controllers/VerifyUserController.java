@@ -14,7 +14,7 @@ public class VerifyUserController {
 
     public Handler verifyExistingUser = ctx -> {
         try {
-            var email = ctx.pathParam("email");
+            String email = ctx.pathParam("email");
 
             service.verifyUser(email);
 

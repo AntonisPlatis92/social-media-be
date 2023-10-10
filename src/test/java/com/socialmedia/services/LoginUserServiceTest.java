@@ -31,11 +31,11 @@ public class LoginUserServiceTest {
     @Test
     public void loginUser_whenUserExistsAndCredentialsCorrect_shouldLogin() {
         //  Given
-        var email = "test@test.com";
-        var password = "rawPassword";
-        var hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        String email = "test@test.com";
+        String password = "rawPassword";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        var userInDb = new User(
+        User userInDb = new User(
                 email,
                 hashedPassword,
                 true,
@@ -54,11 +54,11 @@ public class LoginUserServiceTest {
     @Test
     public void loginUser_whenUserExistsAndCredentialsWrong_shouldLogin() {
         //  Given
-        var email = "test@test.com";
-        var password = "rawPassword";
-        var hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        String email = "test@test.com";
+        String password = "rawPassword";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        var userInDb = new User(
+        User userInDb = new User(
                 email,
                 hashedPassword+"1",
                 true,
@@ -77,8 +77,8 @@ public class LoginUserServiceTest {
     @Test
     public void loginUser_whenUserDoesNotExist_shouldThrowEntityNotFound() {
         //  Given
-        var email = "test@test.com";
-        var password = "rawPassword";
+        String email = "test@test.com";
+        String password = "rawPassword";
         when(loadUserPort.loadUser(email)).thenReturn(null);
 
         // When

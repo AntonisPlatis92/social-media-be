@@ -40,21 +40,14 @@ class CreateUserServiceTest {
     @Test
     public void createUser_whenPasswordAtLeastEightCharsAndUserNew_saveSuccessfully() {
         //  Given
-        var email = "test@test.com";
-        var password = "12345678";
-        var roleId = 1L;
+        String email = "test@test.com";
+        String password = "12345678";
+        long roleId = 1L;
         when(loadUserPort.loadUser(email)).thenReturn(null);
-        var user = new User(
-                email,
-                PasswordEncoder.encode(password),
-                false,
-                roleId,
-                Instant.now(ClockConfig.utcClock())
-        );
         doNothing().when(createUserPort).createUser(eq(email), eq(PasswordEncoder.encode(password)), eq(false), eq(roleId), any(Instant.class));
 
         // When
-        var userCreated = sut.createUser(email, password, roleId);
+        boolean userCreated = sut.createUser(email, password, roleId);
 
         // Then
         assertTrue(userCreated);
@@ -63,10 +56,10 @@ class CreateUserServiceTest {
     @Test
     public void createUser_whenPasswordAtLeastEightCharsAndUserExists_shouldThrowUserAlreadyCreated() {
         //  Given
-        var email = "test@test.com";
-        var password = "12345678";
-        var roleId = 1L;
-        var user = new User(
+        String email = "test@test.com";
+        String password = "12345678";
+        long roleId = 1L;
+        User user = new User(
                 email,
                 BCrypt.hashpw(password, BCrypt.gensalt()),
                 false,
@@ -83,9 +76,9 @@ class CreateUserServiceTest {
     @Test
     public void createUser_whenPasswordLessThanEightCharsAndUserExists_shouldThrowPasswordMinimumCharactersException() {
         //  Given
-        var email = "test@test.com";
-        var password = "1234567";
-        var roleId = 1L;
+        String email = "test@test.com";
+        String password = "1234567";
+        long roleId = 1L;
 
         // When
         assertThrows(PasswordMinimumCharactersException.class, () -> sut.createUser(email, password, roleId));

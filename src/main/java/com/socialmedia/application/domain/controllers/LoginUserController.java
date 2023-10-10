@@ -14,7 +14,7 @@ public class LoginUserController {
 
     public Handler loginExistingUser = ctx -> {
         try {
-            var loginUserVM = ctx.bodyAsClass(LoginUserVM.class);
+            LoginUserVM loginUserVM = ctx.bodyAsClass(LoginUserVM.class);
             if (loginUserVM == null) {
                 ctx.status(400).result("Invalid request body");
             }

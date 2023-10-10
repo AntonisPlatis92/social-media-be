@@ -1,5 +1,6 @@
 package com.socialmedia.application.domain.services;
 
+import com.socialmedia.application.domain.entities.User;
 import com.socialmedia.application.domain.utils.authentication.JwtUtils;
 import com.socialmedia.application.domain.utils.database.DatabaseUtils;
 import com.socialmedia.application.domain.utils.encoders.PasswordEncoder;
@@ -16,7 +17,7 @@ public class LoginUserService {
 
     public String loginUser(String email, String password) {
 
-        var userInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(email));
+        User userInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(email));
 
         if (userInDb == null) {
             throw new UserNotFoundException("User doesn't exist.");

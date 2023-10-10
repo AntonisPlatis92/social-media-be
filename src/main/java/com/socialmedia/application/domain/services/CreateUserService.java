@@ -30,7 +30,7 @@ public class CreateUserService {
             throw new UserAlreadyCreatedException("User is already created.");
         }
 
-        var hashedPassword = PasswordEncoder.encode(password);
+        String hashedPassword = PasswordEncoder.encode(password);
 
         DatabaseUtils.doInTransaction((conn) -> {
             createUserPort.createUser(email,

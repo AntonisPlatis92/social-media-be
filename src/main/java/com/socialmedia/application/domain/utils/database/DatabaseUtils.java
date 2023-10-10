@@ -1,26 +1,21 @@
 package com.socialmedia.application.domain.utils.database;
 
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseUtils {
-
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres"; // PostgreSQL URL
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "password";
-
+    private static final HikariDataSource dataSource = HikariCPDataSource.getDataSource();
     private static final ThreadLocal<Connection> threadLocalConnection = ThreadLocal.withInitial(() -> null);
 
     public static void doInTransaction(DatabaseAction action) {
-        var conn = threadLocalConnection.get();
-        var newTransaction = false;
+        Connection conn = threadLocalConnection.get();
+        boolean newTransaction = false;
 
         try {
             if (conn == null) {
-                // Load the PostgreSQL JDBC driver (org.postgresql.Driver)
-                Class.forName("org.postgresql.Driver");
-                conn = getConnection();
+                conn = getConnection(); // Reuse the existing data source
                 conn.setAutoCommit(false);
                 threadLocalConnection.set(conn);
                 newTransaction = true;
@@ -49,8 +44,6 @@ public class DatabaseUtils {
 
         try {
             if (conn == null) {
-                // Load the PostgreSQL JDBC driver (org.postgresql.Driver)
-                Class.forName("org.postgresql.Driver");
                 conn = getConnection();
                 conn.setAutoCommit(false);
                 threadLocalConnection.set(conn);
@@ -78,7 +71,7 @@ public class DatabaseUtils {
     }
 
     private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        return dataSource.getConnection();
     }
 
     private static void rollbackTransaction(Connection conn) {

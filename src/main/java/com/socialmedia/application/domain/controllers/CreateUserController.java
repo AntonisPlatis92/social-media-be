@@ -15,7 +15,7 @@ public class CreateUserController {
 
     public Handler createNewUser = ctx -> {
         try {
-            var createUserVM = ctx.bodyAsClass(CreateUserVM.class);
+            CreateUserVM createUserVM = ctx.bodyAsClass(CreateUserVM.class);
             if (createUserVM == null) {
                 ctx.status(400).result("Invalid request body");
             }
