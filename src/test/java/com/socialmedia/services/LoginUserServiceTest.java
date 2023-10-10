@@ -1,15 +1,16 @@
 package com.socialmedia.services;
 
-import com.socialmedia.entities.User;
-import com.socialmedia.repositories.UserRepository;
-import com.socialmedia.utils.clock.ClockConfig;
+import com.socialmedia.application.domain.entities.User;
+import com.socialmedia.application.domain.services.LoginUserService;
+import com.socialmedia.application.domain.utils.clock.ClockConfig;
+import com.socialmedia.application.domain.utils.exceptions.UserNotFoundException;
+import com.socialmedia.application.ports.out.LoadUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,12 +20,12 @@ public class LoginUserServiceTest {
     private LoginUserService sut;
 
     @Mock
-    private UserRepository userRepository;
+    private LoadUserPort loadUserPort;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new LoginUserService(userRepository);
+        sut = new LoginUserService(loadUserPort);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class LoginUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.findById(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
         String userToken = sut.loginUser(email, password);
@@ -64,7 +65,7 @@ public class LoginUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.findById(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
         String userToken = sut.loginUser(email, password);
@@ -78,9 +79,9 @@ public class LoginUserServiceTest {
         //  Given
         var email = "test@test.com";
         var password = "rawPassword";
-        when(userRepository.findById(email)).thenReturn(null);
+        when(loadUserPort.loadUser(email)).thenReturn(null);
 
         // When
-        assertThrows(EntityNotFoundException.class, () -> sut.loginUser(email, password));
+        assertThrows(UserNotFoundException.class, () -> sut.loginUser(email, password));
     }
 }

@@ -1,5 +1,6 @@
 package com.socialmedia.utils.authentication;
 
+import com.socialmedia.application.domain.utils.authentication.JwtUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

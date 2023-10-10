@@ -1,11 +1,14 @@
 package com.socialmedia.services;
 
 
-import com.socialmedia.entities.User;
-import com.socialmedia.repositories.UserRepository;
-import com.socialmedia.utils.clock.ClockConfig;
-import com.socialmedia.utils.exceptions.PasswordMinimumCharactersException;
-import com.socialmedia.utils.exceptions.UserAlreadyCreatedException;
+import com.socialmedia.application.domain.entities.User;
+import com.socialmedia.application.domain.services.CreateUserService;
+import com.socialmedia.application.domain.utils.clock.ClockConfig;
+import com.socialmedia.application.domain.utils.encoders.PasswordEncoder;
+import com.socialmedia.application.domain.utils.exceptions.PasswordMinimumCharactersException;
+import com.socialmedia.application.domain.utils.exceptions.UserAlreadyCreatedException;
+import com.socialmedia.application.ports.out.CreateUserPort;
+import com.socialmedia.application.ports.out.LoadUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,7 +18,8 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -23,12 +27,14 @@ class CreateUserServiceTest {
     private CreateUserService sut;
 
     @Mock
-    private UserRepository userRepository;
+    private LoadUserPort loadUserPort;
+    @Mock
+    private CreateUserPort createUserPort;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreateUserService(userRepository);
+        sut = new CreateUserService(createUserPort, loadUserPort);
     }
 
     @Test
@@ -37,15 +43,15 @@ class CreateUserServiceTest {
         var email = "test@test.com";
         var password = "12345678";
         var roleId = 1L;
-        when(userRepository.findById(email)).thenReturn(null);
+        when(loadUserPort.loadUser(email)).thenReturn(null);
         var user = new User(
                 email,
-                BCrypt.hashpw(password, BCrypt.gensalt()),
+                PasswordEncoder.encode(password),
                 false,
                 roleId,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        doNothing().when(createUserPort).createUser(eq(email), eq(PasswordEncoder.encode(password)), eq(false), eq(roleId), any(Instant.class));
 
         // When
         var userCreated = sut.createUser(email, password, roleId);
@@ -67,7 +73,7 @@ class CreateUserServiceTest {
                 roleId,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.findById(email)).thenReturn(user);
+        when(loadUserPort.loadUser(email)).thenReturn(user);
 
         // When
         assertThrows(UserAlreadyCreatedException.class, () -> sut.createUser(email, password, roleId));

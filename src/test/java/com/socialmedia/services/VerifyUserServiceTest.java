@@ -1,9 +1,12 @@
 package com.socialmedia.services;
 
-import com.socialmedia.entities.User;
-import com.socialmedia.repositories.UserRepository;
-import com.socialmedia.utils.clock.ClockConfig;
-import com.socialmedia.utils.exceptions.UserAlreadyVerifiedException;
+import com.socialmedia.application.domain.entities.User;
+import com.socialmedia.application.domain.services.VerifyUserService;
+import com.socialmedia.application.domain.utils.clock.ClockConfig;
+import com.socialmedia.application.domain.utils.exceptions.UserAlreadyVerifiedException;
+import com.socialmedia.application.domain.utils.exceptions.UserNotFoundException;
+import com.socialmedia.application.ports.out.LoadUserPort;
+import com.socialmedia.application.ports.out.VerifyUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -11,27 +14,24 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class VerifyUserServiceTest {
     private VerifyUserService sut;
 
-    @Captor
-    ArgumentCaptor<User> userCaptor;
-
     @Mock
-    private UserRepository userRepository;
+    private LoadUserPort loadUserPort;
+    @Mock
+    private VerifyUserPort verifyUserPort;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new VerifyUserService(userRepository);
+        sut = new VerifyUserService(loadUserPort, verifyUserPort);
     }
 
     @Test
@@ -46,14 +46,13 @@ public class VerifyUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.findById(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
         sut.verifyUser(email);
 
         // Then
-        verify(userRepository).save(userCaptor.capture());
-        assertTrue(userCaptor.getValue().isVerified());
+        verify(verifyUserPort).verifyUser(email);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class VerifyUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(userRepository.findById(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
         assertThrows(UserAlreadyVerifiedException.class, () -> sut.verifyUser(email));
@@ -78,10 +77,9 @@ public class VerifyUserServiceTest {
     public void verifyUser_whenUserDoesNotExist_shouldThrowEntityNotFound() {
         //  Given
         var email = "test@test.com";
-
-        when(userRepository.findById(email)).thenReturn(null);
+        when(loadUserPort.loadUser(email)).thenReturn(null);
 
         // When
-        assertThrows(EntityNotFoundException.class, () -> sut.verifyUser(email));
+        assertThrows(UserNotFoundException.class, () -> sut.verifyUser(email));
     }
 }
