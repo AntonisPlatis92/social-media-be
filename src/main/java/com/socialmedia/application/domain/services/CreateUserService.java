@@ -6,37 +6,36 @@ import com.socialmedia.application.domain.utils.database.DatabaseUtils;
 import com.socialmedia.application.domain.utils.encoders.PasswordEncoder;
 import com.socialmedia.application.domain.utils.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.application.domain.utils.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.application.ports.out.CreateUserPort;
-import com.socialmedia.application.ports.out.LoadUserPort;
+import com.socialmedia.application.port.in.CreateUserCommand;
+import com.socialmedia.application.port.in.CreateUserUseCase;
+import com.socialmedia.application.port.out.CreateUserPort;
+import com.socialmedia.application.port.out.LoadUserPort;
 
 import java.time.Instant;
 
-public class CreateUserService {
+public class CreateUserService implements CreateUserUseCase {
     private final CreateUserPort createUserPort;
     private final LoadUserPort loadUserPort;
-    private static final Long MINIMUM_PASSWORD_CHARACTERS = 8L;
+
 
     public CreateUserService(CreateUserPort createUserPort, LoadUserPort loadUserPort) {
         this.createUserPort = createUserPort;
         this.loadUserPort = loadUserPort;
     }
 
-    public boolean createUser(String email, String password, long roleId) {
-        if (password.length() < MINIMUM_PASSWORD_CHARACTERS) {
-            throw new PasswordMinimumCharactersException(String.format("Password must be at least %s characters long.", MINIMUM_PASSWORD_CHARACTERS));
-        }
+    public boolean createUser(CreateUserCommand command) {
 
-        if (checkIfUserAlreadyCreated(email)) {
+        if (checkIfUserAlreadyCreated(command.email())) {
             throw new UserAlreadyCreatedException("User is already created.");
         }
 
-        String hashedPassword = PasswordEncoder.encode(password);
+        String hashedPassword = PasswordEncoder.encode(command.password());
 
         DatabaseUtils.doInTransaction((conn) -> {
-            createUserPort.createUser(email,
+            createUserPort.createUser(command.email(),
                     hashedPassword,
                     false,
-                    roleId,
+                    command.roleId(),
                     Instant.now(ClockConfig.utcClock()));
         });
 

@@ -1,9 +1,11 @@
-package com.socialmedia.application.domain.controllers;
+package com.socialmedia.adapter.in.web;
 
-import com.socialmedia.application.domain.controllers.vms.LoginUserVM;
+import com.socialmedia.adapter.in.web.vms.LoginUserVM;
 import com.socialmedia.application.domain.services.LoginUserService;
 import com.socialmedia.application.domain.utils.exceptions.UserNotFoundException;
+import com.socialmedia.application.port.in.LoginUserCommand;
 import io.javalin.http.Handler;
+import jakarta.validation.ConstraintViolationException;
 
 public class LoginUserController {
     private LoginUserService service;
@@ -19,18 +21,19 @@ public class LoginUserController {
                 ctx.status(400).result("Invalid request body");
             }
 
-            String loginToken = service.loginUser(
+            LoginUserCommand command = new LoginUserCommand(
                     loginUserVM.email(),
                     loginUserVM.password()
             );
+            String loginToken = service.loginUser(command);
 
             if (loginToken != null) {
                 ctx.status(200).result(loginToken);
             } else {
-                ctx.status(400).result("User login failed.");
+                ctx.status(401).result("User login failed.");
             }
         }
-        catch (UserNotFoundException e) {
+        catch (UserNotFoundException | ConstraintViolationException e) {
             ctx.status(400).result(e.getMessage());
         }
 

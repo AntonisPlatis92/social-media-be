@@ -1,7 +1,7 @@
-package com.socialmedia.adapters.out.database;
+package com.socialmedia.adapter.out.database;
 
 import com.socialmedia.application.domain.utils.database.DatabaseUtils;
-import com.socialmedia.application.ports.out.VerifyUserPort;
+import com.socialmedia.application.port.out.VerifyUserPort;
 
 import java.sql.PreparedStatement;
 

@@ -1,10 +1,12 @@
-package com.socialmedia.application.domain.controllers;
+package com.socialmedia.adapter.in.web;
 
-import com.socialmedia.application.domain.controllers.vms.CreateUserVM;
+import com.socialmedia.adapter.in.web.vms.CreateUserVM;
 import com.socialmedia.application.domain.services.CreateUserService;
 import com.socialmedia.application.domain.utils.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.application.domain.utils.exceptions.UserAlreadyCreatedException;
+import com.socialmedia.application.port.in.CreateUserCommand;
 import io.javalin.http.Handler;
+import jakarta.validation.ConstraintViolationException;
 
 public class CreateUserController {
     private CreateUserService service;
@@ -21,11 +23,12 @@ public class CreateUserController {
             }
 
             // Call the CreateUserService to create the user
-            boolean userCreated = service.createUser(
+            CreateUserCommand command = new CreateUserCommand(
                     createUserVM.email(),
                     createUserVM.password(),
                     createUserVM.roleId()
             );
+            boolean userCreated = service.createUser(command);
 
             if (userCreated) {
                 ctx.status(201).result("User created successfully.");
@@ -33,7 +36,9 @@ public class CreateUserController {
                 ctx.status(500).result("Failed to create user.");
             }
         }
-        catch (PasswordMinimumCharactersException | UserAlreadyCreatedException e) {
+        catch (PasswordMinimumCharactersException |
+               UserAlreadyCreatedException  |
+               ConstraintViolationException e) {
             ctx.status(400).result(e.getMessage());
         }
 

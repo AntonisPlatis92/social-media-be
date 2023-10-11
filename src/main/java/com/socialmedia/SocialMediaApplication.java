@@ -1,18 +1,18 @@
 package com.socialmedia;
 
-import com.socialmedia.adapters.out.database.CreateUserAdapter;
-import com.socialmedia.adapters.out.database.LoadUserAdapter;
-import com.socialmedia.adapters.out.database.UserMapper;
-import com.socialmedia.adapters.out.database.VerifyUserAdapter;
-import com.socialmedia.application.domain.controllers.CreateUserController;
-import com.socialmedia.application.domain.controllers.LoginUserController;
-import com.socialmedia.application.domain.controllers.VerifyUserController;
+import com.socialmedia.adapter.out.database.CreateUserAdapter;
+import com.socialmedia.adapter.out.database.LoadUserAdapter;
+import com.socialmedia.adapter.out.database.UserMapper;
+import com.socialmedia.adapter.out.database.VerifyUserAdapter;
+import com.socialmedia.adapter.in.web.CreateUserController;
+import com.socialmedia.adapter.in.web.LoginUserController;
+import com.socialmedia.adapter.in.web.VerifyUserController;
 import com.socialmedia.application.domain.services.CreateUserService;
 import com.socialmedia.application.domain.services.LoginUserService;
 import com.socialmedia.application.domain.services.VerifyUserService;
-import com.socialmedia.application.ports.out.CreateUserPort;
-import com.socialmedia.application.ports.out.LoadUserPort;
-import com.socialmedia.application.ports.out.VerifyUserPort;
+import com.socialmedia.application.port.out.CreateUserPort;
+import com.socialmedia.application.port.out.LoadUserPort;
+import com.socialmedia.application.port.out.VerifyUserPort;
 import io.javalin.Javalin;
 
 

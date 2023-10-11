@@ -1,9 +1,11 @@
-package com.socialmedia.application.domain.controllers;
+package com.socialmedia.adapter.in.web;
 
 import com.socialmedia.application.domain.services.VerifyUserService;
 import com.socialmedia.application.domain.utils.exceptions.UserAlreadyVerifiedException;
 import com.socialmedia.application.domain.utils.exceptions.UserNotFoundException;
+import com.socialmedia.application.port.in.VerifyUserCommand;
 import io.javalin.http.Handler;
+import jakarta.validation.ConstraintViolationException;
 
 public class VerifyUserController {
     private VerifyUserService service;
@@ -16,11 +18,13 @@ public class VerifyUserController {
         try {
             String email = ctx.pathParam("email");
 
-            service.verifyUser(email);
+            VerifyUserCommand command = new VerifyUserCommand(email);
+            service.verifyUser(command);
 
             ctx.status(200).result("User verified successfully.");
         }
-        catch (UserNotFoundException | UserAlreadyVerifiedException e) {
+        catch (UserNotFoundException | UserAlreadyVerifiedException |
+               ConstraintViolationException e) {
             ctx.status(400).result(e.getMessage());
         }
     };

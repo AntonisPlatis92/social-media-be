@@ -1,4 +1,4 @@
-package com.socialmedia.application.ports.out;
+package com.socialmedia.application.port.out;
 
 import com.socialmedia.application.domain.entities.User;
 

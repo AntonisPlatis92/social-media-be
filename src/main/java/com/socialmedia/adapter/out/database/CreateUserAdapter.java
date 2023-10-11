@@ -1,7 +1,7 @@
-package com.socialmedia.adapters.out.database;
+package com.socialmedia.adapter.out.database;
 
 import com.socialmedia.application.domain.utils.database.DatabaseUtils;
-import com.socialmedia.application.ports.out.CreateUserPort;
+import com.socialmedia.application.port.out.CreateUserPort;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;

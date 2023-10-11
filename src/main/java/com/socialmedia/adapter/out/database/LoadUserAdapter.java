@@ -1,8 +1,8 @@
-package com.socialmedia.adapters.out.database;
+package com.socialmedia.adapter.out.database;
 
 import com.socialmedia.application.domain.entities.User;
 import com.socialmedia.application.domain.utils.database.DatabaseUtils;
-import com.socialmedia.application.ports.out.LoadUserPort;
+import com.socialmedia.application.port.out.LoadUserPort;
 
 import java.sql.ResultSet;
 import java.sql.Statement;

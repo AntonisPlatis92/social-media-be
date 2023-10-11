@@ -1,10 +1,10 @@
-package com.socialmedia.services;
+package com.socialmedia.application.domain.services;
 
 import com.socialmedia.application.domain.entities.User;
-import com.socialmedia.application.domain.services.LoginUserService;
 import com.socialmedia.application.domain.utils.clock.ClockConfig;
 import com.socialmedia.application.domain.utils.exceptions.UserNotFoundException;
-import com.socialmedia.application.ports.out.LoadUserPort;
+import com.socialmedia.application.port.in.LoginUserCommand;
+import com.socialmedia.application.port.out.LoadUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -34,6 +34,7 @@ public class LoginUserServiceTest {
         String email = "test@test.com";
         String password = "rawPassword";
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        LoginUserCommand command = new LoginUserCommand(email, password);
 
         User userInDb = new User(
                 email,
@@ -45,7 +46,7 @@ public class LoginUserServiceTest {
         when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
-        String userToken = sut.loginUser(email, password);
+        String userToken = sut.loginUser(command);
 
         // Then
         assertNotNull(userToken);
@@ -57,6 +58,7 @@ public class LoginUserServiceTest {
         String email = "test@test.com";
         String password = "rawPassword";
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        LoginUserCommand command = new LoginUserCommand(email, password);
 
         User userInDb = new User(
                 email,
@@ -68,7 +70,7 @@ public class LoginUserServiceTest {
         when(loadUserPort.loadUser(email)).thenReturn(userInDb);
 
         // When
-        String userToken = sut.loginUser(email, password);
+        String userToken = sut.loginUser(command);
 
         // Then
         assertNull(userToken);
@@ -79,9 +81,10 @@ public class LoginUserServiceTest {
         //  Given
         String email = "test@test.com";
         String password = "rawPassword";
+        LoginUserCommand command = new LoginUserCommand(email, password);
         when(loadUserPort.loadUser(email)).thenReturn(null);
 
         // When
-        assertThrows(UserNotFoundException.class, () -> sut.loginUser(email, password));
+        assertThrows(UserNotFoundException.class, () -> sut.loginUser(command));
     }
 }

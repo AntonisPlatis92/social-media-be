@@ -1,4 +1,4 @@
-package com.socialmedia.adapters.out.database;
+package com.socialmedia.adapter.out.database;
 
 import com.socialmedia.application.domain.entities.User;
 

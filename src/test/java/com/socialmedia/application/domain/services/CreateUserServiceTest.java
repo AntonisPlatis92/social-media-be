@@ -1,14 +1,14 @@
-package com.socialmedia.services;
+package com.socialmedia.application.domain.services;
 
 
 import com.socialmedia.application.domain.entities.User;
-import com.socialmedia.application.domain.services.CreateUserService;
 import com.socialmedia.application.domain.utils.clock.ClockConfig;
 import com.socialmedia.application.domain.utils.encoders.PasswordEncoder;
 import com.socialmedia.application.domain.utils.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.application.domain.utils.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.application.ports.out.CreateUserPort;
-import com.socialmedia.application.ports.out.LoadUserPort;
+import com.socialmedia.application.port.in.CreateUserCommand;
+import com.socialmedia.application.port.out.CreateUserPort;
+import com.socialmedia.application.port.out.LoadUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -47,7 +47,7 @@ class CreateUserServiceTest {
         doNothing().when(createUserPort).createUser(eq(email), eq(PasswordEncoder.encode(password)), eq(false), eq(roleId), any(Instant.class));
 
         // When
-        boolean userCreated = sut.createUser(email, password, roleId);
+        boolean userCreated = sut.createUser(new CreateUserCommand(email, password, roleId));
 
         // Then
         assertTrue(userCreated);
@@ -69,7 +69,7 @@ class CreateUserServiceTest {
         when(loadUserPort.loadUser(email)).thenReturn(user);
 
         // When
-        assertThrows(UserAlreadyCreatedException.class, () -> sut.createUser(email, password, roleId));
+        assertThrows(UserAlreadyCreatedException.class, () -> sut.createUser(new CreateUserCommand(email, password, roleId)));
 
     }
 
@@ -81,7 +81,7 @@ class CreateUserServiceTest {
         long roleId = 1L;
 
         // When
-        assertThrows(PasswordMinimumCharactersException.class, () -> sut.createUser(email, password, roleId));
+        assertThrows(PasswordMinimumCharactersException.class, () -> sut.createUser(new CreateUserCommand(email, password, roleId)));
 
     }
 }
