@@ -1,5 +1,7 @@
 package com.socialmedia.accounts.application.port.in;
 
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+
 public interface CreateUserUseCase {
-    boolean createUser(CreateUserCommand command);
+    void createUser(CreateUserCommand command);
 }

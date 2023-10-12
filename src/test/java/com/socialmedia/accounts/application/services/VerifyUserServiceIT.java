@@ -1,0 +1,68 @@
+package com.socialmedia.accounts.application.services;
+
+import com.socialmedia.accounts.adapter.out.database.CreateUserAdapter;
+import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
+import com.socialmedia.accounts.adapter.out.database.UserMapper;
+import com.socialmedia.accounts.adapter.out.database.VerifyUserAdapter;
+import com.socialmedia.accounts.application.port.out.CreateUserPort;
+import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.accounts.application.port.out.VerifyUserPort;
+import com.socialmedia.accounts.domain.User;
+import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
+import com.socialmedia.config.ClockConfig;
+import com.socialmedia.config.IntegrationTestConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.time.Instant;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(IntegrationTestConfig.class)
+public class VerifyUserServiceIT {
+    private VerifyUserService sut;
+
+    private LoadUserPort loadUserPort;
+    private VerifyUserPort verifyUserPort;
+    private CreateUserPort createUserPort;
+
+
+    @BeforeEach
+    public void setup() {
+        createUserPort = new CreateUserAdapter();
+        loadUserPort = new LoadUserAdapter(new UserMapper());
+        verifyUserPort = new VerifyUserAdapter();
+        sut = new VerifyUserService(loadUserPort, verifyUserPort);
+    }
+
+    @Test
+    public void verifyUser_whenNewUser_shouldLoadUserWithVerifiedTrue() {
+        //  Given
+
+        String email = "test@test.com";
+        String hashedPassword = "testPassword";
+        boolean verified = false;
+        long roleId = 1L;
+        Instant creationTime = Instant.now(ClockConfig.utcClock());
+
+        User user = new User(
+                email,
+                hashedPassword,
+                verified,
+                roleId,
+                creationTime
+                );
+
+
+        // When
+        createUserPort.createUser(user);
+        sut.verifyUser(new VerifyUserCommand(email));
+
+        // Then
+        Optional<User> maybeUser = loadUserPort.loadUser(email);
+        assertTrue(maybeUser.isPresent());
+        assertTrue(maybeUser.get().isVerified());
+    }
+}

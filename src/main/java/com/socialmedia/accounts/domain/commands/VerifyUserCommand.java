@@ -1,4 +1,4 @@
-package com.socialmedia.accounts.application.port.in;
+package com.socialmedia.accounts.domain.commands;
 
 import jakarta.validation.constraints.NotNull;
 

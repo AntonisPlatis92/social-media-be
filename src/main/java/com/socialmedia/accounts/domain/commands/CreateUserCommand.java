@@ -1,6 +1,6 @@
-package com.socialmedia.accounts.application.port.in;
+package com.socialmedia.accounts.domain.commands;
 
-import com.socialmedia.accounts.application.exceptions.PasswordMinimumCharactersException;
+import com.socialmedia.accounts.domain.exceptions.PasswordMinimumCharactersException;
 import jakarta.validation.constraints.NotNull;
 
 import static com.socialmedia.utils.validation.Validation.validate;

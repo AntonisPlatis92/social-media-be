@@ -1,16 +1,17 @@
 package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.utils.encoders.PasswordEncoder;
-import com.socialmedia.accounts.application.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.accounts.application.port.in.CreateUserCommand;
+import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
 
 public class CreateUserService implements CreateUserUseCase {
     private final CreateUserPort createUserPort;
@@ -22,7 +23,7 @@ public class CreateUserService implements CreateUserUseCase {
         this.loadUserPort = loadUserPort;
     }
 
-    public boolean createUser(CreateUserCommand command) {
+    public void createUser(CreateUserCommand command) {
 
         if (checkIfUserAlreadyCreated(command.email())) {
             throw new UserAlreadyCreatedException("User is already created.");
@@ -30,19 +31,21 @@ public class CreateUserService implements CreateUserUseCase {
 
         String hashedPassword = PasswordEncoder.encode(command.password());
 
-        DatabaseUtils.doInTransaction((conn) -> {
-            createUserPort.createUser(command.email(),
-                    hashedPassword,
-                    false,
-                    command.roleId(),
-                    Instant.now(ClockConfig.utcClock()));
-        });
+        User userToBeCreated = new User(
+                command.email(),
+                hashedPassword,
+                false,
+                command.roleId(),
+                Instant.now(Clock.systemUTC())
+        );
 
-        return true;
+        DatabaseUtils.doInTransaction((conn) -> {
+            createUserPort.createUser(userToBeCreated);
+        });
     }
 
     private boolean checkIfUserAlreadyCreated(String email) {
-        User userInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(email));
-        return userInDb != null;
+        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(email));
+        return maybeUserInDb.isPresent();
     }
 }

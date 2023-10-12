@@ -1,9 +1,10 @@
 package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.domain.User;
+import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.accounts.application.exceptions.UserNotFoundException;
-import com.socialmedia.accounts.application.port.in.LoginUserCommand;
+import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -43,7 +45,7 @@ public class LoginUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
 
         // When
         String userToken = sut.loginUser(command);
@@ -53,7 +55,7 @@ public class LoginUserServiceTest {
     }
 
     @Test
-    public void loginUser_whenUserExistsAndCredentialsWrong_shouldLogin() {
+    public void loginUser_whenUserExistsAndCredentialsWrong_shouldThrowLoginFailedException() {
         //  Given
         String email = "test@test.com";
         String password = "rawPassword";
@@ -67,13 +69,10 @@ public class LoginUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
-
-        // When
-        String userToken = sut.loginUser(command);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
 
         // Then
-        assertNull(userToken);
+        assertThrows(LoginFailedException.class, () -> sut.loginUser(command));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class LoginUserServiceTest {
         String email = "test@test.com";
         String password = "rawPassword";
         LoginUserCommand command = new LoginUserCommand(email, password);
-        when(loadUserPort.loadUser(email)).thenReturn(null);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.loginUser(command));

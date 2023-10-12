@@ -2,9 +2,9 @@ package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.accounts.application.exceptions.UserAlreadyVerifiedException;
-import com.socialmedia.accounts.application.exceptions.UserNotFoundException;
-import com.socialmedia.accounts.application.port.in.VerifyUserCommand;
+import com.socialmedia.accounts.domain.exceptions.UserAlreadyVerifiedException;
+import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -45,7 +46,7 @@ public class VerifyUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
 
         // When
         sut.verifyUser(command);
@@ -67,7 +68,7 @@ public class VerifyUserServiceTest {
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(userInDb);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
 
         // When
         assertThrows(UserAlreadyVerifiedException.class, () -> sut.verifyUser(command));
@@ -79,7 +80,7 @@ public class VerifyUserServiceTest {
         String email = "test@test.com";
         VerifyUserCommand command = new VerifyUserCommand(email);
 
-        when(loadUserPort.loadUser(email)).thenReturn(null);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.verifyUser(command));

@@ -2,6 +2,8 @@ package com.socialmedia.accounts.application.port.out;
 
 import com.socialmedia.accounts.domain.User;
 
+import java.util.Optional;
+
 public interface LoadUserPort {
-    User loadUser(String email);
+    Optional<User> loadUser(String email);
 }

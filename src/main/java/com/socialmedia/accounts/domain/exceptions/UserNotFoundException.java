@@ -1,4 +1,4 @@
-package com.socialmedia.accounts.application.exceptions;
+package com.socialmedia.accounts.domain.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

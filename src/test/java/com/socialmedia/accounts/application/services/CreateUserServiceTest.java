@@ -3,24 +3,24 @@ package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.utils.encoders.PasswordEncoder;
-import com.socialmedia.accounts.application.exceptions.PasswordMinimumCharactersException;
-import com.socialmedia.accounts.application.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.accounts.application.port.in.CreateUserCommand;
+import com.socialmedia.accounts.domain.exceptions.PasswordMinimumCharactersException;
+import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
-import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
-import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.Instant;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import org.mockito.Mock;
 
 
 class CreateUserServiceTest {
@@ -30,6 +30,8 @@ class CreateUserServiceTest {
     private LoadUserPort loadUserPort;
     @Mock
     private CreateUserPort createUserPort;
+    @Captor
+    ArgumentCaptor<User> userCaptor;
 
     @BeforeEach
     public void setup() {
@@ -43,14 +45,17 @@ class CreateUserServiceTest {
         String email = "test@test.com";
         String password = "12345678";
         long roleId = 1L;
-        when(loadUserPort.loadUser(email)).thenReturn(null);
-        doNothing().when(createUserPort).createUser(eq(email), eq(PasswordEncoder.encode(password)), eq(false), eq(roleId), any(Instant.class));
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
+        doNothing().when(createUserPort).createUser(any(User.class));
 
         // When
-        boolean userCreated = sut.createUser(new CreateUserCommand(email, password, roleId));
+        sut.createUser(new CreateUserCommand(email, password, roleId));
 
         // Then
-        assertTrue(userCreated);
+        verify(createUserPort).createUser(userCaptor.capture());
+        assertEquals(email, userCaptor.getValue().getEmail());
+        assertFalse(userCaptor.getValue().isVerified());
+        assertEquals(roleId, userCaptor.getValue().getRoleId());
     }
 
     @Test
@@ -66,11 +71,10 @@ class CreateUserServiceTest {
                 roleId,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(user);
+        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(user));
 
         // When
         assertThrows(UserAlreadyCreatedException.class, () -> sut.createUser(new CreateUserCommand(email, password, roleId)));
-
     }
 
     @Test
@@ -82,6 +86,5 @@ class CreateUserServiceTest {
 
         // When
         assertThrows(PasswordMinimumCharactersException.class, () -> sut.createUser(new CreateUserCommand(email, password, roleId)));
-
     }
 }

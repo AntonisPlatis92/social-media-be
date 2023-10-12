@@ -7,6 +7,7 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.Optional;
 
 public class LoadUserAdapter implements LoadUserPort {
     private final UserMapper mapper;
@@ -17,7 +18,7 @@ public class LoadUserAdapter implements LoadUserPort {
     private static final String LOAD_USER_STATEMENT = "SELECT * FROM users WHERE email = '%s';";
 
     @Override
-    public User loadUser(String email) {
+    public Optional<User> loadUser(String email) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             Statement statement = conn.createStatement();
             String query = String.format(LOAD_USER_STATEMENT,email);
@@ -30,15 +31,15 @@ public class LoadUserAdapter implements LoadUserPort {
                 Long roleId = resultSet.getLong("role_id");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
-                return mapper.mapToUserEntity(
+                return Optional.of(mapper.mapToUserEntity(
                         userEmail,
                         hashedPassword,
                         verified,
                         roleId,
                         creationTime
-                );
+                ));
             }
-            else {return null;}
+            else {return Optional.empty();}
         });
     }
 }
