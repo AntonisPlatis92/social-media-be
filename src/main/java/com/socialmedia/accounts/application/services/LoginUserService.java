@@ -22,7 +22,7 @@ public class LoginUserService implements LoginUserUseCase {
 
     public String loginUser(LoginUserCommand command) {
 
-        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(command.email()));
+        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(command.email()));
 
         if (maybeUserInDb.isEmpty()) {
             throw new UserNotFoundException("User doesn't exist.");
@@ -32,6 +32,6 @@ public class LoginUserService implements LoginUserUseCase {
 
         if (!passwordMatch) {throw new LoginFailedException("Wrong credentials. User login failed.");}
 
-        return JwtUtils.createToken(command.email());
+        return JwtUtils.createToken(maybeUserInDb.get().getUserId());
     }
 }

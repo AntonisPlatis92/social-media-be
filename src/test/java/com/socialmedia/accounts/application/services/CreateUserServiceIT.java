@@ -44,7 +44,7 @@ class CreateUserServiceIT {
         sut.createUser(new CreateUserCommand(email, password, roleId));
 
         // Then
-        Optional<User> maybeUserCreated = loadUserPort.loadUser(email);
+        Optional<User> maybeUserCreated = loadUserPort.loadUserByEmail(email);
         assertTrue(maybeUserCreated.isPresent());
         assertEquals(email, maybeUserCreated.get().getEmail());
         assertNotNull(maybeUserCreated.get().getHashedPassword());

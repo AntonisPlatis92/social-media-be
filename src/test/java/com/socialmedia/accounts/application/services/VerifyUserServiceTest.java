@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -40,13 +41,14 @@ public class VerifyUserServiceTest {
         VerifyUserCommand command = new VerifyUserCommand(email);
 
         User userInDb = new User(
+                UUID.randomUUID(),
                 email,
                 "hashedPassword",
                 false,
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When
         sut.verifyUser(command);
@@ -62,13 +64,14 @@ public class VerifyUserServiceTest {
         VerifyUserCommand command = new VerifyUserCommand(email);
 
         User userInDb = new User(
+                UUID.randomUUID(),
                 email,
                 "hashedPassword",
                 true,
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When
         assertThrows(UserAlreadyVerifiedException.class, () -> sut.verifyUser(command));
@@ -80,7 +83,7 @@ public class VerifyUserServiceTest {
         String email = "test@test.com";
         VerifyUserCommand command = new VerifyUserCommand(email);
 
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.verifyUser(command));

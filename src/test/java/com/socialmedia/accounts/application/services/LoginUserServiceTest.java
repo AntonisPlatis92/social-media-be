@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -39,13 +40,14 @@ public class LoginUserServiceTest {
         LoginUserCommand command = new LoginUserCommand(email, password);
 
         User userInDb = new User(
+                UUID.randomUUID(),
                 email,
                 hashedPassword,
                 true,
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When
         String userToken = sut.loginUser(command);
@@ -63,13 +65,14 @@ public class LoginUserServiceTest {
         LoginUserCommand command = new LoginUserCommand(email, password);
 
         User userInDb = new User(
+                UUID.randomUUID(),
                 email,
                 hashedPassword+"1",
                 true,
                 1L,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(userInDb));
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // Then
         assertThrows(LoginFailedException.class, () -> sut.loginUser(command));
@@ -81,7 +84,7 @@ public class LoginUserServiceTest {
         String email = "test@test.com";
         String password = "rawPassword";
         LoginUserCommand command = new LoginUserCommand(email, password);
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.loginUser(command));

@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -45,7 +46,7 @@ class CreateUserServiceTest {
         String email = "test@test.com";
         String password = "12345678";
         long roleId = 1L;
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.empty());
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.empty());
         doNothing().when(createUserPort).createUser(any(User.class));
 
         // When
@@ -65,13 +66,14 @@ class CreateUserServiceTest {
         String password = "12345678";
         long roleId = 1L;
         User user = new User(
+                UUID.randomUUID(),
                 email,
                 BCrypt.hashpw(password, BCrypt.gensalt()),
                 false,
                 roleId,
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadUserPort.loadUser(email)).thenReturn(Optional.of(user));
+        when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(user));
 
         // When
         assertThrows(UserAlreadyCreatedException.class, () -> sut.createUser(new CreateUserCommand(email, password, roleId)));

@@ -12,6 +12,7 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CreateUserService implements CreateUserUseCase {
     private final CreateUserPort createUserPort;
@@ -32,6 +33,7 @@ public class CreateUserService implements CreateUserUseCase {
         String hashedPassword = PasswordEncoder.encode(command.password());
 
         User userToBeCreated = new User(
+                UUID.randomUUID(),
                 command.email(),
                 hashedPassword,
                 false,
@@ -45,7 +47,7 @@ public class CreateUserService implements CreateUserUseCase {
     }
 
     private boolean checkIfUserAlreadyCreated(String email) {
-        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(email));
+        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(email));
         return maybeUserInDb.isPresent();
     }
 }

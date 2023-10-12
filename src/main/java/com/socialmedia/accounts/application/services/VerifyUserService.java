@@ -22,7 +22,7 @@ public class VerifyUserService implements VerifyUserUseCase {
 
     public void verifyUser(VerifyUserCommand command) {
 
-        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUser(command.email()));
+        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(command.email()));
 
         if (maybeUserInDb.isEmpty()) {
             throw new UserNotFoundException("User doesn't exist.");

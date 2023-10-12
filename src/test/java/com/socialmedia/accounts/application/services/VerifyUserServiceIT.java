@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +41,7 @@ public class VerifyUserServiceIT {
     @Test
     public void verifyUser_whenNewUser_shouldLoadUserWithVerifiedTrue() {
         //  Given
-
+        UUID userId = UUID.randomUUID();
         String email = "test@test.com";
         String hashedPassword = "testPassword";
         boolean verified = false;
@@ -48,6 +49,7 @@ public class VerifyUserServiceIT {
         Instant creationTime = Instant.now(ClockConfig.utcClock());
 
         User user = new User(
+                userId,
                 email,
                 hashedPassword,
                 verified,
@@ -61,7 +63,7 @@ public class VerifyUserServiceIT {
         sut.verifyUser(new VerifyUserCommand(email));
 
         // Then
-        Optional<User> maybeUser = loadUserPort.loadUser(email);
+        Optional<User> maybeUser = loadUserPort.loadUserById(userId);
         assertTrue(maybeUser.isPresent());
         assertTrue(maybeUser.get().isVerified());
     }

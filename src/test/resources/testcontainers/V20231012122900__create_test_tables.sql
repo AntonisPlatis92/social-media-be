@@ -1,7 +1,8 @@
 create table users
 (
-    email           varchar(255)                        not null
+    id              uuid                                not null
         primary key,
+    email           varchar(255)                        not null,
     hashed_password varchar(255)                        not null,
     verified        boolean   default false             not null,
     role_id         bigint                              not null,
