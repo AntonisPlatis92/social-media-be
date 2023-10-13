@@ -3,6 +3,7 @@ package com.socialmedia.accounts.adapter.out.database;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import lombok.NoArgsConstructor;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -10,12 +11,9 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+@NoArgsConstructor
 public class LoadUserAdapter implements LoadUserPort {
-    private final UserMapper mapper;
 
-    public LoadUserAdapter(UserMapper mapper) {
-        this.mapper = mapper;
-    }
     private static final String LOAD_USER_BY_EMAIL_STATEMENT = "SELECT * FROM users WHERE email = '%s';";
     private static final String LOAD_USER_BY_ID_STATEMENT = "SELECT * FROM users WHERE id = '%s';";
 
@@ -34,7 +32,7 @@ public class LoadUserAdapter implements LoadUserPort {
                 Long roleId = resultSet.getLong("role_id");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
-                return Optional.of(mapper.mapToUserEntity(
+                return Optional.of(new User(
                         userId,
                         userEmail,
                         hashedPassword,
@@ -62,7 +60,7 @@ public class LoadUserAdapter implements LoadUserPort {
                 Long roleId = resultSet.getLong("role_id");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
-                return Optional.of(mapper.mapToUserEntity(
+                return Optional.of(new User(
                         userId,
                         userEmail,
                         hashedPassword,

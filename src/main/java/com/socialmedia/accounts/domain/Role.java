@@ -11,6 +11,7 @@ public class Role {
     private String roleName;
     private boolean hasPostCharsLimit;
     private Long postCharsLimit;
-    private boolean commentsLimit;
+    private boolean hasCommentsLimit;
+    private Long commentsLimit;
     private Instant creationTime;
 }

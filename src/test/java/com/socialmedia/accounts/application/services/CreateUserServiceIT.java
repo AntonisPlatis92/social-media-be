@@ -3,7 +3,6 @@ package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.adapter.out.database.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
-import com.socialmedia.accounts.adapter.out.database.UserMapper;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
@@ -28,7 +27,7 @@ class CreateUserServiceIT {
 
     @BeforeEach
     public void setup() {
-        loadUserPort = new LoadUserAdapter(new UserMapper());
+        loadUserPort = new LoadUserAdapter();
         createUserPort = new CreateUserAdapter();
         sut = new CreateUserService(createUserPort, loadUserPort);
     }

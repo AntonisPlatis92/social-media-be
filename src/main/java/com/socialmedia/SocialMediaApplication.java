@@ -2,7 +2,6 @@ package com.socialmedia;
 
 import com.socialmedia.accounts.adapter.out.database.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
-import com.socialmedia.accounts.adapter.out.database.UserMapper;
 import com.socialmedia.accounts.adapter.out.database.VerifyUserAdapter;
 import com.socialmedia.accounts.adapter.in.web.UserController;
 import com.socialmedia.accounts.application.services.CreateUserService;
@@ -28,7 +27,7 @@ public class SocialMediaApplication {
         ExceptionHandler.setupExceptionHandler(app);
 
         // Initialize your services and controllers
-        LoadUserPort loadUserPort = new LoadUserAdapter(new UserMapper());
+        LoadUserPort loadUserPort = new LoadUserAdapter();
         CreateUserPort createUserPort = new CreateUserAdapter();
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         UserController userController = new UserController(
