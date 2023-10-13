@@ -17,7 +17,7 @@ public class LoadUserAdapter implements LoadUserPort {
         this.mapper = mapper;
     }
     private static final String LOAD_USER_BY_EMAIL_STATEMENT = "SELECT * FROM users WHERE email = '%s';";
-    private static final String LOAD_USER_BY_ID_STATEMENT = "SELECT * FROM users WHERE id = %s;";
+    private static final String LOAD_USER_BY_ID_STATEMENT = "SELECT * FROM users WHERE id = '%s';";
 
     @Override
     public Optional<User> loadUserByEmail(String email) {

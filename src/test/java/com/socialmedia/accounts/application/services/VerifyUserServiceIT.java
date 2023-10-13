@@ -23,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(IntegrationTestConfig.class)
 public class VerifyUserServiceIT {
-    private VerifyUserService sut;
+    private VerifyUserService verifyUserService;
+    private LoadUserService loadUserService;
 
     private LoadUserPort loadUserPort;
     private VerifyUserPort verifyUserPort;
@@ -35,7 +36,8 @@ public class VerifyUserServiceIT {
         createUserPort = new CreateUserAdapter();
         loadUserPort = new LoadUserAdapter(new UserMapper());
         verifyUserPort = new VerifyUserAdapter();
-        sut = new VerifyUserService(loadUserPort, verifyUserPort);
+        verifyUserService = new VerifyUserService(loadUserPort, verifyUserPort);
+        loadUserService = new LoadUserService(loadUserPort);
     }
 
     @Test
@@ -60,10 +62,10 @@ public class VerifyUserServiceIT {
 
         // When
         createUserPort.createUser(user);
-        sut.verifyUser(new VerifyUserCommand(email));
+        verifyUserService.verifyUser(new VerifyUserCommand(email));
 
         // Then
-        Optional<User> maybeUser = loadUserPort.loadUserById(userId);
+        Optional<User> maybeUser = loadUserService.loadUser(userId);
         assertTrue(maybeUser.isPresent());
         assertTrue(maybeUser.get().isVerified());
     }
