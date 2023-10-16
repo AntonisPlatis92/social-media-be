@@ -64,7 +64,7 @@ public class VerifyUserServiceIT {
         verifyUserService.verifyUser(new VerifyUserCommand(email));
 
         // Then
-        Optional<User> maybeUser = loadUserService.loadUser(userId);
+        Optional<User> maybeUser = loadUserService.loadUserById(userId);
         assertTrue(maybeUser.isPresent());
         assertTrue(maybeUser.get().isVerified());
     }

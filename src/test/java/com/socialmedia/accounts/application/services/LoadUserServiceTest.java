@@ -1,13 +1,10 @@
 package com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -45,7 +42,7 @@ public class LoadUserServiceTest {
         when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
 
         // When
-        Optional<User> userReturned = sut.loadUser(userId);
+        Optional<User> userReturned = sut.loadUserById(userId);
 
         // Then
         assertEquals(userReturned, Optional.of(user));
@@ -58,7 +55,7 @@ public class LoadUserServiceTest {
         when(loadUserPort.loadUserById(userId)).thenReturn(Optional.empty());
 
         // When
-        Optional<User> userReturned = sut.loadUser(userId);
+        Optional<User> userReturned = sut.loadUserById(userId);
 
         // Then
         assertEquals(userReturned, Optional.empty());

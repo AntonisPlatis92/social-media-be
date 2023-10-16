@@ -8,14 +8,19 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import java.util.Optional;
 import java.util.UUID;
 
-class LoadUserService implements LoadUserUseCase {
+public class LoadUserService implements LoadUserUseCase {
     private final LoadUserPort loadUserPort;
 
     public LoadUserService(LoadUserPort loadUserPort) {
         this.loadUserPort = loadUserPort;
     }
 
-    public Optional<User> loadUser(UUID userId) {
+    public Optional<User> loadUserById(UUID userId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserById(userId));
+    }
+
+    @Override
+    public Optional<User> loadUserByEmail(String email) {
+        return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(email));
     }
 }

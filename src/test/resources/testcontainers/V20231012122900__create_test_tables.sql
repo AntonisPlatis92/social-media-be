@@ -28,3 +28,12 @@ VALUES (1, 'FREE', true, 1000, true, 5, DEFAULT);
 INSERT INTO roles (id, role_name, has_post_chars_limit, post_chars_limit, has_comments_limit, comments_limit,
                           creation_time)
 VALUES (2, 'PREMIUM', true, 3000, false, null, DEFAULT);
+
+create table posts
+(
+    id              uuid                                not null
+        primary key,
+    user_id         uuid                                not null,
+    body            text                                not null,
+    creation_time   timestamp default CURRENT_TIMESTAMP not null
+);
