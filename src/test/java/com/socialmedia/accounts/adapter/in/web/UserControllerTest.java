@@ -2,6 +2,9 @@ package com.socialmedia.accounts.adapter.in.web;
 
 import com.socialmedia.accounts.adapter.in.web.vms.CreateUserVM;
 import com.socialmedia.accounts.adapter.in.web.vms.LoginUserVM;
+import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
+import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
+import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.accounts.application.services.LoginUserService;
@@ -25,18 +28,18 @@ class UserControllerTest {
     private UserController sut;
 
     @Mock
-    private CreateUserService createUserService;
+    private CreateUserUseCase createUserUseCase;
     @Mock
-    private VerifyUserService verifyUserService;
+    private VerifyUserUseCase verifyUserUseCase;
     @Mock
-    private LoginUserService loginUserService;
+    private LoginUserUseCase loginUserUseCase;
     @Mock
     private Context ctx;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new UserController(createUserService, verifyUserService, loginUserService);
+        sut = new UserController(createUserUseCase, verifyUserUseCase, loginUserUseCase);
     }
 
     @Test
@@ -49,7 +52,7 @@ class UserControllerTest {
         CreateUserCommand command = new CreateUserCommand(email, password, roleId);
 
         when(ctx.bodyAsClass(CreateUserVM.class)).thenReturn(createUserVM);
-        doNothing().when(createUserService).createUser(command);
+        doNothing().when(createUserUseCase).createUser(command);
         when(ctx.status(201)).thenReturn(ctx);
 
         // When
@@ -96,7 +99,7 @@ class UserControllerTest {
         VerifyUserCommand command = new VerifyUserCommand(email);
 
         when(ctx.pathParam("email")).thenReturn(email);
-        doNothing().when(verifyUserService).verifyUser(command);
+        doNothing().when(verifyUserUseCase).verifyUser(command);
         when(ctx.status(200)).thenReturn(ctx);
 
         // When
@@ -126,7 +129,7 @@ class UserControllerTest {
         VerifyUserCommand command = new VerifyUserCommand(email);
 
         when(ctx.pathParam("email")).thenReturn(email);
-        doThrow(UserAlreadyVerifiedException.class).when(verifyUserService).verifyUser(command);
+        doThrow(UserAlreadyVerifiedException.class).when(verifyUserUseCase).verifyUser(command);
         when(ctx.status(400)).thenReturn(ctx);
 
         // Then
@@ -143,7 +146,7 @@ class UserControllerTest {
 
         when(ctx.bodyAsClass(LoginUserVM.class)).thenReturn(loginUserVM);
         String token = "testToken";
-        when(loginUserService.loginUser(command)).thenReturn(token);
+        when(loginUserUseCase.loginUser(command)).thenReturn(token);
         when(ctx.status(200)).thenReturn(ctx);
 
         // When
@@ -177,7 +180,7 @@ class UserControllerTest {
         LoginUserCommand command = new LoginUserCommand(email, password);
 
         when(ctx.bodyAsClass(LoginUserVM.class)).thenReturn(loginUserVM);
-        doThrow(LoginFailedException.class).when(loginUserService).loginUser(command);
+        doThrow(LoginFailedException.class).when(loginUserUseCase).loginUser(command);
         when(ctx.status(401)).thenReturn(ctx);
 
         // Then

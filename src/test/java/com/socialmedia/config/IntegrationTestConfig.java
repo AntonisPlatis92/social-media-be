@@ -17,6 +17,7 @@ public class IntegrationTestConfig implements BeforeAllCallback, AfterAllCallbac
 
     @Override
     public void afterAll(ExtensionContext extensionContext) {
+        postgresqlContainer.close();
         postgresqlContainer.stop();
     }
 }

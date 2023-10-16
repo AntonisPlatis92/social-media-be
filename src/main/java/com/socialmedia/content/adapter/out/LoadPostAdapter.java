@@ -47,7 +47,7 @@ public class LoadPostAdapter implements LoadPostPort {
     public List<Post> loadPostByUserId(UUID userId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             Statement statement = conn.createStatement();
-            String query = String.format(LOAD_POST_BY_ID_STATEMENT, userId);
+            String query = String.format(LOAD_POST_BY_USER_ID_STATEMENT, userId);
             ResultSet resultSet = statement.executeQuery(query);
 
             ArrayList<Post> posts = new ArrayList<>();

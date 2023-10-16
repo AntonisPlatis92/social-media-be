@@ -7,7 +7,7 @@ import java.util.Properties;
 public class PropertiesManager {
     private static final Properties properties = new Properties();
 
-    static {
+    public static String getProperty(String key) {
         String environment = System.getProperty("app.environment", "prod");
 
         String configFileName = "prod".equals(environment) ? "application.properties" : "application-" + environment + ".properties";
@@ -21,9 +21,6 @@ public class PropertiesManager {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    public static String getProperty(String key) {
         return properties.getProperty(key);
     }
 }

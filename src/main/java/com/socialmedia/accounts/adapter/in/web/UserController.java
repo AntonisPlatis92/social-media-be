@@ -2,24 +2,24 @@ package com.socialmedia.accounts.adapter.in.web;
 
 import com.socialmedia.accounts.adapter.in.web.vms.CreateUserVM;
 import com.socialmedia.accounts.adapter.in.web.vms.LoginUserVM;
+import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
+import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
+import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
-import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
-import com.socialmedia.accounts.application.services.LoginUserService;
-import com.socialmedia.accounts.application.services.VerifyUserService;
 import io.javalin.http.Handler;
 
 public class UserController {
-    private CreateUserService createUserService;
-    private VerifyUserService verifyUserService;
-    private LoginUserService loginUserService;
+    private CreateUserUseCase createUserUseCase;
+    private VerifyUserUseCase verifyUserUseCase;
+    private LoginUserUseCase loginUserUseCase;
 
 
-    public UserController(CreateUserService createUserService, VerifyUserService verifyUserService, LoginUserService loginUserService) {
-        this.createUserService = createUserService;
-        this.verifyUserService = verifyUserService;
-        this.loginUserService = loginUserService;
+    public UserController(CreateUserUseCase createUserUseCase, VerifyUserUseCase verifyUserUseCase, LoginUserUseCase loginUserUseCase) {
+        this.createUserUseCase = createUserUseCase;
+        this.verifyUserUseCase = verifyUserUseCase;
+        this.loginUserUseCase = loginUserUseCase;
     }
 
     public Handler createNewUser = ctx -> {
@@ -35,7 +35,7 @@ public class UserController {
                 createUserVM.roleId()
         );
 
-        createUserService.createUser(command);
+        createUserUseCase.createUser(command);
 
         ctx.status(201).result("User created successfully.");
     };
@@ -44,7 +44,7 @@ public class UserController {
         String email = ctx.pathParam("email");
 
         VerifyUserCommand command = new VerifyUserCommand(email);
-        verifyUserService.verifyUser(command);
+        verifyUserUseCase.verifyUser(command);
 
         ctx.status(200).result("User verified successfully.");
     };
@@ -59,7 +59,7 @@ public class UserController {
                 loginUserVM.email(),
                 loginUserVM.password()
         );
-        String loginToken = loginUserService.loginUser(command);
+        String loginToken = loginUserUseCase.loginUser(command);
 
         ctx.status(200).result(loginToken);
     };

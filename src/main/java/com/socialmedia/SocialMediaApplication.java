@@ -5,6 +5,9 @@ import com.socialmedia.accounts.adapter.out.database.LoadRoleAdapter;
 import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
 import com.socialmedia.accounts.adapter.out.database.VerifyUserAdapter;
 import com.socialmedia.accounts.adapter.in.web.UserController;
+import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
+import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
+import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.application.services.LoginUserService;
@@ -14,6 +17,7 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
 import com.socialmedia.content.adapter.in.ContentController;
 import com.socialmedia.content.adapter.out.CreatePostAdapter;
+import com.socialmedia.content.application.port.in.CreatePostUseCase;
 import com.socialmedia.content.application.port.out.CreatePostPort;
 import com.socialmedia.content.application.services.CreatePostService;
 import com.socialmedia.utils.authentication.exceptions.ExceptionHandler;
@@ -32,19 +36,23 @@ public class SocialMediaApplication {
         // Configure Javalin
         ExceptionHandler.setupExceptionHandler(app);
 
-        // Initialize your services and controllers
+        // Initialize ports
         LoadUserPort loadUserPort = new LoadUserAdapter();
         CreateUserPort createUserPort = new CreateUserAdapter();
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         LoadRolePort loadRolePort = new LoadRoleAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
+        // Initialize services
+        CreateUserUseCase createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
+        VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
+        LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
+        CreatePostUseCase createPostUseCase = new CreatePostService(loadUserPort, loadRolePort, createPostPort);
+        // Initialize controllers
         UserController userController = new UserController(
-                new CreateUserService(createUserPort, loadUserPort),
-                new VerifyUserService(loadUserPort, verifyUserPort),
-                new LoginUserService(loadUserPort));
-        ContentController contentController = new ContentController(
-                new CreatePostService(loadUserPort, loadRolePort, createPostPort)
-        );
+                createUserUseCase,
+                verifyUserUseCase,
+                loginUserUseCase);
+        ContentController contentController = new ContentController(createPostUseCase);
 
         // Define routes
         app.post("users", userController.createNewUser);
