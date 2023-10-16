@@ -1,6 +1,7 @@
 package com.socialmedia.utils.authentication;
 
 import com.socialmedia.config.ClockConfig;
+import com.socialmedia.config.PropertiesManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -14,7 +15,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class JwtUtils {
-    public static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    public static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(PropertiesManager.getProperty("jwt.secretKey").getBytes());
     private static final long EXPIRATION_DURATION_IN_MINUTES = 60;
 
     public static String createToken(UUID userId) {

@@ -1,8 +1,11 @@
 package com.socialmedia.utils.authentication.exceptions;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.socialmedia.accounts.domain.exceptions.*;
+import com.socialmedia.content.domain.exceptions.PostCharsLimitException;
 import io.javalin.Javalin;
 import jakarta.validation.ConstraintViolationException;
+import io.jsonwebtoken.security.SignatureException;
 
 public class ExceptionHandler {
     public static void setupExceptionHandler(Javalin app) {
@@ -27,6 +30,18 @@ public class ExceptionHandler {
             ctx.result(e.getMessage());
         });
         app.exception(LoginFailedException.class, (e, ctx) -> {
+            ctx.status(401);
+            ctx.result(e.getMessage());
+        });
+        app.exception(UnrecognizedPropertyException.class, (e, ctx) -> {
+            ctx.status(401);
+            ctx.result(e.getMessage());
+        });
+        app.exception(SignatureException.class, (e, ctx) -> {
+            ctx.status(401);
+            ctx.result(e.getMessage());
+        });
+        app.exception(PostCharsLimitException.class, (e, ctx) -> {
             ctx.status(401);
             ctx.result(e.getMessage());
         });

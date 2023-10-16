@@ -30,7 +30,7 @@ public class ContentController {
 
         CreatePostCommand command = new CreatePostCommand(
                 userId,
-                createPostVM.postBody()
+                createPostVM.body()
         );
 
         createPostUseCase.createPost(command);

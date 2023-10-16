@@ -13,7 +13,7 @@ public class CreatePostAdapter implements CreatePostPort {
     public void createNewPost(Post post) {
         DatabaseUtils.doInTransaction((conn) -> {
             PreparedStatement preparedStatement = conn.prepareStatement(CREATE_POST_STATEMENT);
-            preparedStatement.setObject(1, post.getUserId());
+            preparedStatement.setObject(1, post.getId());
             preparedStatement.setObject(2, post.getUserId());
             preparedStatement.setString(3, post.getBody());
             preparedStatement.setTimestamp(4, Timestamp.from(post.getCreationTime()));
