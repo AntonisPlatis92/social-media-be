@@ -16,9 +16,17 @@ import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
 import com.socialmedia.content.adapter.in.ContentController;
+import com.socialmedia.content.adapter.out.CreateCommentAdapter;
 import com.socialmedia.content.adapter.out.CreatePostAdapter;
+import com.socialmedia.content.adapter.out.LoadCommentAdapter;
+import com.socialmedia.content.adapter.out.LoadPostAdapter;
+import com.socialmedia.content.application.port.in.CreateCommentUseCase;
 import com.socialmedia.content.application.port.in.CreatePostUseCase;
+import com.socialmedia.content.application.port.out.CreateCommentPort;
 import com.socialmedia.content.application.port.out.CreatePostPort;
+import com.socialmedia.content.application.port.out.LoadCommentPort;
+import com.socialmedia.content.application.port.out.LoadPostPort;
+import com.socialmedia.content.application.services.CreateCommentService;
 import com.socialmedia.content.application.services.CreatePostService;
 import com.socialmedia.utils.authentication.exceptions.ExceptionHandler;
 import io.javalin.Javalin;
@@ -42,23 +50,28 @@ public class SocialMediaApplication {
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         LoadRolePort loadRolePort = new LoadRoleAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
+        LoadPostPort loadPostPort = new LoadPostAdapter();
+        LoadCommentPort loadCommentPort = new LoadCommentAdapter();
+        CreateCommentPort createCommentPort = new CreateCommentAdapter();
         // Initialize services
         CreateUserUseCase createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserPort, loadRolePort, createPostPort);
+        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserPort, loadRolePort, loadPostPort, loadCommentPort, createCommentPort);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,
                 verifyUserUseCase,
                 loginUserUseCase);
-        ContentController contentController = new ContentController(createPostUseCase);
+        ContentController contentController = new ContentController(createPostUseCase, createCommentUseCase);
 
         // Define routes
         app.post("users", userController.createNewUser);
         app.post("users/verify/{email}", userController.verifyExistingUser);
         app.get("users/login", userController.loginExistingUser);
         app.post("posts", contentController.createNewPost);
+        app.post("comments", contentController.createNewComment);
 
         // Start the server
         app.start(7000);

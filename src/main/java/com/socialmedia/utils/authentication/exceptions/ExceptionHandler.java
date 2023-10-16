@@ -8,6 +8,7 @@ import com.socialmedia.content.domain.exceptions.PostNotFoundException;
 import io.javalin.Javalin;
 import jakarta.validation.ConstraintViolationException;
 import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.ExpiredJwtException;
 
 public class ExceptionHandler {
     public static void setupExceptionHandler(Javalin app) {
@@ -56,6 +57,10 @@ public class ExceptionHandler {
             ctx.result(e.getMessage());
         });
         app.exception(CommentsLimitException.class, (e, ctx) -> {
+            ctx.status(401);
+            ctx.result(e.getMessage());
+        });
+        app.exception(ExpiredJwtException.class, (e, ctx) -> {
             ctx.status(401);
             ctx.result(e.getMessage());
         });

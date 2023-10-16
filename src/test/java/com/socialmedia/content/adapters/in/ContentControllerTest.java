@@ -2,8 +2,11 @@ package com.socialmedia.content.adapters.in;
 
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.content.adapter.in.ContentController;
+import com.socialmedia.content.adapter.in.vms.CreateCommentVM;
 import com.socialmedia.content.adapter.in.vms.CreatePostVM;
+import com.socialmedia.content.application.port.in.CreateCommentUseCase;
 import com.socialmedia.content.application.port.in.CreatePostUseCase;
+import com.socialmedia.content.domain.commands.CreateCommentCommand;
 import com.socialmedia.content.domain.commands.CreatePostCommand;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Context;
@@ -32,12 +35,14 @@ public class ContentControllerTest {
     @Mock
     private CreatePostUseCase createPostUseCase;
     @Mock
+    private CreateCommentUseCase createCommentUseCase;
+    @Mock
     private Context ctx;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new ContentController(createPostUseCase);
+        sut = new ContentController(createPostUseCase, createCommentUseCase);
     }
 
     @Test
@@ -113,5 +118,84 @@ public class ContentControllerTest {
 
         // Then
         assertThrows(ExpiredJwtException.class, () -> sut.createNewPost.handle(ctx));
+    }
+
+    @Test
+    void createNewComment_whenValidInputAndServiceReturnsTrue_shouldReturn201() throws Exception {
+        // Given
+        UUID userId = UUID.randomUUID();
+        String token = JwtUtils.createToken(userId);
+        when(ctx.header("Authorization")).thenReturn(token);
+        UUID postId = UUID.randomUUID();
+        String commentBody = "testBody";
+        CreateCommentVM createCommentVM = new CreateCommentVM(postId, commentBody);
+        CreateCommentCommand command = new CreateCommentCommand(userId, postId, commentBody);
+
+        when(ctx.bodyAsClass(CreateCommentVM.class)).thenReturn(createCommentVM);
+        doNothing().when(createCommentUseCase).createComment(command);
+        when(ctx.status(201)).thenReturn(ctx);
+
+        // When
+        sut.createNewComment.handle(ctx);
+
+        // Then
+        verify(ctx).status(201);
+        verify(ctx).result("Comment created successfully.");
+    }
+
+    @Test
+    void createNewComment_whenInvalidInput_shouldThrowConstraintViolationException() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        String token = JwtUtils.createToken(userId);
+        when(ctx.header("Authorization")).thenReturn(token);
+        UUID postId = UUID.randomUUID();
+        String commentBody = null;
+        CreateCommentVM createCommentVM = new CreateCommentVM(postId, commentBody);
+
+        when(ctx.bodyAsClass(CreateCommentVM.class)).thenReturn(createCommentVM);
+
+        // Then
+        assertThrows(ConstraintViolationException.class, () -> sut.createNewComment.handle(ctx));
+    }
+
+    @Test
+    void createNewComment_whenInvalidToken_shouldThrowMalformedJwtException() {
+        // Given
+        String token = "token";
+        when(ctx.header("Authorization")).thenReturn(token);
+        UUID postId = UUID.randomUUID();
+        String commentBody = "commentBody";
+        CreateCommentVM createCommentVM = new CreateCommentVM(postId, commentBody);
+
+        when(ctx.bodyAsClass(CreateCommentVM.class)).thenReturn(createCommentVM);
+        when(ctx.status(403)).thenReturn(ctx);
+
+        // Then
+        assertThrows(MalformedJwtException.class, () -> sut.createNewComment.handle(ctx));
+    }
+
+    @Test
+    void createNewComment_whenExpiredToken_shouldThrowException() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        Instant now = Instant.now(ClockConfig.utcClock());
+        Instant expirationInPast = now.minus(1, ChronoUnit.DAYS);
+        String expiredToken = Jwts.builder()
+                .setSubject(userId.toString())
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expirationInPast))
+                .signWith(SECRET_KEY)
+                .compact();
+        when(ctx.header("Authorization")).thenReturn(expiredToken);
+        UUID postId = UUID.randomUUID();
+        String commentBody = "commentBody";
+        CreateCommentVM createCommentVM = new CreateCommentVM(postId, commentBody);
+
+        when(ctx.bodyAsClass(CreateCommentVM.class)).thenReturn(createCommentVM);
+        when(ctx.status(403)).thenReturn(ctx);
+
+        // Then
+        assertThrows(ExpiredJwtException.class, () -> sut.createNewComment.handle(ctx));
     }
 }

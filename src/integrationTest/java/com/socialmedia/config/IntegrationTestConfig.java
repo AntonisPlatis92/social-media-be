@@ -10,7 +10,7 @@ public class IntegrationTestConfig implements BeforeAllCallback, AfterAllCallbac
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        System.setProperty("app.environment", "test");
+        System.setProperty("app.environment", "integration-test");
         postgresqlContainer.start();
         TestContainerSetup.setUp();
     }
