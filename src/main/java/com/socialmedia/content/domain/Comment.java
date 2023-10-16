@@ -1,11 +1,17 @@
 package com.socialmedia.content.domain;
 
-import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.time.Instant;
+import java.util.UUID;
+
+@AllArgsConstructor
+@Getter
 public class Comment {
-    private Long id;
-    private Long userId;
-    private Long postId;
+    private UUID id;
+    private UUID userId;
+    private UUID postId;
     private String body;
     private Instant creationTime;
 }

@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface LoadPostPort {
     public Optional<Post> loadPostById(UUID id);
-    public List<Post> loadPostByUserId(UUID id);
+    public List<Post> loadPostByUserId(UUID userId);
 }

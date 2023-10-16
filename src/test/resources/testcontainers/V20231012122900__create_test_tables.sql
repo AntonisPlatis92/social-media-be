@@ -35,5 +35,18 @@ create table posts
         primary key,
     user_id         uuid                                not null,
     body            text                                not null,
-    creation_time   timestamp default CURRENT_TIMESTAMP not null
+    creation_time   timestamp default CURRENT_TIMESTAMP not null,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+create table comments
+(
+    id              uuid                                not null
+        primary key,
+    post_id         uuid                                not null,
+    user_id         uuid                                not null,
+    body            text                                not null,
+    creation_time   timestamp default CURRENT_TIMESTAMP not null,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );
