@@ -58,6 +58,6 @@ public class LoadUserServiceTest {
         Optional<User> userReturned = sut.loadUserById(userId);
 
         // Then
-        assertEquals(userReturned, Optional.empty());
+        assertEquals(Optional.empty(), userReturned);
     }
 }

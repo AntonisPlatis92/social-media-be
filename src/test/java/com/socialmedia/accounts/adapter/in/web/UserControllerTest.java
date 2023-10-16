@@ -61,7 +61,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createNewUser_whenInvalidInput_shouldThrowException() throws Exception {
+    void createNewUser_whenInvalidInput_shouldThrowException() {
         // Given
         String email = "test@test.com";
         String password = null;
@@ -75,7 +75,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createNewUser_whenValidInputAndPasswordIsLessThanMinChars_shouldThrowException() throws Exception {
+    void createNewUser_whenValidInputAndPasswordIsLessThanMinChars_shouldThrowException() {
         // Given
         String email = "test@test.com";
         String password = "1234";

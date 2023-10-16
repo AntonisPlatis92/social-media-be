@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class JwtUtils {
-    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    public static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_DURATION_IN_MINUTES = 60;
 
     public static String createToken(UUID userId) {
