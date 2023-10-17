@@ -38,13 +38,7 @@ public class CreatePostService implements CreatePostUseCase {
             checkPostCharsLimit(command.body(), role);
         }
 
-        Post newPost = new Post(
-                UUID.randomUUID(),
-                command.userId(),
-                command.body(),
-                Instant.now(ClockConfig.utcClock())
-        );
-        createPostPort.createNewPost(newPost);
+        createPostPort.createNewPost(Post.createPostFromCommand(command));
     }
 
     private void checkPostCharsLimit(String postBody, Role role) {

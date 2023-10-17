@@ -1,5 +1,7 @@
 package com.socialmedia.content.domain;
 
+import com.socialmedia.config.ClockConfig;
+import com.socialmedia.content.domain.commands.CreateCommentCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,4 +16,14 @@ public class Comment {
     private UUID postId;
     private String body;
     private Instant creationTime;
+
+    public static Comment createCommentFromCommand(CreateCommentCommand command) {
+        return new Comment(
+                UUID.randomUUID(),
+                command.userId(),
+                command.postId(),
+                command.body(),
+                Instant.now(ClockConfig.utcClock())
+        );
+    }
 }

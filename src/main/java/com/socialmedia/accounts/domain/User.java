@@ -1,5 +1,8 @@
 package com.socialmedia.accounts.domain;
 
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+import com.socialmedia.config.ClockConfig;
+import com.socialmedia.utils.encoders.PasswordEncoder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +20,15 @@ public class User {
     private boolean verified;
     private Long roleId;
     private Instant creationTime;
+
+    public static User createUserFromCommand(CreateUserCommand command){
+        return new User(
+                UUID.randomUUID(),
+                command.email(),
+                PasswordEncoder.encode(command.password()),
+                false,
+                command.roleId(),
+                Instant.now(ClockConfig.utcClock())
+        );
+    }
 }

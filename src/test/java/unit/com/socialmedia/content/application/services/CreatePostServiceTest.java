@@ -55,7 +55,6 @@ public class CreatePostServiceTest {
                userId,
                postBody
         );
-        System.out.println(command);
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
         when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
