@@ -1,4 +1,4 @@
-package com.socialmedia.accounts.adapter.out.database;
+package com.socialmedia.accounts.adapter.out;
 
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;

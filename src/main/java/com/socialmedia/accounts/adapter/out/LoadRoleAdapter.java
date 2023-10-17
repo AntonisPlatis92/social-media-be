@@ -1,4 +1,4 @@
-package com.socialmedia.accounts.adapter.out.database;
+package com.socialmedia.accounts.adapter.out;
 
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.domain.Role;

@@ -1,4 +1,4 @@
-package com.socialmedia.accounts.adapter.out.database;
+package com.socialmedia.accounts.adapter.out;
 
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.utils.database.DatabaseUtils;

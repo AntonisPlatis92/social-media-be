@@ -1,10 +1,10 @@
 package com.socialmedia;
 
-import com.socialmedia.accounts.adapter.out.database.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.database.LoadRoleAdapter;
-import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
-import com.socialmedia.accounts.adapter.out.database.VerifyUserAdapter;
-import com.socialmedia.accounts.adapter.in.web.UserController;
+import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
+import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
+import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
+import com.socialmedia.accounts.adapter.out.VerifyUserAdapter;
+import com.socialmedia.accounts.adapter.in.UserController;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;

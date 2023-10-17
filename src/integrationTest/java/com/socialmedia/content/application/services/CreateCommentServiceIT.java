@@ -1,8 +1,8 @@
 package com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.adapter.out.database.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.database.LoadRoleAdapter;
-import com.socialmedia.accounts.adapter.out.database.LoadUserAdapter;
+import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
+import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
+import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;

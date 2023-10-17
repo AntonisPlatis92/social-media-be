@@ -1,6 +1,6 @@
 package com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.adapter.out.database.LoadRoleAdapter;
+import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.config.IntegrationTestConfig;

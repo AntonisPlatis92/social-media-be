@@ -1,7 +1,7 @@
-package com.socialmedia.accounts.adapter.in.web;
+package com.socialmedia.accounts.adapter.in;
 
-import com.socialmedia.accounts.adapter.in.web.vms.CreateUserVM;
-import com.socialmedia.accounts.adapter.in.web.vms.LoginUserVM;
+import com.socialmedia.accounts.adapter.in.vms.CreateUserVM;
+import com.socialmedia.accounts.adapter.in.vms.LoginUserVM;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
