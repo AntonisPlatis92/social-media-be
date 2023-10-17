@@ -1,4 +1,4 @@
-package com.socialmedia.follows.domain.commands;
+package com.socialmedia.accounts.domain.commands;
 
 import com.socialmedia.utils.validation.Validation;
 import jakarta.validation.constraints.NotNull;

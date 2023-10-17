@@ -1,8 +1,8 @@
-package com.socialmedia.follows.adapter.out;
+package com.socialmedia.accounts.adapter.out;
 
-import com.socialmedia.follows.domain.Follow;
+import com.socialmedia.accounts.domain.Follow;
 import com.socialmedia.utils.database.DatabaseUtils;
-import com.socialmedia.follows.application.port.out.LoadFollowPort;
+import com.socialmedia.accounts.application.port.out.LoadFollowPort;
 
 import java.sql.ResultSet;
 import java.sql.Statement;

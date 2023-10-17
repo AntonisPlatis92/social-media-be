@@ -1,14 +1,14 @@
-package com.socialmedia.follows.application.services;
+package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.follows.application.port.out.CreateFollowPort;
-import com.socialmedia.follows.domain.Follow;
-import com.socialmedia.follows.domain.exceptions.FollowAlreadyExistsException;
+import com.socialmedia.accounts.application.port.out.CreateFollowPort;
+import com.socialmedia.accounts.domain.Follow;
+import com.socialmedia.accounts.domain.exceptions.FollowAlreadyExistsException;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
-import com.socialmedia.follows.application.port.in.CreateFollowUseCase;
-import com.socialmedia.follows.application.port.out.LoadFollowPort;
-import com.socialmedia.follows.domain.commands.CreateFollowCommand;
+import com.socialmedia.accounts.application.port.in.CreateFollowUseCase;
+import com.socialmedia.accounts.application.port.out.LoadFollowPort;
+import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -33,12 +33,7 @@ public class CreateFollowService implements CreateFollowUseCase {
         checkIfUserDoesNotExist(command.followerId());
         checkIfUserDoesNotExist(command.followingId());
 
-        Follow newFollow = new Follow(
-                command.followerId(),
-                command.followingId(),
-                Instant.now(ClockConfig.utcClock())
-        );
-        createFollowPort.createFollow(newFollow);
+        createFollowPort.createFollow(Follow.createFollowFromCommand(command));
     }
 
     private void checkIfFollowAlreadyExists(CreateFollowCommand command) {

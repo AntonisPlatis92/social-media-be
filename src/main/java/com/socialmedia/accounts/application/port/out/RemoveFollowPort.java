@@ -1,4 +1,4 @@
-package com.socialmedia.follows.application.port.out;
+package com.socialmedia.accounts.application.port.out;
 
 import java.util.UUID;
 

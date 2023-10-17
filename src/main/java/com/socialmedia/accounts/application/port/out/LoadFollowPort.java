@@ -1,6 +1,6 @@
-package com.socialmedia.follows.application.port.out;
+package com.socialmedia.accounts.application.port.out;
 
-import com.socialmedia.follows.domain.Follow;
+import com.socialmedia.accounts.domain.Follow;
 
 import java.util.Optional;
 import java.util.UUID;
