@@ -1,8 +1,8 @@
 package com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.utils.database.DatabaseUtils;
+import com.socialmedia.accounts.application.port.out.LoadRolePort;
 
 import java.util.Optional;
 

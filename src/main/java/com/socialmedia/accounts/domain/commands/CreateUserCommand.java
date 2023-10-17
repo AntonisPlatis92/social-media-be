@@ -14,12 +14,9 @@ public record CreateUserCommand(
         long roleId) {
     public static final Long MINIMUM_PASSWORD_CHARACTERS = 8L;
 
-    public CreateUserCommand(String email, String password, long roleId) {
-        this.email = email;
-        this.password = password;
-        this.roleId = roleId;
+    public CreateUserCommand {
         validate(this);
-        if (this.password.length() < MINIMUM_PASSWORD_CHARACTERS) {
+        if (password.length() < MINIMUM_PASSWORD_CHARACTERS) {
             throw new PasswordMinimumCharactersException(String.format("Password must be at least %s characters long.", MINIMUM_PASSWORD_CHARACTERS));
         }
     }

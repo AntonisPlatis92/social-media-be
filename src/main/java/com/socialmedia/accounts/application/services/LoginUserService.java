@@ -1,13 +1,13 @@
 package com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
+import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.domain.User;
+import com.socialmedia.accounts.domain.commands.LoginUserCommand;
+import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
+import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.utils.authentication.JwtUtils;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.utils.encoders.PasswordEncoder;
-import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
-import com.socialmedia.accounts.domain.commands.LoginUserCommand;
-import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 
 import java.util.Optional;

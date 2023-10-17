@@ -1,8 +1,8 @@
 package com.socialmedia.accounts.adapter.out;
 
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.utils.database.DatabaseUtils;
+import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import lombok.NoArgsConstructor;
 
 import java.sql.ResultSet;

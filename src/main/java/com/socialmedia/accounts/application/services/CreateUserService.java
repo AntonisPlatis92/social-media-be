@@ -1,11 +1,11 @@
 package com.socialmedia.accounts.application.services;
 
+import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.domain.User;
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.utils.encoders.PasswordEncoder;
-import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.accounts.domain.commands.CreateUserCommand;
-import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 

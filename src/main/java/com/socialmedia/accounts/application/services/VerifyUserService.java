@@ -1,11 +1,11 @@
 package com.socialmedia.accounts.application.services;
 
+import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.utils.database.DatabaseUtils;
+import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyVerifiedException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
-import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
-import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
+import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
 

@@ -10,9 +10,7 @@ public record LoginUserCommand(
         @NotNull
         String password
 ) {
-    public LoginUserCommand(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public LoginUserCommand {
         validate(this);
     }
 }

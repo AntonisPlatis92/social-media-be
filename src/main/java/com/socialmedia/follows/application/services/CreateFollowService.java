@@ -1,15 +1,15 @@
 package com.socialmedia.follows.application.services;
 
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.follows.application.port.in.CreateFollowUseCase;
 import com.socialmedia.follows.application.port.out.CreateFollowPort;
-import com.socialmedia.follows.application.port.out.LoadFollowPort;
 import com.socialmedia.follows.domain.Follow;
-import com.socialmedia.follows.domain.commands.CreateFollowCommand;
 import com.socialmedia.follows.domain.exceptions.FollowAlreadyExistsException;
+import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.follows.application.port.in.CreateFollowUseCase;
+import com.socialmedia.follows.application.port.out.LoadFollowPort;
+import com.socialmedia.follows.domain.commands.CreateFollowCommand;
 
 import java.time.Instant;
 import java.util.Optional;

@@ -5,9 +5,9 @@ import com.socialmedia.accounts.adapter.in.vms.LoginUserVM;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
+import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
-import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import io.javalin.http.Handler;
 
 public class UserController {

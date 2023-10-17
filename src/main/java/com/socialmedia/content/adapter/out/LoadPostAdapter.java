@@ -1,6 +1,5 @@
 package com.socialmedia.content.adapter.out;
 
-import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.content.application.port.out.LoadPostPort;
 import com.socialmedia.content.domain.Post;
 import com.socialmedia.utils.database.DatabaseUtils;
@@ -12,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Collections.emptyList;
 
 public class LoadPostAdapter implements LoadPostPort {
     private static final String LOAD_POST_BY_ID_STATEMENT = "SELECT * FROM posts WHERE id = '%s';";

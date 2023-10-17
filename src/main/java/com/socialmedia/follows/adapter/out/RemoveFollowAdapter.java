@@ -1,7 +1,7 @@
 package com.socialmedia.follows.adapter.out;
 
-import com.socialmedia.follows.application.port.out.RemoveFollowPort;
 import com.socialmedia.utils.database.DatabaseUtils;
+import com.socialmedia.follows.application.port.out.RemoveFollowPort;
 
 import java.sql.PreparedStatement;
 import java.util.UUID;

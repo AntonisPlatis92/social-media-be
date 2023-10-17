@@ -12,9 +12,7 @@ public record CreatePostCommand(
         @NotNull
         String body
 ) {
-    public CreatePostCommand(UUID userId, String body) {
-        this.userId = userId;
-        this.body = body;
+    public CreatePostCommand {
         validate(this);
     }
 }

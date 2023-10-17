@@ -3,8 +3,6 @@ package com.socialmedia.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.util.concurrent.TimeUnit;
-
 public class HikariCPDataSource {
 
     private static final String JDBC_URL = PropertiesManager.getProperty("jdbc.url");

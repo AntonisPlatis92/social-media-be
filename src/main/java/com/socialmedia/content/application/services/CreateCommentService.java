@@ -1,11 +1,13 @@
 package com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.content.domain.exceptions.CommentsLimitException;
+import com.socialmedia.content.domain.exceptions.PostNotFoundException;
+import com.socialmedia.accounts.application.port.out.LoadRolePort;
+import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.content.application.port.in.CreateCommentUseCase;
 import com.socialmedia.content.application.port.out.CreateCommentPort;
@@ -14,8 +16,6 @@ import com.socialmedia.content.application.port.out.LoadPostPort;
 import com.socialmedia.content.domain.Comment;
 import com.socialmedia.content.domain.Post;
 import com.socialmedia.content.domain.commands.CreateCommentCommand;
-import com.socialmedia.content.domain.exceptions.CommentsLimitException;
-import com.socialmedia.content.domain.exceptions.PostNotFoundException;
 
 import java.time.Instant;
 import java.util.Optional;
