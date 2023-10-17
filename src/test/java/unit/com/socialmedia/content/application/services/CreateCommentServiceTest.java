@@ -50,6 +50,8 @@ public class CreateCommentServiceTest {
     @Captor
     ArgumentCaptor<Comment> commentCaptor;
 
+    private static final String USER_EMAIL = "test@test.com";
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -59,18 +61,17 @@ public class CreateCommentServiceTest {
     @Test
     public void createComment_whenUserExistsAndRoleExistsAndPostExistsAndCommentsLessThanLimit_shouldCreateComment() {
         // Given
-        UUID userId = UUID.randomUUID();
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
-                userId,
+                USER_EMAIL,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
         when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
@@ -78,12 +79,12 @@ public class CreateCommentServiceTest {
         String postBody = "postBody";
         Post post = new Post(
                 postId,
-                userId,
+                USER_EMAIL,
                 postBody,
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.of(post));
-        when(loadCommentPort.loadCommentByUserIdAndPostId(userId, postId)).thenReturn(Collections.emptyList());
+        when(loadCommentPort.loadCommentByUserEmailAndPostId(USER_EMAIL, postId)).thenReturn(Collections.emptyList());
 
         // When
         sut.createComment(command);
@@ -91,7 +92,7 @@ public class CreateCommentServiceTest {
         // Then
         verify(createCommentPort).createNewComment(commentCaptor.capture());
         assertNotNull(commentCaptor.getValue());
-        assertEquals(userId, commentCaptor.getValue().getUserId());
+        assertEquals(USER_EMAIL, commentCaptor.getValue().getUserEmail());
         assertEquals(postId, commentCaptor.getValue().getPostId());
         assertNotNull(commentCaptor.getValue().getId());
         assertEquals(commentBody, commentCaptor.getValue().getBody());
@@ -100,18 +101,17 @@ public class CreateCommentServiceTest {
     @Test
     public void createComment_whenUserExistsAndRoleExistsAndPostExistsAndCommentsMoreThanLimit_shouldThrowCommentsLimitException() {
         // Given
-        UUID userId = UUID.randomUUID();
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
-                userId,
+                USER_EMAIL,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
         when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
@@ -119,19 +119,19 @@ public class CreateCommentServiceTest {
         String postBody = "postBody";
         Post post = new Post(
                 postId,
-                userId,
+                USER_EMAIL,
                 postBody,
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.of(post));
         Comment previousComment = new Comment(
                 UUID.randomUUID(),
-                userId,
+                USER_EMAIL,
                 postId,
                 "previousCommentBody",
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadCommentPort.loadCommentByUserIdAndPostId(userId, postId))
+        when(loadCommentPort.loadCommentByUserEmailAndPostId(USER_EMAIL, postId))
                 .thenReturn(Collections.nCopies(5, previousComment));
 
         // When
@@ -141,18 +141,17 @@ public class CreateCommentServiceTest {
     @Test
     public void createComment_whenUserExistsAndRoleExistsAndPostDoesNotExist_shouldThrowPostNotFoundException() {
         // Given
-        UUID userId = UUID.randomUUID();
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
-                userId,
+                USER_EMAIL,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
         when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
@@ -166,18 +165,17 @@ public class CreateCommentServiceTest {
     @Test
     public void createComment_whenUserExistsAndRoleDoesNotExist_shouldThrowRoleNotFoundException() {
         // Given
-        UUID userId = UUID.randomUUID();
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
-                userId,
+                USER_EMAIL,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
 
         when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.empty());
 
@@ -188,16 +186,15 @@ public class CreateCommentServiceTest {
     @Test
     public void createComment_whenUserDoesNotExist_shouldThrowUserNotFoundException() {
         // Given
-        UUID userId = UUID.randomUUID();
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentCommand command = new CreateCommentCommand(
-                userId,
+                USER_EMAIL,
                 postId,
                 commentBody
         );
 
-        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.empty());
+        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.createComment(command));

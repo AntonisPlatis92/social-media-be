@@ -3,8 +3,6 @@ package unit.com.socialmedia.utils.authentication;
 import com.socialmedia.utils.authentication.JwtUtils;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JwtUtilsTest {
@@ -12,14 +10,14 @@ public class JwtUtilsTest {
     @Test
     void createToken_whenExtractingEmailFromToken_shouldMatchEmail() {
         // Given
-        UUID userId = UUID.randomUUID();
+        String userEmail = "test@test.com";
 
         // When
-        String token = JwtUtils.createToken(userId);
+        String token = JwtUtils.createToken(userEmail);
 
         // Then
         assertNotNull(token);
         assertTrue(JwtUtils.isTokenValid(token));
-        assertEquals(userId, JwtUtils.extractUserIdFromToken(token));
+        assertEquals(userEmail, JwtUtils.extractUserEmailFromToken(token));
     }
 }

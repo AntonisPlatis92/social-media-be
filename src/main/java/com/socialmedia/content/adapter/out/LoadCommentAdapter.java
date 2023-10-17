@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class LoadCommentAdapter implements LoadCommentPort {
     private static final String LOAD_COMMENT_BY_ID_STATEMENT = "SELECT * FROM comments WHERE id = '%s';";
-    private static final String LOAD_COMMENT_BY_USER_ID_AND_POST_ID_STATEMENT = "SELECT * FROM comments WHERE user_id = '%s' AND post_id = '%s';";
+    private static final String LOAD_COMMENT_BY_USER_EMAIL_AND_POST_ID_STATEMENT = "SELECT * FROM comments WHERE user_email = '%s' AND post_id = '%s';";
 
     @Override
     public Optional<Comment> loadCommentById(UUID id) {
@@ -25,14 +25,14 @@ public class LoadCommentAdapter implements LoadCommentPort {
 
             if (resultSet.next()) {
                 UUID commentId = (UUID) resultSet.getObject("id");
-                UUID userId = (UUID) resultSet.getObject("user_id");
+                String userEmail = resultSet.getString("user_email");
                 UUID postId = (UUID) resultSet.getObject("post_id");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 return Optional.of(new Comment(
                         commentId,
-                        userId,
+                        userEmail,
                         postId,
                         body,
                         creationTime
@@ -43,24 +43,24 @@ public class LoadCommentAdapter implements LoadCommentPort {
     }
 
     @Override
-    public List<Comment> loadCommentByUserIdAndPostId(UUID userId, UUID postId) {
+    public List<Comment> loadCommentByUserEmailAndPostId(String userEmail, UUID postId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             Statement statement = conn.createStatement();
-            String query = String.format(LOAD_COMMENT_BY_USER_ID_AND_POST_ID_STATEMENT, userId, postId);
+            String query = String.format(LOAD_COMMENT_BY_USER_EMAIL_AND_POST_ID_STATEMENT, userEmail, postId);
             ResultSet resultSet = statement.executeQuery(query);
 
             ArrayList<Comment> comments = new ArrayList<>();
 
             while (resultSet.next()) {
                 UUID commentId = (UUID) resultSet.getObject("id");
-                UUID commentUserId = (UUID) resultSet.getObject("user_id");
+                String commentUserEmail = resultSet.getString("user_email");
                 UUID commentPostId = (UUID) resultSet.getObject("post_id");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 comments.add(new Comment(
                         commentId,
-                        commentUserId,
+                        commentUserEmail,
                         commentPostId,
                         body,
                         creationTime

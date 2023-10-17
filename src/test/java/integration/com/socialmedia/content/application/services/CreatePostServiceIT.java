@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,14 +66,13 @@ public class CreatePostServiceIT {
 
         // When
         createUserUseCase.createUser(new CreateUserCommand(userEmail, userPassword, userRoleId));
-        UUID userId = loadUserUseCase.loadUserByEmail(userEmail).get().getUserId();
-        createPostService.createPost(new CreatePostCommand(userId, postBody));
+        createPostService.createPost(new CreatePostCommand(userEmail, postBody));
 
         // Then
-        List<Post> userPosts = loadPostPort.loadPostByUserId(userId);
+        List<Post> userPosts = loadPostPort.loadPostsByUserEmail(userEmail);
         assertFalse(userPosts.isEmpty());
         assertEquals(1, userPosts.size());
-        assertEquals(userId, userPosts.get(0).getUserId());
+        assertEquals(userEmail, userPosts.get(0).getUserEmail());
         assertEquals(postBody, userPosts.get(0).getBody());
     }
 }

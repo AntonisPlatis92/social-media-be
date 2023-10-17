@@ -11,32 +11,31 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.UUID;
 
 public class JwtUtils {
     public static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(PropertiesManager.getProperty("jwt.secretKey").getBytes());
     private static final long EXPIRATION_DURATION_IN_MINUTES = 60;
 
-    public static String createToken(UUID userId) {
+    public static String createToken(String userEmail) {
         Instant now = Instant.now(ClockConfig.utcClock());
         Instant expiration = now.plus(EXPIRATION_DURATION_IN_MINUTES, ChronoUnit.MINUTES);
 
         return Jwts.builder()
-                .setSubject(userId.toString())
+                .setSubject(userEmail)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiration))
                 .signWith(SECRET_KEY)
                 .compact();
     }
 
-    public static UUID extractUserIdFromToken(String token) {
+    public static String extractUserEmailFromToken(String token) {
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token);
 
         Claims claims = claimsJws.getBody();
-        return UUID.fromString(claims.getSubject());
+        return claims.getSubject();
     }
 
     public static boolean isTokenValid(String token) {

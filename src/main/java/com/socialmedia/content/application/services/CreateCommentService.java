@@ -40,7 +40,7 @@ public class CreateCommentService implements CreateCommentUseCase {
     }
     @Override
     public void createComment(CreateCommentCommand command) {
-        User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = loadUserUseCase.loadUserByEmail(command.userEmail()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
 
         Long roleId = user.getRoleId();
         Role role = loadRoleUseCase.loadRole(roleId).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
@@ -49,22 +49,15 @@ public class CreateCommentService implements CreateCommentUseCase {
 
         boolean shouldCheckCommentsLimit = role.isHasCommentsLimit();
         if (shouldCheckCommentsLimit) {
-            checkCommentsLimit(command.userId(), command.postId(), role);
+            checkCommentsLimit(command.userEmail(), command.postId(), role);
         }
 
-        Comment newComment = new Comment(
-                UUID.randomUUID(),
-                command.userId(),
-                command.postId(),
-                command.body(),
-                Instant.now(ClockConfig.utcClock())
-        );
-        createCommentPort.createNewComment(newComment);
+        createCommentPort.createNewComment(Comment.createCommentFromCommand(command));
     }
 
-    private void checkCommentsLimit(UUID userId, UUID postId, Role role) {
-        int userCommentsInPost = loadCommentPort.loadCommentByUserIdAndPostId(
-                userId,
+    private void checkCommentsLimit(String userEmail, UUID postId, Role role) {
+        int userCommentsInPost = loadCommentPort.loadCommentByUserEmailAndPostId(
+                userEmail,
                 postId
         ).size();
         if (userCommentsInPost >= role.getCommentsLimit()) {

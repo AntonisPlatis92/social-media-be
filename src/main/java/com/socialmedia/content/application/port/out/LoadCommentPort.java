@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface LoadCommentPort {
     public Optional<Comment> loadCommentById(UUID id);
-    public List<Comment> loadCommentByUserIdAndPostId(UUID userId, UUID postId);
+    public List<Comment> loadCommentByUserEmailAndPostId(String userEmail, UUID postId);
 }

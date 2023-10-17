@@ -47,12 +47,12 @@ public class ContentControllerTest {
     @Test
     void createNewPost_whenValidInputAndServiceReturnsTrue_shouldReturn201() throws Exception {
         // Given
-        UUID userId = UUID.randomUUID();
-        String token = JwtUtils.createToken(userId);
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
         when(ctx.header("Authorization")).thenReturn(token);
         String postBody = "testBody";
         CreatePostVM createPostVM = new CreatePostVM(postBody);
-        CreatePostCommand command = new CreatePostCommand(userId, postBody);
+        CreatePostCommand command = new CreatePostCommand(userEmail, postBody);
 
         when(ctx.bodyAsClass(CreatePostVM.class)).thenReturn(createPostVM);
         doNothing().when(createPostUseCase).createPost(command);
@@ -69,8 +69,8 @@ public class ContentControllerTest {
     @Test
     void createNewPost_whenInvalidInput_shouldThrowConstraintViolationException() {
         // Given
-        UUID userId = UUID.randomUUID();
-        String token = JwtUtils.createToken(userId);
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
         when(ctx.header("Authorization")).thenReturn(token);
         String postBody = null;
         CreatePostVM createPostVM = new CreatePostVM(postBody);
@@ -122,13 +122,13 @@ public class ContentControllerTest {
     @Test
     void createNewComment_whenValidInputAndServiceReturnsTrue_shouldReturn201() throws Exception {
         // Given
-        UUID userId = UUID.randomUUID();
-        String token = JwtUtils.createToken(userId);
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
         when(ctx.header("Authorization")).thenReturn(token);
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentVM createCommentVM = new CreateCommentVM(postId, commentBody);
-        CreateCommentCommand command = new CreateCommentCommand(userId, postId, commentBody);
+        CreateCommentCommand command = new CreateCommentCommand(userEmail, postId, commentBody);
 
         when(ctx.bodyAsClass(CreateCommentVM.class)).thenReturn(createCommentVM);
         doNothing().when(createCommentUseCase).createComment(command);
@@ -145,8 +145,8 @@ public class ContentControllerTest {
     @Test
     void createNewComment_whenInvalidInput_shouldThrowConstraintViolationException() {
         // Given
-        UUID userId = UUID.randomUUID();
-        String token = JwtUtils.createToken(userId);
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
         when(ctx.header("Authorization")).thenReturn(token);
         UUID postId = UUID.randomUUID();
         String commentBody = null;

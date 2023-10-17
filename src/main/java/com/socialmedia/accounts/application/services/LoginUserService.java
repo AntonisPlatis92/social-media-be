@@ -32,6 +32,6 @@ public class LoginUserService implements LoginUserUseCase {
 
         if (!passwordMatch) {throw new LoginFailedException("Wrong credentials. User login failed.");}
 
-        return JwtUtils.createToken(maybeUserInDb.get().getUserId());
+        return JwtUtils.createToken(maybeUserInDb.get().getEmail());
     }
 }

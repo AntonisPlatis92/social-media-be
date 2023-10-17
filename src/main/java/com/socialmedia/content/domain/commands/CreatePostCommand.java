@@ -9,12 +9,12 @@ import static com.socialmedia.utils.validation.Validation.validate;
 
 public record CreatePostCommand(
         @NotNull
-        UUID userId,
+        String userEmail,
         @NotNull
         String body
 ) {
-    public CreatePostCommand(UUID userId, String body) {
-        this.userId = userId;
+    public CreatePostCommand(String userEmail, String body) {
+        this.userEmail = userEmail;
         this.body = body;
         validate(this);
     }

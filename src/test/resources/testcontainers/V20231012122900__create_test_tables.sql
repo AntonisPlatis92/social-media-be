@@ -6,7 +6,8 @@ create table users
     hashed_password varchar(255)                        not null,
     verified        boolean   default false             not null,
     role_id         bigint                              not null,
-    creation_time   timestamp default CURRENT_TIMESTAMP not null
+    creation_time   timestamp default CURRENT_TIMESTAMP not null,
+    constraint unique_user_email unique (email)
 );
 
 create table roles
@@ -31,22 +32,22 @@ VALUES (2, 'PREMIUM', true, 3000, false, null, DEFAULT);
 
 create table posts
 (
-    id              uuid                                not null
+    id            uuid                                not null
         primary key,
-    user_id         uuid                                not null,
-    body            text                                not null,
-    creation_time   timestamp default CURRENT_TIMESTAMP not null,
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    user_email    varchar(255)                        not null,
+    body          text                                not null,
+    creation_time timestamp default CURRENT_TIMESTAMP not null,
+    FOREIGN KEY (user_email) REFERENCES users (email)
 );
 
 create table comments
 (
-    id              uuid                                not null
+    id            uuid                                not null
         primary key,
-    post_id         uuid                                not null,
-    user_id         uuid                                not null,
-    body            text                                not null,
-    creation_time   timestamp default CURRENT_TIMESTAMP not null,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    post_id       uuid                                not null,
+    user_email    varchar(255)                        not null,
+    body          text                                not null,
+    creation_time timestamp default CURRENT_TIMESTAMP not null,
+    FOREIGN KEY (user_email) REFERENCES users (email),
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );

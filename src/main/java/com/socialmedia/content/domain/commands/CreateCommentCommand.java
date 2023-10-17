@@ -8,14 +8,14 @@ import static com.socialmedia.utils.validation.Validation.validate;
 
 public record CreateCommentCommand(
         @NotNull
-        UUID userId,
+        String userEmail,
         @NotNull
         UUID postId,
         @NotNull
         String body
 ) {
-    public CreateCommentCommand(UUID userId, UUID postId, String body) {
-        this.userId = userId;
+    public CreateCommentCommand(String userEmail, UUID postId, String body) {
+        this.userEmail = userEmail;
         this.postId = postId;
         this.body = body;
         validate(this);

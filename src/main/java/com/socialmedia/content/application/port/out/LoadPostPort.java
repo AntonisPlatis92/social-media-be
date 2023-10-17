@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface LoadPostPort {
-    public Optional<Post> loadPostById(UUID id);
-    public List<Post> loadPostByUserId(UUID userId);
+    Optional<Post> loadPostById(UUID id);
+    List<Post> loadPostsByUserEmail(String userEmail);
 }

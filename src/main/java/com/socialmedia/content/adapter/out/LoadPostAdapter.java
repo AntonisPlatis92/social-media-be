@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class LoadPostAdapter implements LoadPostPort {
     private static final String LOAD_POST_BY_ID_STATEMENT = "SELECT * FROM posts WHERE id = '%s';";
-    private static final String LOAD_POST_BY_USER_ID_STATEMENT = "SELECT * FROM posts WHERE user_id = '%s';";
+    private static final String LOAD_POST_BY_USER_EMAIL_STATEMENT = "SELECT * FROM posts WHERE user_email = '%s';";
 
     @Override
     public Optional<Post> loadPostById(UUID id) {
@@ -25,13 +25,13 @@ public class LoadPostAdapter implements LoadPostPort {
 
             if (resultSet.next()) {
                 UUID postId = (UUID) resultSet.getObject("id");
-                UUID userId = (UUID) resultSet.getObject("user_id");
+                String userEmail = resultSet.getString("user_email");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 return Optional.of(new Post(
                         postId,
-                        userId,
+                        userEmail,
                         body,
                         creationTime
                 ));
@@ -41,23 +41,23 @@ public class LoadPostAdapter implements LoadPostPort {
     }
 
     @Override
-    public List<Post> loadPostByUserId(UUID userId) {
+    public List<Post> loadPostsByUserEmail(String userEmail) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             Statement statement = conn.createStatement();
-            String query = String.format(LOAD_POST_BY_USER_ID_STATEMENT, userId);
+            String query = String.format(LOAD_POST_BY_USER_EMAIL_STATEMENT, userEmail);
             ResultSet resultSet = statement.executeQuery(query);
 
             ArrayList<Post> posts = new ArrayList<>();
 
             while (resultSet.next()) {
                 UUID postId = (UUID) resultSet.getObject("id");
-                UUID postUserId = (UUID) resultSet.getObject("user_id");
+                String postUserEmail = resultSet.getString("user_email");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 posts.add(new Post(
                         postId,
-                        postUserId,
+                        postUserEmail,
                         body,
                         creationTime
                 ));

@@ -82,16 +82,15 @@ public class CreateCommentServiceIT {
 
         // When
         createUserUseCase.createUser(new CreateUserCommand(userEmail, userPassword, userRoleId));
-        UUID userId = loadUserUseCase.loadUserByEmail(userEmail).get().getUserId();
-        createPostUseCase.createPost(new CreatePostCommand(userId, postBody));
-        UUID postId = loadPostPort.loadPostByUserId(userId).get(0).getId();
-        createCommentService.createComment(new CreateCommentCommand(userId, postId, commentBody));
+        createPostUseCase.createPost(new CreatePostCommand(userEmail, postBody));
+        UUID postId = loadPostPort.loadPostsByUserEmail(userEmail).get(0).getId();
+        createCommentService.createComment(new CreateCommentCommand(userEmail, postId, commentBody));
 
         // Then
-        List<Comment> userCommentsInPost = loadCommentPort.loadCommentByUserIdAndPostId(userId, postId);
+        List<Comment> userCommentsInPost = loadCommentPort.loadCommentByUserEmailAndPostId(userEmail, postId);
         assertFalse(userCommentsInPost.isEmpty());
         assertEquals(1, userCommentsInPost.size());
-        assertEquals(userId, userCommentsInPost.get(0).getUserId());
+        assertEquals(userEmail, userCommentsInPost.get(0).getUserEmail());
         assertEquals(postId, userCommentsInPost.get(0).getPostId());
         assertEquals(commentBody, userCommentsInPost.get(0).getBody());
     }

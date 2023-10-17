@@ -12,14 +12,14 @@ import java.util.UUID;
 @Getter
 public class Post {
     private UUID id;
-    private UUID userId;
+    private String userEmail;
     private String body;
     private Instant creationTime;
 
     public static Post createPostFromCommand(CreatePostCommand command) {
         return new Post(
                 UUID.randomUUID(),
-                command.userId(),
+                command.userEmail(),
                 command.body(),
                 Instant.now(ClockConfig.utcClock())
         );
