@@ -37,7 +37,7 @@ public class ExceptionHandler {
             ctx.result(e.getMessage());
         });
         app.exception(UnrecognizedPropertyException.class, (e, ctx) -> {
-            ctx.status(401);
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
         app.exception(SignatureException.class, (e, ctx) -> {
@@ -45,19 +45,19 @@ public class ExceptionHandler {
             ctx.result(e.getMessage());
         });
         app.exception(PostCharsLimitException.class, (e, ctx) -> {
-            ctx.status(401);
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
         app.exception(RoleNotFoundException.class, (e, ctx) -> {
-            ctx.status(401);
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
         app.exception(PostNotFoundException.class, (e, ctx) -> {
-            ctx.status(401);
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
         app.exception(CommentsLimitException.class, (e, ctx) -> {
-            ctx.status(401);
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
         app.exception(ExpiredJwtException.class, (e, ctx) -> {

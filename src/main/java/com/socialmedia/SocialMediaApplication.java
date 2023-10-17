@@ -74,6 +74,6 @@ public class SocialMediaApplication {
         app.post("comments", contentController.createNewComment);
 
         // Start the server
-        app.start(7000);
+        app.start(8080);
     }
 }
