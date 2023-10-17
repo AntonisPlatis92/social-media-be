@@ -4,9 +4,8 @@ import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
 import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
 import com.socialmedia.accounts.adapter.out.VerifyUserAdapter;
-import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
-import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
-import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
+import com.socialmedia.accounts.application.port.in.*;
+import com.socialmedia.accounts.application.services.*;
 import com.socialmedia.content.adapter.out.CreateCommentAdapter;
 import com.socialmedia.content.adapter.out.CreatePostAdapter;
 import com.socialmedia.content.adapter.out.LoadCommentAdapter;
@@ -22,9 +21,6 @@ import com.socialmedia.content.application.services.CreatePostService;
 import com.socialmedia.utils.authentication.exceptions.ExceptionHandler;
 import com.socialmedia.accounts.adapter.in.UserController;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.services.CreateUserService;
-import com.socialmedia.accounts.application.services.LoginUserService;
-import com.socialmedia.accounts.application.services.VerifyUserService;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
@@ -57,8 +53,10 @@ public class SocialMediaApplication {
         CreateUserUseCase createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
-        CreatePostUseCase createPostUseCase = new CreatePostService(loadUserPort, loadRolePort, createPostPort);
-        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserPort, loadRolePort, loadPostPort, loadCommentPort, createCommentPort);
+        LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
+        LoadRoleUseCase loadRoleUseCase = new LoadRoleService(loadRolePort);
+        CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
+        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, loadCommentPort, createCommentPort);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,

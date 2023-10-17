@@ -4,11 +4,13 @@ import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
 import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
+import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.services.CreateUserService;
+import com.socialmedia.accounts.application.services.LoadRoleService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import integration.com.socialmedia.config.IntegrationTestConfig;
@@ -33,6 +35,7 @@ public class CreatePostServiceIT {
     private CreatePostService createPostService;
     private CreateUserUseCase createUserUseCase;
     private LoadUserUseCase loadUserUseCase;
+    private LoadRoleUseCase loadRoleUseCase;
 
     private LoadUserPort loadUserPort;
     private CreateUserPort createUserPort;
@@ -50,7 +53,8 @@ public class CreatePostServiceIT {
         createUserPort = new CreateUserAdapter();
         createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
-        createPostService = new CreatePostService(loadUserPort, loadRolePort, createPostPort);
+        loadRoleUseCase = new LoadRoleService(loadRolePort);
+        createPostService = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
     }
 
     @Test

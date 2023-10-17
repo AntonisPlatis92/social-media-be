@@ -1,7 +1,7 @@
 package unit.com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
+import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
@@ -31,9 +31,9 @@ public class CreatePostServiceTest {
     private CreatePostService sut;
 
     @Mock
-    private LoadUserPort loadUserPort;
+    private LoadUserUseCase loadUserUseCase;
     @Mock
-    private LoadRolePort loadRolePort;
+    private LoadRoleUseCase loadRoleUseCase;
     @Mock
     private CreatePostPort createPostPort;
     @Captor
@@ -42,7 +42,7 @@ public class CreatePostServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreatePostService(loadUserPort, loadRolePort, createPostPort);
+        sut = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
     }
 
     @Test
@@ -55,12 +55,13 @@ public class CreatePostServiceTest {
                userId,
                postBody
         );
+        System.out.println(command);
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.of(role));
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
 
         // When
@@ -86,10 +87,10 @@ public class CreatePostServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().withPostCharsLimit(1L).build();
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.of(role));
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
 
         // Then
@@ -108,9 +109,9 @@ public class CreatePostServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(roleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
-        when(loadRolePort.loadRoleById(roleId)).thenReturn(Optional.empty());
+        when(loadRoleUseCase.loadRole(roleId)).thenReturn(Optional.empty());
 
 
         // Then
@@ -127,7 +128,7 @@ public class CreatePostServiceTest {
                 postBody
         );
 
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.empty());
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.empty());
 
         // Then
         assertThrows(UserNotFoundException.class, () -> sut.createPost(command));

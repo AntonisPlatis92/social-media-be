@@ -1,6 +1,5 @@
 package com.socialmedia.follows.application.services;
 
-import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.follows.application.port.out.CreateFollowPort;
@@ -12,7 +11,6 @@ import com.socialmedia.follows.application.port.out.LoadFollowPort;
 import com.socialmedia.follows.domain.commands.CreateFollowCommand;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 public class CreateFollowService implements CreateFollowUseCase {
@@ -31,15 +29,9 @@ public class CreateFollowService implements CreateFollowUseCase {
 
     @Override
     public void createNewFollow(CreateFollowCommand command) {
-        if (checkIfFollowAlreadyExists(command)) {
-            throw new FollowAlreadyExistsException("Follow already exists.");
-        }
-        if (checkIfUserDoesNotExist(command.followerId())) {
-            throw new UserNotFoundException(String.format("User %s not found.", command.followerId()));
-        }
-        if (checkIfUserDoesNotExist(command.followingId())) {
-            throw new UserNotFoundException(String.format("User %s not found.", command.followingId()));
-        }
+        checkIfFollowAlreadyExists(command);
+        checkIfUserDoesNotExist(command.followerId());
+        checkIfUserDoesNotExist(command.followingId());
 
         Follow newFollow = new Follow(
                 command.followerId(),
@@ -49,13 +41,11 @@ public class CreateFollowService implements CreateFollowUseCase {
         createFollowPort.createFollow(newFollow);
     }
 
-    private boolean checkIfFollowAlreadyExists(CreateFollowCommand command) {
-        Optional<Follow> maybeFollow = loadFollowPort.loadFollowByPk(command.followerId(), command.followingId());
-        return maybeFollow.isPresent();
+    private void checkIfFollowAlreadyExists(CreateFollowCommand command) {
+        loadFollowPort.loadFollowByPk(command.followerId(), command.followingId()).orElseThrow(() -> new FollowAlreadyExistsException("Follow already exists."));
     }
 
-    private boolean checkIfUserDoesNotExist(UUID userId) {
-        Optional<User> maybeUser = loadUserPort.loadUserById(userId);
-        return maybeUser.isEmpty();
+    private void checkIfUserDoesNotExist(UUID userId) {
+        loadUserPort.loadUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", userId)));
     }
 }

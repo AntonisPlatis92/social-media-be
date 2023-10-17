@@ -11,7 +11,9 @@ public record CreateFollowCommand(
         @NotNull
         UUID followingId
 ) {
-    public CreateFollowCommand {
+    public CreateFollowCommand(UUID followerId, UUID followingId) {
+        this.followerId = followerId;
+        this.followingId = followingId;
         Validation.validate(this);
     }
 }

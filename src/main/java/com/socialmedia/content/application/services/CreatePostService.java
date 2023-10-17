@@ -1,12 +1,12 @@
 package com.socialmedia.content.application.services;
 
+import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
+import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.content.domain.exceptions.PostCharsLimitException;
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.content.application.port.in.CreatePostUseCase;
 import com.socialmedia.content.application.port.out.CreatePostPort;
@@ -14,31 +14,28 @@ import com.socialmedia.content.domain.Post;
 import com.socialmedia.content.domain.commands.CreatePostCommand;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 public class CreatePostService implements CreatePostUseCase {
-    private final LoadUserPort loadUserPort;
-    private final LoadRolePort loadRolePort;
+    private final LoadUserUseCase loadUserUseCase;
+    private final LoadRoleUseCase loadRoleUseCase;
     private final CreatePostPort createPostPort;
 
-    public CreatePostService(LoadUserPort loadUserPort, LoadRolePort loadRolePort, CreatePostPort createPostPort) {
-        this.loadUserPort = loadUserPort;
-        this.loadRolePort = loadRolePort;
+    public CreatePostService(LoadUserUseCase loadUserUseCase, LoadRoleUseCase loadRoleUseCase, CreatePostPort createPostPort) {
+        this.loadUserUseCase = loadUserUseCase;
+        this.loadRoleUseCase = loadRoleUseCase;
         this.createPostPort = createPostPort;
     }
     @Override
     public void createPost(CreatePostCommand command) {
-        Optional<User> maybeUser = loadUserPort.loadUserById(command.userId());
-        if (maybeUser.isEmpty()) {throw new UserNotFoundException("User doesn't exist.");}
+        User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
 
-        Long roleId = maybeUser.get().getRoleId();
-        Optional<Role> maybeRole = loadRolePort.loadRoleById(roleId);
-        if (maybeRole.isEmpty()) {throw new RoleNotFoundException("Role doesn't exist.");}
+        Long roleId = user.getRoleId();
+        Role role = loadRoleUseCase.loadRole(roleId).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
 
-        boolean shouldCheckPostCharsLimit = maybeRole.get().isHasPostCharsLimit();
+        boolean shouldCheckPostCharsLimit = role.isHasPostCharsLimit();
         if (shouldCheckPostCharsLimit) {
-            checkPostCharsLimit(command.body(), maybeRole.get());
+            checkPostCharsLimit(command.body(), role);
         }
 
         Post newPost = new Post(

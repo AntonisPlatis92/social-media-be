@@ -1,7 +1,7 @@
 package unit.com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
+import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
@@ -38,9 +38,9 @@ public class CreateCommentServiceTest {
     private CreateCommentService sut;
 
     @Mock
-    private LoadUserPort loadUserPort;
+    private LoadUserUseCase loadUserUseCase;
     @Mock
-    private LoadRolePort loadRolePort;
+    private LoadRoleUseCase loadRoleUseCase;
     @Mock
     private LoadPostPort loadPostPort;
     @Mock
@@ -53,7 +53,7 @@ public class CreateCommentServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreateCommentService(loadUserPort, loadRolePort, loadPostPort, loadCommentPort, createCommentPort);
+        sut = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, loadCommentPort, createCommentPort);
     }
 
     @Test
@@ -70,10 +70,10 @@ public class CreateCommentServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.of(role));
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         String postBody = "postBody";
         Post post = new Post(
@@ -111,10 +111,10 @@ public class CreateCommentServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.of(role));
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         String postBody = "postBody";
         Post post = new Post(
@@ -152,10 +152,10 @@ public class CreateCommentServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.of(role));
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.empty());
 
@@ -177,9 +177,9 @@ public class CreateCommentServiceTest {
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
-        when(loadRolePort.loadRoleById(freeUserRoleId)).thenReturn(Optional.empty());
+        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.empty());
 
         // When
         assertThrows(RoleNotFoundException.class, () -> sut.createComment(command));
@@ -197,7 +197,7 @@ public class CreateCommentServiceTest {
                 commentBody
         );
 
-        when(loadUserPort.loadUserById(userId)).thenReturn(Optional.empty());
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.createComment(command));

@@ -14,7 +14,10 @@ public record CreateCommentCommand(
         @NotNull
         String body
 ) {
-    public CreateCommentCommand {
+    public CreateCommentCommand(UUID userId, UUID postId, String body) {
+        this.userId = userId;
+        this.postId = postId;
+        this.body = body;
         validate(this);
     }
 }
