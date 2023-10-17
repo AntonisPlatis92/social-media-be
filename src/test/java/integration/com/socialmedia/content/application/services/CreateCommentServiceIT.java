@@ -13,6 +13,7 @@ import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.application.services.LoadRoleService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+import com.socialmedia.content.domain.Post;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import com.socialmedia.content.adapter.out.CreateCommentAdapter;
 import com.socialmedia.content.adapter.out.CreatePostAdapter;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,13 +64,12 @@ public class CreateCommentServiceIT {
         createPostPort = new CreatePostAdapter();
         loadPostPort = new LoadPostAdapter();
         createUserPort = new CreateUserAdapter();
-        loadCommentPort = new LoadCommentAdapter();
         createCommentPort = new CreateCommentAdapter();
         createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
         loadRoleUseCase = new LoadRoleService(loadRolePort);
         createPostUseCase = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
-        createCommentService = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, loadCommentPort, createCommentPort);
+        createCommentService = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
     }
 
     @Test
@@ -87,11 +88,11 @@ public class CreateCommentServiceIT {
         createCommentService.createComment(new CreateCommentCommand(userEmail, postId, commentBody));
 
         // Then
-        List<Comment> userCommentsInPost = loadCommentPort.loadCommentByUserEmailAndPostId(userEmail, postId);
-        assertFalse(userCommentsInPost.isEmpty());
-        assertEquals(1, userCommentsInPost.size());
-        assertEquals(userEmail, userCommentsInPost.get(0).getUserEmail());
-        assertEquals(postId, userCommentsInPost.get(0).getPostId());
-        assertEquals(commentBody, userCommentsInPost.get(0).getBody());
+        Optional<Post> postAfterComment = loadPostPort.loadPostById(postId);
+        assertFalse(postAfterComment.get().getComments().isEmpty());
+        assertEquals(1, postAfterComment.get().getComments().size());
+        assertEquals(userEmail, postAfterComment.get().getComments().get(0).getUserEmail());
+        assertEquals(postId, postAfterComment.get().getComments().get(0).getPostId());
+        assertEquals(commentBody, postAfterComment.get().getComments().get(0).getBody());
     }
 }

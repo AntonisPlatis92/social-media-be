@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -15,13 +17,15 @@ public class Post {
     private String userEmail;
     private String body;
     private Instant creationTime;
+    private List<Comment> comments;
 
     public static Post createPostFromCommand(CreatePostCommand command) {
         return new Post(
                 UUID.randomUUID(),
                 command.userEmail(),
                 command.body(),
-                Instant.now(ClockConfig.utcClock())
+                Instant.now(ClockConfig.utcClock()),
+                Collections.emptyList()
         );
     }
 }

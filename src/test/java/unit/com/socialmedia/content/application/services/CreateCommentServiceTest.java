@@ -8,7 +8,6 @@ import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.content.application.port.out.CreateCommentPort;
-import com.socialmedia.content.application.port.out.LoadCommentPort;
 import com.socialmedia.content.application.port.out.LoadPostPort;
 import com.socialmedia.content.application.services.CreateCommentService;
 import com.socialmedia.content.domain.Comment;
@@ -44,8 +43,6 @@ public class CreateCommentServiceTest {
     @Mock
     private LoadPostPort loadPostPort;
     @Mock
-    private LoadCommentPort loadCommentPort;
-    @Mock
     private CreateCommentPort createCommentPort;
     @Captor
     ArgumentCaptor<Comment> commentCaptor;
@@ -55,7 +52,7 @@ public class CreateCommentServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, loadCommentPort, createCommentPort);
+        sut = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
     }
 
     @Test
@@ -81,10 +78,10 @@ public class CreateCommentServiceTest {
                 postId,
                 USER_EMAIL,
                 postBody,
-                Instant.now(ClockConfig.utcClock())
+                Instant.now(ClockConfig.utcClock()),
+                Collections.emptyList()
         );
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.of(post));
-        when(loadCommentPort.loadCommentByUserEmailAndPostId(USER_EMAIL, postId)).thenReturn(Collections.emptyList());
 
         // When
         sut.createComment(command);
@@ -117,13 +114,6 @@ public class CreateCommentServiceTest {
         when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         String postBody = "postBody";
-        Post post = new Post(
-                postId,
-                USER_EMAIL,
-                postBody,
-                Instant.now(ClockConfig.utcClock())
-        );
-        when(loadPostPort.loadPostById(postId)).thenReturn(Optional.of(post));
         Comment previousComment = new Comment(
                 UUID.randomUUID(),
                 USER_EMAIL,
@@ -131,8 +121,14 @@ public class CreateCommentServiceTest {
                 "previousCommentBody",
                 Instant.now(ClockConfig.utcClock())
         );
-        when(loadCommentPort.loadCommentByUserEmailAndPostId(USER_EMAIL, postId))
-                .thenReturn(Collections.nCopies(5, previousComment));
+        Post post = new Post(
+                postId,
+                USER_EMAIL,
+                postBody,
+                Instant.now(ClockConfig.utcClock()),
+                Collections.nCopies(5, previousComment)
+        );
+        when(loadPostPort.loadPostById(postId)).thenReturn(Optional.of(post));
 
         // When
         assertThrows(CommentsLimitException.class, () -> sut.createComment(command));

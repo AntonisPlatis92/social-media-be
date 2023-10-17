@@ -8,13 +8,11 @@ import com.socialmedia.accounts.application.port.in.*;
 import com.socialmedia.accounts.application.services.*;
 import com.socialmedia.content.adapter.out.CreateCommentAdapter;
 import com.socialmedia.content.adapter.out.CreatePostAdapter;
-import com.socialmedia.content.adapter.out.LoadCommentAdapter;
 import com.socialmedia.content.adapter.out.LoadPostAdapter;
 import com.socialmedia.content.application.port.in.CreateCommentUseCase;
 import com.socialmedia.content.application.port.in.CreatePostUseCase;
 import com.socialmedia.content.application.port.out.CreateCommentPort;
 import com.socialmedia.content.application.port.out.CreatePostPort;
-import com.socialmedia.content.application.port.out.LoadCommentPort;
 import com.socialmedia.content.application.port.out.LoadPostPort;
 import com.socialmedia.content.application.services.CreateCommentService;
 import com.socialmedia.content.application.services.CreatePostService;
@@ -47,7 +45,6 @@ public class SocialMediaApplication {
         LoadRolePort loadRolePort = new LoadRoleAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
         LoadPostPort loadPostPort = new LoadPostAdapter();
-        LoadCommentPort loadCommentPort = new LoadCommentAdapter();
         CreateCommentPort createCommentPort = new CreateCommentAdapter();
         // Initialize services
         CreateUserUseCase createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
@@ -56,7 +53,7 @@ public class SocialMediaApplication {
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
         LoadRoleUseCase loadRoleUseCase = new LoadRoleService(loadRolePort);
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
-        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, loadCommentPort, createCommentPort);
+        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,
