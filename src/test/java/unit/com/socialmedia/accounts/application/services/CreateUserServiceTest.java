@@ -4,27 +4,25 @@ package unit.com.socialmedia.accounts.application.services;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.accounts.domain.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.utils.encoders.PasswordEncoder;
 import org.junit.jupiter.api.*;
-import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import unit.com.socialmedia.accounts.domain.RoleBuilder;
+import unit.com.socialmedia.accounts.domain.UserBuilder;
 
 
 class CreateUserServiceTest {
@@ -71,14 +69,11 @@ class CreateUserServiceTest {
         String email = "test@test.com";
         String password = "12345678";
         long roleId = 1L;
-        User user = new User(
-                UUID.randomUUID(),
-                email,
-                BCrypt.hashpw(password, BCrypt.gensalt()),
-                false,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User user = UserBuilder.aRandomUserBuilder()
+                .withEmail(email)
+                .withHashedPassword(PasswordEncoder.encode(password))
+                .withRole(RoleBuilder.aFreeUserRoleBuilder().build())
+                .build();
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(user));
 
         // When

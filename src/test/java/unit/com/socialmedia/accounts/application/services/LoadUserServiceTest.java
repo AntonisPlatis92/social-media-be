@@ -3,14 +3,12 @@ package unit.com.socialmedia.accounts.application.services;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.config.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import unit.com.socialmedia.accounts.domain.RoleBuilder;
+import unit.com.socialmedia.accounts.domain.UserBuilder;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,14 +31,9 @@ public class LoadUserServiceTest {
     void userReturned_whenPortReturnsUser_shouldReturnOptionalUser() {
         // Given
         UUID userId = UUID.randomUUID();
-        User user = new User(
-                userId,
-                "test",
-                "test",
-                false,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User user = UserBuilder.aRandomUserBuilder()
+                .withUserId(userId)
+                .build();
         when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));
 
         // When

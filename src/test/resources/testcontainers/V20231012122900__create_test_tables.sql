@@ -51,3 +51,13 @@ create table comments
     FOREIGN KEY (user_email) REFERENCES users (email),
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
+
+create table follows
+(
+    follower_id   uuid                                not null,
+    following_id  uuid                                not null,
+    creation_time timestamp default CURRENT_TIMESTAMP not null,
+    primary key (follower_id, following_id),
+    FOREIGN KEY (follower_id) REFERENCES users (id),
+    FOREIGN KEY (following_id) REFERENCES users (id)
+);

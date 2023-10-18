@@ -1,6 +1,5 @@
 package com.socialmedia.accounts.domain;
 
-import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 import com.socialmedia.config.ClockConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,10 +14,12 @@ public class Follow {
     private UUID followingId;
     private Instant creationTime;
 
-    public static Follow createFollowFromCommand(CreateFollowCommand command) {
+    public static Follow createFollowFromFollowerIdAndFollowingId(
+            UUID followerId,
+            UUID followingId) {
         return new Follow(
-                command.followerId(),
-                command.followingId(),
+                followerId,
+                followingId,
                 Instant.now(ClockConfig.utcClock())
         );
     }

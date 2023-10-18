@@ -1,5 +1,6 @@
 package unit.com.socialmedia.accounts.domain;
 
+import com.socialmedia.accounts.domain.Follow;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
@@ -8,6 +9,8 @@ import lombok.Builder;
 import lombok.With;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @With
@@ -20,6 +23,8 @@ public class UserBuilder {
     private boolean verified;
     private Role role;
     private Instant creationTime;
+    private List<Follow> followers;
+    private List<Follow> following;
 
     private static final UUID USER_ID = UUID.randomUUID();
     private static final String EMAIL = "testEmail";
@@ -35,6 +40,8 @@ public class UserBuilder {
                 .verified(false)
                 .role(FREE_USER_ROLE)
                 .creationTime(Instant.now(ClockConfig.utcClock()))
+                .followers(Collections.emptyList())
+                .following(Collections.emptyList())
                 .build();
     }
 
@@ -46,6 +53,8 @@ public class UserBuilder {
                 .verified(verified)
                 .role(role)
                 .creationTime(creationTime)
+                .followers(followers)
+                .following(following)
                 .build();
     }
 }

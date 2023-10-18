@@ -3,7 +3,6 @@ package unit.com.socialmedia.accounts.application.services;
 import com.socialmedia.accounts.application.services.LoginUserService;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import unit.com.socialmedia.accounts.domain.RoleBuilder;
+import unit.com.socialmedia.accounts.domain.UserBuilder;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -41,14 +38,11 @@ public class LoginUserServiceTest {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         LoginUserCommand command = new LoginUserCommand(email, password);
 
-        User userInDb = new User(
-                UUID.randomUUID(),
-                email,
-                hashedPassword,
-                true,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User userInDb = UserBuilder.aRandomUserBuilder()
+                .withEmail(email)
+                .withHashedPassword(hashedPassword)
+                .build();
+
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When
@@ -66,14 +60,10 @@ public class LoginUserServiceTest {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         LoginUserCommand command = new LoginUserCommand(email, password);
 
-        User userInDb = new User(
-                UUID.randomUUID(),
-                email,
-                hashedPassword+"1",
-                true,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User userInDb = UserBuilder.aRandomUserBuilder()
+                .withEmail(email)
+                .withHashedPassword(hashedPassword+"1")
+                .build();
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // Then

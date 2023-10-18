@@ -10,14 +10,12 @@ import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.application.services.VerifyUserService;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
-import com.socialmedia.config.ClockConfig;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import unit.com.socialmedia.accounts.domain.RoleBuilder;
+import unit.com.socialmedia.accounts.domain.UserBuilder;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,18 +45,12 @@ public class VerifyUserServiceIT {
         //  Given
         UUID userId = UUID.randomUUID();
         String email = "test@test.com";
-        String hashedPassword = "testPassword";
-        boolean verified = false;
-        Instant creationTime = Instant.now(ClockConfig.utcClock());
 
-        User user = new User(
-                userId,
-                email,
-                hashedPassword,
-                verified,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                creationTime
-                );
+        User user = UserBuilder.aRandomUserBuilder()
+                .withUserId(userId)
+                .withEmail(email)
+                .withVerified(false)
+                .build();
 
 
         // When

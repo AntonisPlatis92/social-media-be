@@ -2,7 +2,6 @@ package unit.com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.application.services.VerifyUserService;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyVerifiedException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import unit.com.socialmedia.accounts.domain.RoleBuilder;
+import unit.com.socialmedia.accounts.domain.UserBuilder;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -42,14 +39,11 @@ public class VerifyUserServiceTest {
         String email = "test@test.com";
         VerifyUserCommand command = new VerifyUserCommand(email);
 
-        User userInDb = new User(
-                UUID.randomUUID(),
-                email,
-                "hashedPassword",
-                false,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User userInDb = UserBuilder.aRandomUserBuilder()
+                .withEmail(email)
+                .withVerified(false)
+                .build();
+
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When
@@ -60,19 +54,15 @@ public class VerifyUserServiceTest {
     }
 
     @Test
-    public void verifyUser_whenUserExistsAndUnverified_shouldThrowUserAlreadyVerified() {
+    public void verifyUser_whenUserExistsAndVerified_shouldThrowUserAlreadyVerified() {
         //  Given
         String email = "test@test.com";
         VerifyUserCommand command = new VerifyUserCommand(email);
 
-        User userInDb = new User(
-                UUID.randomUUID(),
-                email,
-                "hashedPassword",
-                true,
-                RoleBuilder.aFreeUserRoleBuilder().build(),
-                Instant.now(ClockConfig.utcClock())
-        );
+        User userInDb = UserBuilder.aRandomUserBuilder()
+                .withEmail(email)
+                .withVerified(true)
+                .build();
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
 
         // When

@@ -1,6 +1,8 @@
 package com.socialmedia.accounts.domain;
 
+import com.socialmedia.accounts.application.port.out.CreateFollowPort;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+import com.socialmedia.accounts.domain.exceptions.FollowAlreadyExistsException;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.utils.encoders.PasswordEncoder;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -20,6 +24,9 @@ public class User {
     private boolean verified;
     private Role role;
     private Instant creationTime;
+    private List<Follow> followers;
+    private List<Follow> following;
+
 
     public static User createUserFromCommandAndRole(CreateUserCommand command, Role role){
         return new User(
@@ -28,7 +35,22 @@ public class User {
                 PasswordEncoder.encode(command.password()),
                 false,
                 role,
-                Instant.now(ClockConfig.utcClock())
+                Instant.now(ClockConfig.utcClock()),
+                Collections.emptyList(),
+                Collections.emptyList()
         );
+    }
+
+    public void follow(User followingUser, CreateFollowPort createFollowPort) {
+        List<UUID> followingUserIds = following.stream()
+                .map(Follow::getFollowingId)
+                .toList();
+        if (followingUserIds.contains(followingUser.userId)) {throw new FollowAlreadyExistsException("Follow already exists.");}
+
+        createFollowPort.createFollow(
+                Follow.createFollowFromFollowerIdAndFollowingId(
+                        this.userId,
+                        followingUser.userId
+                ));
     }
 }
