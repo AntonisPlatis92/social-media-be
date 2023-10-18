@@ -6,6 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface LoadUserUseCase {
-    public Optional<User> loadUserById(UUID userId);
-    public Optional<User> loadUserByEmail(String email);
+    Optional<User> loadUserById(UUID userId);
+    Optional<User> loadUserByEmail(String email);
 }

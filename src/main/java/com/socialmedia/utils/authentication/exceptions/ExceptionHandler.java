@@ -2,9 +2,9 @@ package com.socialmedia.utils.authentication.exceptions;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.socialmedia.accounts.domain.exceptions.*;
-import com.socialmedia.content.domain.exceptions.CommentsLimitException;
-import com.socialmedia.content.domain.exceptions.PostCharsLimitException;
-import com.socialmedia.content.domain.exceptions.PostNotFoundException;
+import com.socialmedia.posts.domain.exceptions.CommentsLimitException;
+import com.socialmedia.posts.domain.exceptions.PostCharsLimitException;
+import com.socialmedia.posts.domain.exceptions.PostNotFoundException;
 import io.javalin.Javalin;
 import jakarta.validation.ConstraintViolationException;
 import io.jsonwebtoken.security.SignatureException;

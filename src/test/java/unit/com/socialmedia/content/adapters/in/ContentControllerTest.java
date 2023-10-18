@@ -1,13 +1,13 @@
 package unit.com.socialmedia.content.adapters.in;
 
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.content.adapter.in.ContentController;
-import com.socialmedia.content.adapter.in.vms.CreateCommentVM;
-import com.socialmedia.content.adapter.in.vms.CreatePostVM;
-import com.socialmedia.content.application.port.in.CreateCommentUseCase;
-import com.socialmedia.content.application.port.in.CreatePostUseCase;
-import com.socialmedia.content.domain.commands.CreateCommentCommand;
-import com.socialmedia.content.domain.commands.CreatePostCommand;
+import com.socialmedia.posts.adapter.in.ContentController;
+import com.socialmedia.posts.adapter.in.vms.CreateCommentVM;
+import com.socialmedia.posts.adapter.in.vms.CreatePostVM;
+import com.socialmedia.posts.application.port.in.CreateCommentUseCase;
+import com.socialmedia.posts.application.port.in.CreatePostUseCase;
+import com.socialmedia.posts.domain.commands.CreateCommentCommand;
+import com.socialmedia.posts.domain.commands.CreatePostCommand;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Context;
 import io.jsonwebtoken.ExpiredJwtException;
