@@ -39,7 +39,7 @@ public class CreateCommentService implements CreateCommentUseCase {
             checkCommentsLimit(post, role);
         }
 
-        createCommentPort.createNewComment(Comment.createCommentFromCommand(command));
+        post.addComment(command, createCommentPort);
     }
 
     private void checkCommentsLimit(Post post, Role role) {

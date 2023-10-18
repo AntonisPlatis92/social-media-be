@@ -1,6 +1,8 @@
 package com.socialmedia.posts.domain;
 
 import com.socialmedia.config.ClockConfig;
+import com.socialmedia.posts.application.port.out.CreateCommentPort;
+import com.socialmedia.posts.domain.commands.CreateCommentCommand;
 import com.socialmedia.posts.domain.commands.CreatePostCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +29,9 @@ public class Post {
                 Instant.now(ClockConfig.utcClock()),
                 Collections.emptyList()
         );
+    }
+
+    public void addComment(CreateCommentCommand command, CreateCommentPort createCommentPort) {
+        createCommentPort.createNewComment(Comment.createCommentFromCommand(command));
     }
 }
