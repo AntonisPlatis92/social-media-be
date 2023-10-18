@@ -15,6 +15,7 @@ import integration.com.socialmedia.config.IntegrationTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import unit.com.socialmedia.accounts.domain.RoleBuilder;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -48,7 +49,6 @@ public class VerifyUserServiceIT {
         String email = "test@test.com";
         String hashedPassword = "testPassword";
         boolean verified = false;
-        long roleId = 1L;
         Instant creationTime = Instant.now(ClockConfig.utcClock());
 
         User user = new User(
@@ -56,7 +56,7 @@ public class VerifyUserServiceIT {
                 email,
                 hashedPassword,
                 verified,
-                roleId,
+                RoleBuilder.aFreeUserRoleBuilder().build(),
                 creationTime
                 );
 

@@ -18,16 +18,16 @@ public class User {
     private String email;
     private String hashedPassword;
     private boolean verified;
-    private Long roleId;
+    private Role role;
     private Instant creationTime;
 
-    public static User createUserFromCommand(CreateUserCommand command){
+    public static User createUserFromCommandAndRole(CreateUserCommand command, Role role){
         return new User(
                 UUID.randomUUID(),
                 command.email(),
                 PasswordEncoder.encode(command.password()),
                 false,
-                command.roleId(),
+                role,
                 Instant.now(ClockConfig.utcClock())
         );
     }

@@ -1,10 +1,7 @@
 package unit.com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
-import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
 import com.socialmedia.posts.application.services.CreatePostService;
@@ -32,8 +29,6 @@ public class CreatePostServiceTest {
     @Mock
     private LoadUserUseCase loadUserUseCase;
     @Mock
-    private LoadRoleUseCase loadRoleUseCase;
-    @Mock
     private CreatePostPort createPostPort;
     @Captor
     ArgumentCaptor<Post> postCaptor;
@@ -41,7 +36,7 @@ public class CreatePostServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
+        sut = new CreatePostService(loadUserUseCase, createPostPort);
     }
 
     @Test
@@ -49,18 +44,13 @@ public class CreatePostServiceTest {
         // Given
         String userEmail = "test@test.com";
         String postBody = "testBody";
-        Long freeUserRoleId = 1L;
         CreatePostCommand command = new CreatePostCommand(
                 userEmail,
                 postBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
+        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.of(user));
-
-        Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
-
 
         // When
         sut.createPost(command);
@@ -78,42 +68,17 @@ public class CreatePostServiceTest {
         // Given
         String userEmail = "test@test.com";
         String postBody = "testBody";
-        Long freeUserRoleId = 1L;
         CreatePostCommand command = new CreatePostCommand(
                 userEmail,
                 postBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
+        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().withPostCharsLimit(1L).build()).build();
         when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.of(user));
-
-        Role role = RoleBuilder.aFreeUserRoleBuilder().withPostCharsLimit(1L).build();
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
 
         // Then
         assertThrows(PostCharsLimitException.class, () -> sut.createPost(command));
-    }
-
-    @Test
-    public void createPost_whenUserExistsAndRoleDoesNotExist_shouldThrowRoleNotFoundException() {
-        // Given
-        String userEmail = "test@test.com";
-        String postBody = "testBody";
-        Long roleId = 3L;
-        CreatePostCommand command = new CreatePostCommand(
-                userEmail,
-                postBody
-        );
-
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(roleId).build();
-        when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.of(user));
-
-        when(loadRoleUseCase.loadRole(roleId)).thenReturn(Optional.empty());
-
-
-        // Then
-        assertThrows(RoleNotFoundException.class, () -> sut.createPost(command));
     }
 
     @Test

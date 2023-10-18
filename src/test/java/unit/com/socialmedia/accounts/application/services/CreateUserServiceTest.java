@@ -1,6 +1,7 @@
 package unit.com.socialmedia.accounts.application.services;
 
 
+import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import org.mockito.Mock;
+import unit.com.socialmedia.accounts.domain.RoleBuilder;
 
 
 class CreateUserServiceTest {
@@ -31,6 +33,8 @@ class CreateUserServiceTest {
     @Mock
     private LoadUserPort loadUserPort;
     @Mock
+    private LoadRolePort loadRolePort;
+    @Mock
     private CreateUserPort createUserPort;
     @Captor
     ArgumentCaptor<User> userCaptor;
@@ -38,7 +42,7 @@ class CreateUserServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreateUserService(createUserPort, loadUserPort);
+        sut = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
     }
 
     @Test
@@ -48,6 +52,7 @@ class CreateUserServiceTest {
         String password = "12345678";
         long roleId = 1L;
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.empty());
+        when(loadRolePort.loadRoleById(roleId)).thenReturn(Optional.of(RoleBuilder.aFreeUserRoleBuilder().build()));
         doNothing().when(createUserPort).createUser(any(User.class));
 
         // When
@@ -57,7 +62,7 @@ class CreateUserServiceTest {
         verify(createUserPort).createUser(userCaptor.capture());
         assertEquals(email, userCaptor.getValue().getEmail());
         assertFalse(userCaptor.getValue().isVerified());
-        assertEquals(roleId, userCaptor.getValue().getRoleId());
+        assertEquals(roleId, userCaptor.getValue().getRole().getId());
     }
 
     @Test
@@ -71,7 +76,7 @@ class CreateUserServiceTest {
                 email,
                 BCrypt.hashpw(password, BCrypt.gensalt()),
                 false,
-                roleId,
+                RoleBuilder.aFreeUserRoleBuilder().build(),
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(user));

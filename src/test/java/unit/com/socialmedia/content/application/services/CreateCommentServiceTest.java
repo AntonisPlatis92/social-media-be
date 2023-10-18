@@ -1,10 +1,7 @@
 package unit.com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
-import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.posts.application.port.out.CreateCommentPort;
@@ -39,8 +36,6 @@ public class CreateCommentServiceTest {
     @Mock
     private LoadUserUseCase loadUserUseCase;
     @Mock
-    private LoadRoleUseCase loadRoleUseCase;
-    @Mock
     private LoadPostPort loadPostPort;
     @Mock
     private CreateCommentPort createCommentPort;
@@ -52,7 +47,7 @@ public class CreateCommentServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
+        sut = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
     }
 
     @Test
@@ -60,18 +55,14 @@ public class CreateCommentServiceTest {
         // Given
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
-        Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
                 USER_EMAIL,
                 postId,
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
+        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
-
-        Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         String postBody = "postBody";
         Post post = new Post(
@@ -100,18 +91,14 @@ public class CreateCommentServiceTest {
         // Given
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
-        Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
                 USER_EMAIL,
                 postId,
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
+        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
-
-        Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         String postBody = "postBody";
         Comment previousComment = new Comment(
@@ -139,44 +126,20 @@ public class CreateCommentServiceTest {
         // Given
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
-        Long freeUserRoleId = 1L;
         CreateCommentCommand command = new CreateCommentCommand(
                 USER_EMAIL,
                 postId,
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
+        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
 
-        Role role = RoleBuilder.aFreeUserRoleBuilder().build();
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.of(role));
 
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.empty());
 
         // When
         assertThrows(PostNotFoundException.class, () -> sut.createComment(command));
-    }
-
-    @Test
-    public void createComment_whenUserExistsAndRoleDoesNotExist_shouldThrowRoleNotFoundException() {
-        // Given
-        UUID postId = UUID.randomUUID();
-        String commentBody = "testBody";
-        Long freeUserRoleId = 1L;
-        CreateCommentCommand command = new CreateCommentCommand(
-                USER_EMAIL,
-                postId,
-                commentBody
-        );
-
-        User user = UserBuilder.aRandomUserBuilder().withRoleId(freeUserRoleId).build();
-        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
-
-        when(loadRoleUseCase.loadRole(freeUserRoleId)).thenReturn(Optional.empty());
-
-        // When
-        assertThrows(RoleNotFoundException.class, () -> sut.createComment(command));
     }
 
     @Test

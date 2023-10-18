@@ -1,5 +1,6 @@
 package unit.com.socialmedia.accounts.domain;
 
+import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.config.ClockConfig;
 import lombok.AllArgsConstructor;
@@ -17,13 +18,13 @@ public class UserBuilder {
     private String email;
     private String hashedPassword;
     private boolean verified;
-    private Long roleId;
+    private Role role;
     private Instant creationTime;
 
     private static final UUID USER_ID = UUID.randomUUID();
     private static final String EMAIL = "testEmail";
     private static final String HASHED_PASSWORD = "hashedPassword";
-    private static final Long FREE_USER_ROLE_ID = 1L;
+    private static final Role FREE_USER_ROLE = RoleBuilder.aFreeUserRoleBuilder().build();
 
 
     public static UserBuilder aRandomUserBuilder() {
@@ -32,7 +33,7 @@ public class UserBuilder {
                 .email(EMAIL)
                 .hashedPassword(HASHED_PASSWORD)
                 .verified(false)
-                .roleId(FREE_USER_ROLE_ID)
+                .role(FREE_USER_ROLE)
                 .creationTime(Instant.now(ClockConfig.utcClock()))
                 .build();
     }
@@ -43,7 +44,7 @@ public class UserBuilder {
                 .email(email)
                 .hashedPassword(hashedPassword)
                 .verified(verified)
-                .roleId(roleId)
+                .role(role)
                 .creationTime(creationTime)
                 .build();
     }

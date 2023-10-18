@@ -1,6 +1,8 @@
 package integration.com.socialmedia.accounts.application.services;
 
 
+import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
+import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
@@ -23,6 +25,7 @@ class CreateUserServiceIT {
     private CreateUserService sut;
 
     private LoadUserPort loadUserPort;
+    private LoadRolePort loadRolePort;
     private CreateUserPort createUserPort;
 
 
@@ -30,7 +33,8 @@ class CreateUserServiceIT {
     public void setup() {
         loadUserPort = new LoadUserAdapter();
         createUserPort = new CreateUserAdapter();
-        sut = new CreateUserService(createUserPort, loadUserPort);
+        loadRolePort = new LoadRoleAdapter();
+        sut = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
     }
 
     @Test

@@ -4,13 +4,11 @@ import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
 import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
-import com.socialmedia.accounts.application.port.in.LoadRoleUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.services.CreateUserService;
-import com.socialmedia.accounts.application.services.LoadRoleService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.posts.domain.Post;
@@ -21,7 +19,6 @@ import com.socialmedia.posts.adapter.out.LoadPostAdapter;
 import com.socialmedia.posts.application.port.in.CreatePostUseCase;
 import com.socialmedia.posts.application.port.out.CreateCommentPort;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
-import com.socialmedia.posts.application.port.out.LoadCommentPort;
 import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.application.services.CreateCommentService;
 import com.socialmedia.posts.application.services.CreatePostService;
@@ -43,14 +40,11 @@ public class CreateCommentServiceIT {
     private CreatePostUseCase createPostUseCase;
     private CreateUserUseCase createUserUseCase;
     private LoadUserUseCase loadUserUseCase;
-    private LoadRoleUseCase loadRoleUseCase;
-
     private LoadUserPort loadUserPort;
     private CreateUserPort createUserPort;
     private LoadRolePort loadRolePort;
     private CreatePostPort createPostPort;
     private LoadPostPort loadPostPort;
-    private LoadCommentPort loadCommentPort;
     private CreateCommentPort createCommentPort;
 
 
@@ -62,11 +56,10 @@ public class CreateCommentServiceIT {
         loadPostPort = new LoadPostAdapter();
         createUserPort = new CreateUserAdapter();
         createCommentPort = new CreateCommentAdapter();
-        createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
+        createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
-        loadRoleUseCase = new LoadRoleService(loadRolePort);
-        createPostUseCase = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
-        createCommentService = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
+        createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort);
+        createCommentService = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
     }
 
     @Test

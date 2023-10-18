@@ -47,13 +47,12 @@ public class SocialMediaApplication {
         LoadPostPort loadPostPort = new LoadPostAdapter();
         CreateCommentPort createCommentPort = new CreateCommentAdapter();
         // Initialize services
-        CreateUserUseCase createUserUseCase = new CreateUserService(createUserPort, loadUserPort);
+        CreateUserUseCase createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
-        LoadRoleUseCase loadRoleUseCase = new LoadRoleService(loadRolePort);
-        CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, loadRoleUseCase, createPostPort);
-        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadRoleUseCase, loadPostPort, createCommentPort);
+        CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort);
+        CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,

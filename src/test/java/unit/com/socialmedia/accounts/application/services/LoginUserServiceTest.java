@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import unit.com.socialmedia.accounts.domain.RoleBuilder;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class LoginUserServiceTest {
                 email,
                 hashedPassword,
                 true,
-                1L,
+                RoleBuilder.aFreeUserRoleBuilder().build(),
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));
@@ -70,7 +71,7 @@ public class LoginUserServiceTest {
                 email,
                 hashedPassword+"1",
                 true,
-                1L,
+                RoleBuilder.aFreeUserRoleBuilder().build(),
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadUserPort.loadUserByEmail(email)).thenReturn(Optional.of(userInDb));

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import unit.com.socialmedia.accounts.domain.RoleBuilder;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class LoadUserServiceTest {
                 "test",
                 "test",
                 false,
-                1L,
+                RoleBuilder.aFreeUserRoleBuilder().build(),
                 Instant.now(ClockConfig.utcClock())
         );
         when(loadUserPort.loadUserById(userId)).thenReturn(Optional.of(user));

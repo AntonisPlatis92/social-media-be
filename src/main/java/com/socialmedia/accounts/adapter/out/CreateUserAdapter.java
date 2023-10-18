@@ -17,7 +17,7 @@ public class CreateUserAdapter implements CreateUserPort {
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getHashedPassword());
             preparedStatement.setBoolean(4, user.isVerified());
-            preparedStatement.setLong(5, user.getRoleId());
+            preparedStatement.setLong(5, user.getRole().getId());
             preparedStatement.setTimestamp(6, Timestamp.from(user.getCreationTime()));
             preparedStatement.executeUpdate();
         });
