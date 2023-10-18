@@ -1,8 +1,10 @@
 package com.socialmedia.accounts.domain;
 
 import com.socialmedia.accounts.application.port.out.CreateFollowPort;
+import com.socialmedia.accounts.application.port.out.RemoveFollowPort;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.domain.exceptions.FollowAlreadyExistsException;
+import com.socialmedia.accounts.domain.exceptions.FollowNotFoundException;
 import com.socialmedia.config.ClockConfig;
 import com.socialmedia.utils.encoders.PasswordEncoder;
 import lombok.AllArgsConstructor;
@@ -52,5 +54,17 @@ public class User {
                         this.userId,
                         followingUser.userId
                 ));
+    }
+
+    public void unfollow(User unfollowingUser, RemoveFollowPort removeFollowPort) {
+        List<UUID> followingUserIds = following.stream()
+                .map(Follow::getFollowingId)
+                .toList();
+        if (!followingUserIds.contains(unfollowingUser.userId)) {throw new FollowNotFoundException("Follow already exists.");}
+
+        removeFollowPort.removeFollowByFollowerAndFollowingId(
+                this.userId,
+                unfollowingUser.userId
+        );
     }
 }

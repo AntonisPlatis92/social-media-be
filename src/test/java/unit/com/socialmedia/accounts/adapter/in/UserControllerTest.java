@@ -1,17 +1,21 @@
 package unit.com.socialmedia.accounts.adapter.in;
 
 import com.socialmedia.accounts.adapter.in.UserController;
+import com.socialmedia.accounts.adapter.in.vms.CreateFollowVM;
 import com.socialmedia.accounts.adapter.in.vms.CreateUserVM;
 import com.socialmedia.accounts.adapter.in.vms.LoginUserVM;
+import com.socialmedia.accounts.application.port.in.CreateFollowUseCase;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
 import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
+import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
 import com.socialmedia.accounts.domain.exceptions.PasswordMinimumCharactersException;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyVerifiedException;
+import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Context;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -33,12 +39,14 @@ class UserControllerTest {
     @Mock
     private LoginUserUseCase loginUserUseCase;
     @Mock
+    private CreateFollowUseCase createFollowUseCase;
+    @Mock
     private Context ctx;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new UserController(createUserUseCase, verifyUserUseCase, loginUserUseCase);
+        sut = new UserController(createUserUseCase, verifyUserUseCase, loginUserUseCase, createFollowUseCase);
     }
 
     @Test
@@ -110,7 +118,7 @@ class UserControllerTest {
     }
 
     @Test
-    void verifyExistingUser_whenInvalidInput_shouldThrowException() throws Exception {
+    void verifyExistingUser_whenInvalidInput_shouldThrowException() {
         // Given
         String email = null;
 
@@ -122,7 +130,7 @@ class UserControllerTest {
     }
 
     @Test
-    void verifyExistingUser_whenValidInputAndServiceThrowsException_shouldThrowException() throws Exception {
+    void verifyExistingUser_whenValidInputAndServiceThrowsException_shouldThrowException() {
         // Given
         String email = "test@test.com";
         VerifyUserCommand command = new VerifyUserCommand(email);
@@ -184,5 +192,42 @@ class UserControllerTest {
 
         // Then
         assertThrows(LoginFailedException.class, () -> sut.loginExistingUser.handle(ctx));
+    }
+
+    @Test
+    void createNewFollow_whenValidInputAndServiceSuccessful_shouldReturn201() throws Exception {
+        // Given
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
+        when(ctx.header("Authorization")).thenReturn(token);
+        String followingUserEmail = "testFollowing@test.com";
+        CreateFollowVM createFollowVM = new CreateFollowVM(followingUserEmail);
+        CreateFollowCommand command = new CreateFollowCommand(userEmail, followingUserEmail);
+
+        when(ctx.bodyAsClass(CreateFollowVM.class)).thenReturn(createFollowVM);
+        doNothing().when(createFollowUseCase).createNewFollow(command);
+        when(ctx.status(201)).thenReturn(ctx);
+
+        // When
+        sut.followUser.handle(ctx);
+
+        // Then
+        verify(ctx).status(201);
+        verify(ctx).result("Follow created successfully.");
+    }
+
+    @Test
+    void createNewFollow_whenInvalidInput_shouldThrowException() {
+        // Given
+        String userEmail = "test@test.com";
+        String token = JwtUtils.createToken(userEmail);
+        when(ctx.header("Authorization")).thenReturn(token);
+        String followingUserEmail = null;
+        CreateFollowVM createFollowVM = new CreateFollowVM(followingUserEmail);
+
+        when(ctx.bodyAsClass(CreateFollowVM.class)).thenReturn(createFollowVM);
+
+        // Then
+        assertThrows(ConstraintViolationException.class, () -> sut.followUser.handle(ctx));
     }
 }

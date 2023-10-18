@@ -1,7 +1,7 @@
 package unit.com.socialmedia.content.adapters.in;
 
 import com.socialmedia.config.ClockConfig;
-import com.socialmedia.posts.adapter.in.ContentController;
+import com.socialmedia.posts.adapter.in.PostController;
 import com.socialmedia.posts.adapter.in.vms.CreateCommentVM;
 import com.socialmedia.posts.adapter.in.vms.CreatePostVM;
 import com.socialmedia.posts.application.port.in.CreateCommentUseCase;
@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
-public class ContentControllerTest {
-    private ContentController sut;
+public class PostControllerTest {
+    private PostController sut;
 
     @Mock
     private CreatePostUseCase createPostUseCase;
@@ -41,7 +41,7 @@ public class ContentControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new ContentController(createPostUseCase, createCommentUseCase);
+        sut = new PostController(createPostUseCase, createCommentUseCase);
     }
 
     @Test

@@ -153,7 +153,7 @@ public class LoadUserAdapter implements LoadUserPort {
                     List<Follow> following = new ArrayList<>();
 
                     Statement followerStatement = conn.createStatement();
-                    String followerQuery = String.format(LOAD_FOLLOWS_BY_FOLLOWER_ID_STATEMENT, userId);
+                    String followerQuery = String.format(LOAD_FOLLOWS_BY_FOLLOWING_ID_STATEMENT, userId);
                     ResultSet followerResultSet = followerStatement.executeQuery(followerQuery);
 
                     while (followerResultSet.next()) {
@@ -169,15 +169,15 @@ public class LoadUserAdapter implements LoadUserPort {
                     }
 
                     Statement followingStatement = conn.createStatement();
-                    String followingQuery = String.format(LOAD_FOLLOWS_BY_FOLLOWING_ID_STATEMENT, userId);
+                    String followingQuery = String.format(LOAD_FOLLOWS_BY_FOLLOWER_ID_STATEMENT, userId);
                     ResultSet followingResultSet = followingStatement.executeQuery(followingQuery);
 
                     while (followingResultSet.next()) {
-                        UUID followingsFollowerId = (UUID) followerResultSet.getObject("follower_id");
-                        UUID followingsFollowingId = (UUID) followerResultSet.getObject("following_id");
-                        Instant followingsFollowCreationTime = followerResultSet.getTimestamp("creation_time").toInstant();
+                        UUID followingsFollowerId = (UUID) followingResultSet.getObject("follower_id");
+                        UUID followingsFollowingId = (UUID) followingResultSet.getObject("following_id");
+                        Instant followingsFollowCreationTime = followingResultSet.getTimestamp("creation_time").toInstant();
 
-                        followers.add(new Follow(
+                        following.add(new Follow(
                                 followingsFollowerId,
                                 followingsFollowingId,
                                 followingsFollowCreationTime

@@ -9,12 +9,12 @@ import com.socialmedia.posts.domain.commands.CreatePostCommand;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Handler;
 
-public class ContentController {
+public class PostController {
     private CreatePostUseCase createPostUseCase;
     private CreateCommentUseCase createCommentUseCase;
 
 
-    public ContentController(CreatePostUseCase createPostUseCase, CreateCommentUseCase createCommentUseCase) {
+    public PostController(CreatePostUseCase createPostUseCase, CreateCommentUseCase createCommentUseCase) {
         this.createPostUseCase = createPostUseCase;
         this.createCommentUseCase = createCommentUseCase;
     }

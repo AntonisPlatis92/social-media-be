@@ -1,10 +1,8 @@
 package com.socialmedia;
 
-import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
-import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
-import com.socialmedia.accounts.adapter.out.VerifyUserAdapter;
+import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.in.*;
+import com.socialmedia.accounts.application.port.out.*;
 import com.socialmedia.accounts.application.services.*;
 import com.socialmedia.posts.adapter.out.CreateCommentAdapter;
 import com.socialmedia.posts.adapter.out.CreatePostAdapter;
@@ -16,13 +14,9 @@ import com.socialmedia.posts.application.port.out.CreatePostPort;
 import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.application.services.CreateCommentService;
 import com.socialmedia.posts.application.services.CreatePostService;
-import com.socialmedia.utils.authentication.exceptions.ExceptionHandler;
+import com.socialmedia.utils.exceptions.ExceptionHandler;
 import com.socialmedia.accounts.adapter.in.UserController;
-import com.socialmedia.accounts.application.port.out.LoadRolePort;
-import com.socialmedia.accounts.application.port.out.CreateUserPort;
-import com.socialmedia.accounts.application.port.out.LoadUserPort;
-import com.socialmedia.accounts.application.port.out.VerifyUserPort;
-import com.socialmedia.posts.adapter.in.ContentController;
+import com.socialmedia.posts.adapter.in.PostController;
 import io.javalin.Javalin;
 
 
@@ -43,6 +37,7 @@ public class SocialMediaApplication {
         CreateUserPort createUserPort = new CreateUserAdapter();
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         LoadRolePort loadRolePort = new LoadRoleAdapter();
+        CreateFollowPort createFollowPort = new CreateFollowAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
         LoadPostPort loadPostPort = new LoadPostAdapter();
         CreateCommentPort createCommentPort = new CreateCommentAdapter();
@@ -50,6 +45,7 @@ public class SocialMediaApplication {
         CreateUserUseCase createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
+        CreateFollowUseCase createFollowUseCase = new CreateFollowService(loadUserPort, createFollowPort);
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort);
         CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
@@ -57,15 +53,17 @@ public class SocialMediaApplication {
         UserController userController = new UserController(
                 createUserUseCase,
                 verifyUserUseCase,
-                loginUserUseCase);
-        ContentController contentController = new ContentController(createPostUseCase, createCommentUseCase);
+                loginUserUseCase,
+                createFollowUseCase);
+        PostController postController = new PostController(createPostUseCase, createCommentUseCase);
 
         // Define routes
         app.post("users", userController.createNewUser);
         app.post("users/verify/{email}", userController.verifyExistingUser);
         app.get("users/login", userController.loginExistingUser);
-        app.post("posts", contentController.createNewPost);
-        app.post("comments", contentController.createNewComment);
+        app.post("posts", postController.createNewPost);
+        app.post("comments", postController.createNewComment);
+        app.post("follows", userController.followUser);
 
         // Start the server
         app.start(8080);

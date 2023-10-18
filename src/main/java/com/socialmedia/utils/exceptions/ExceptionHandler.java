@@ -1,4 +1,4 @@
-package com.socialmedia.utils.authentication.exceptions;
+package com.socialmedia.utils.exceptions;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.socialmedia.accounts.domain.exceptions.*;
@@ -62,6 +62,14 @@ public class ExceptionHandler {
         });
         app.exception(ExpiredJwtException.class, (e, ctx) -> {
             ctx.status(401);
+            ctx.result(e.getMessage());
+        });
+        app.exception(FollowAlreadyExistsException.class, (e, ctx) -> {
+            ctx.status(400);
+            ctx.result(e.getMessage());
+        });
+        app.exception(FollowNotFoundException.class, (e, ctx) -> {
+            ctx.status(400);
             ctx.result(e.getMessage());
         });
     }

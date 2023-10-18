@@ -10,7 +10,7 @@ public class RemoveFollowAdapter implements RemoveFollowPort {
     private static final String REMOVE_FOLLOW_STATEMENT = "DELETE FROM follows WHERE follower_id = ? AND following_id = ?;";
 
     @Override
-    public void removeFollow(UUID followerId, UUID followingId) {
+    public void removeFollowByFollowerAndFollowingId(UUID followerId, UUID followingId) {
         DatabaseUtils.doInTransaction((conn) -> {
             PreparedStatement preparedStatement = conn.prepareStatement(REMOVE_FOLLOW_STATEMENT);
             preparedStatement.setObject(1, followerId);
