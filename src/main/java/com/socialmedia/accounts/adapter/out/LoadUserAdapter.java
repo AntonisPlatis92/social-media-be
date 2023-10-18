@@ -85,9 +85,9 @@ public class LoadUserAdapter implements LoadUserPort {
                     ResultSet followingResultSet = followingStatement.executeQuery(followingQuery);
 
                     while (followingResultSet.next()) {
-                        UUID followingsFollowerId = (UUID) followerResultSet.getObject("follower_id");
-                        UUID followingsFollowingId = (UUID) followerResultSet.getObject("following_id");
-                        Instant followingsFollowCreationTime = followerResultSet.getTimestamp("creation_time").toInstant();
+                        UUID followingsFollowerId = (UUID) followingResultSet.getObject("follower_id");
+                        UUID followingsFollowingId = (UUID) followingResultSet.getObject("following_id");
+                        Instant followingsFollowCreationTime = followingResultSet.getTimestamp("creation_time").toInstant();
 
                         following.add(new Follow(
                                 followingsFollowerId,
