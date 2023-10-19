@@ -1,10 +1,8 @@
-package com.socialmedia.views.adapter.in.vms;
-
-import java.util.UUID;
+package com.socialmedia.posts.adapter.in.vms;
 
 public record CommentReturnVM(
         String postId,
-        UUID userId,
+        String commentUserEmail,
         String commentBody,
         String commentCreationTime
 ) {

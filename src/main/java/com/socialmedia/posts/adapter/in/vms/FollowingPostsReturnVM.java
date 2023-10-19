@@ -1,10 +1,8 @@
-package com.socialmedia.views.adapter.in.vms;
-
-import java.util.UUID;
+package com.socialmedia.posts.adapter.in.vms;
 
 public record FollowingPostsReturnVM(
         String postId,
-        UUID postUserId,
+        String postUserEmail,
         String postBody,
         String postCreationTime
 ) {}

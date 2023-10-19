@@ -13,6 +13,8 @@ import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.domain.Comment;
 import com.socialmedia.posts.domain.commands.CreateCommentCommand;
 
+import java.util.UUID;
+
 public class CreateCommentService implements CreateCommentUseCase {
     private final LoadUserUseCase loadUserUseCase;
     private final LoadPostPort loadPostPort;
@@ -36,14 +38,17 @@ public class CreateCommentService implements CreateCommentUseCase {
 
         boolean shouldCheckCommentsLimit = role.isHasCommentsLimit();
         if (shouldCheckCommentsLimit) {
-            checkCommentsLimit(post, role);
+            checkCommentsLimit(user.getUserId(), post, role);
         }
 
         post.addComment(command, createCommentPort);
     }
 
-    private void checkCommentsLimit(Post post, Role role) {
-        if (post.getComments().size() >= role.getCommentsLimit()) {
+    private void checkCommentsLimit(UUID userId, Post post, Role role) {
+        long commentsOnPostByUser = post.getComments().stream()
+                .filter(comment -> userId.equals(comment.getUserId()))
+                .count();
+        if (commentsOnPostByUser >= role.getCommentsLimit()) {
             throw new CommentsLimitException(String.format("Current role is restricted to %d comments per post.", role.getCommentsLimit()));
         }
     }

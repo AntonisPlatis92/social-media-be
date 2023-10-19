@@ -1,9 +1,8 @@
-package com.socialmedia.views.application.port.in;
+package com.socialmedia.posts.application.port.in;
 
-import com.socialmedia.posts.domain.Post;
-import com.socialmedia.views.adapter.in.vms.CommentReturnVM;
-import com.socialmedia.views.adapter.in.vms.FollowingPostsReturnVM;
-import com.socialmedia.views.adapter.in.vms.OwnPostsReturnVM;
+import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
+import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
+import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
 
 import java.util.List;
 import java.util.UUID;
