@@ -21,7 +21,7 @@ public class CreateFollowService implements CreateFollowUseCase {
 
     @Override
     public void createNewFollow(CreateFollowCommand command) {
-        User followerUser = loadUserPort.loadUserByEmail(command.followerUserEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerUserEmail())));
+        User followerUser = loadUserPort.loadUserById(command.followerUserId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerUserId())));
         User followingUser = loadUserPort.loadUserByEmail(command.followingUserEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followingUserEmail())));
 
         followerUser.follow(followingUser, createFollowPort);

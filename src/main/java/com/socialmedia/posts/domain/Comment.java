@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 public class Comment {
     private UUID id;
-    private String userEmail;
+    private UUID userId;
     private UUID postId;
     private String body;
     private Instant creationTime;
@@ -20,7 +20,7 @@ public class Comment {
     public static Comment createCommentFromCommand(CreateCommentCommand command) {
         return new Comment(
                 UUID.randomUUID(),
-                command.userEmail(),
+                command.userId(),
                 command.postId(),
                 command.body(),
                 Instant.now(ClockConfig.utcClock())

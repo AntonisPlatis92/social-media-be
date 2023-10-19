@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 public class Post {
     private UUID id;
-    private String userEmail;
+    private UUID userId;
     private String body;
     private Instant creationTime;
     private List<Comment> comments;
@@ -24,7 +24,7 @@ public class Post {
     public static Post createPostFromCommand(CreatePostCommand command) {
         return new Post(
                 UUID.randomUUID(),
-                command.userEmail(),
+                command.userId(),
                 command.body(),
                 Instant.now(ClockConfig.utcClock()),
                 Collections.emptyList()
@@ -33,5 +33,9 @@ public class Post {
 
     public void addComment(CreateCommentCommand command, CreateCommentPort createCommentPort) {
         createCommentPort.createNewComment(Comment.createCommentFromCommand(command));
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

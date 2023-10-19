@@ -5,6 +5,7 @@ import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.domain.Post;
 
 import java.util.List;
+import java.util.UUID;
 
 public class LoadPostService implements LoadPostUseCase {
     private final LoadPostPort loadPostPort;
@@ -13,7 +14,7 @@ public class LoadPostService implements LoadPostUseCase {
         this.loadPostPort = loadPostPort;
     }
     @Override
-    public List<Post> loadPostsByUserEmail(String userEmail) {
-        return loadPostPort.loadPostsByUserEmail(userEmail);
+    public List<Post> loadPostsByUserId(UUID userId) {
+        return loadPostPort.loadPostsByUserId(userId);
     }
 }

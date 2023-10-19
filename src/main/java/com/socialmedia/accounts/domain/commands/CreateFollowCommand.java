@@ -3,14 +3,16 @@ package com.socialmedia.accounts.domain.commands;
 import com.socialmedia.utils.validation.Validation;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 public record CreateFollowCommand(
         @NotNull
-        String followerUserEmail,
+        UUID followerUserId,
         @NotNull
         String followingUserEmail
 ) {
-    public CreateFollowCommand(String followerUserEmail, String followingUserEmail) {
-        this.followerUserEmail = followerUserEmail;
+    public CreateFollowCommand(UUID followerUserId, String followingUserEmail) {
+        this.followerUserId = followerUserId;
         this.followingUserEmail = followingUserEmail;
         Validation.validate(this);
     }

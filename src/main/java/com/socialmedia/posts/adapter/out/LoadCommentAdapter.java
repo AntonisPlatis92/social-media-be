@@ -25,14 +25,14 @@ public class LoadCommentAdapter implements LoadCommentPort {
 
             if (resultSet.next()) {
                 UUID commentId = (UUID) resultSet.getObject("id");
-                String userEmail = resultSet.getString("user_email");
+                UUID commentUserId = (UUID) resultSet.getObject("user_id");
                 UUID postId = (UUID) resultSet.getObject("post_id");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 return Optional.of(new Comment(
                         commentId,
-                        userEmail,
+                        commentUserId,
                         postId,
                         body,
                         creationTime
@@ -53,14 +53,14 @@ public class LoadCommentAdapter implements LoadCommentPort {
 
             while (resultSet.next()) {
                 UUID commentId = (UUID) resultSet.getObject("id");
-                String commentUserEmail = resultSet.getString("user_email");
+                UUID commentUserId = (UUID) resultSet.getObject("user_email");
                 UUID commentPostId = (UUID) resultSet.getObject("post_id");
                 String body = resultSet.getString("body");
                 Instant creationTime = resultSet.getTimestamp("creation_time").toInstant();
 
                 comments.add(new Comment(
                         commentId,
-                        commentUserEmail,
+                        commentUserId,
                         commentPostId,
                         body,
                         creationTime

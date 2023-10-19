@@ -55,7 +55,7 @@ public class CreateFollowServiceIT {
         // When
         createUserPort.createUser(followerUser);
         createUserPort.createUser(followingUser);
-        sut.createNewFollow(new CreateFollowCommand(followerUserEmail, followingUserEmail));
+        sut.createNewFollow(new CreateFollowCommand(followerUserId, followingUserEmail));
 
         // Then
         User followerUserFromDb = loadUserPort.loadUserById(followerUserId).get();

@@ -42,7 +42,7 @@ public class CreateCommentServiceTest {
     @Captor
     ArgumentCaptor<Comment> commentCaptor;
 
-    private static final String USER_EMAIL = "test@test.com";
+    private static final UUID USER_ID = UUID.randomUUID();
 
     @BeforeEach
     public void setup() {
@@ -56,18 +56,18 @@ public class CreateCommentServiceTest {
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentCommand command = new CreateCommentCommand(
-                USER_EMAIL,
+                USER_ID,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
-        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
         String postBody = "postBody";
         Post post = new Post(
                 postId,
-                USER_EMAIL,
+                USER_ID,
                 postBody,
                 Instant.now(ClockConfig.utcClock()),
                 Collections.emptyList()
@@ -80,7 +80,7 @@ public class CreateCommentServiceTest {
         // Then
         verify(createCommentPort).createNewComment(commentCaptor.capture());
         assertNotNull(commentCaptor.getValue());
-        assertEquals(USER_EMAIL, commentCaptor.getValue().getUserEmail());
+        assertEquals(USER_ID, commentCaptor.getValue().getUserId());
         assertEquals(postId, commentCaptor.getValue().getPostId());
         assertNotNull(commentCaptor.getValue().getId());
         assertEquals(commentBody, commentCaptor.getValue().getBody());
@@ -92,25 +92,25 @@ public class CreateCommentServiceTest {
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentCommand command = new CreateCommentCommand(
-                USER_EMAIL,
+                USER_ID,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
-        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
         String postBody = "postBody";
         Comment previousComment = new Comment(
                 UUID.randomUUID(),
-                USER_EMAIL,
+                USER_ID,
                 postId,
                 "previousCommentBody",
                 Instant.now(ClockConfig.utcClock())
         );
         Post post = new Post(
                 postId,
-                USER_EMAIL,
+                USER_ID,
                 postBody,
                 Instant.now(ClockConfig.utcClock()),
                 Collections.nCopies(5, previousComment)
@@ -127,13 +127,13 @@ public class CreateCommentServiceTest {
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentCommand command = new CreateCommentCommand(
-                USER_EMAIL,
+                USER_ID,
                 postId,
                 commentBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
-        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
 
         when(loadPostPort.loadPostById(postId)).thenReturn(Optional.empty());
@@ -148,12 +148,12 @@ public class CreateCommentServiceTest {
         UUID postId = UUID.randomUUID();
         String commentBody = "testBody";
         CreateCommentCommand command = new CreateCommentCommand(
-                USER_EMAIL,
+                USER_ID,
                 postId,
                 commentBody
         );
 
-        when(loadUserUseCase.loadUserByEmail(USER_EMAIL)).thenReturn(Optional.empty());
+        when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.empty());
 
         // When
         assertThrows(UserNotFoundException.class, () -> sut.createComment(command));

@@ -16,4 +16,5 @@ public class ClockConfig {
     public ZoneId getZone(Clock clock) {
         return clock.getZone();
     }
+    public static ZoneId utcZone() {return ClockConfig.utcClock().getZone();}
 }

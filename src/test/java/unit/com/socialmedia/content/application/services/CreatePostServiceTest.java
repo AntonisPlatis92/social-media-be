@@ -18,6 +18,7 @@ import unit.com.socialmedia.accounts.domain.RoleBuilder;
 import unit.com.socialmedia.accounts.domain.UserBuilder;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -42,15 +43,15 @@ public class CreatePostServiceTest {
     @Test
     public void createPost_whenUserExistsAndRoleExistsAndPostLessThanLimit_shouldCreatePost() {
         // Given
-        String userEmail = "test@test.com";
+        UUID userId = UUID.randomUUID();
         String postBody = "testBody";
         CreatePostCommand command = new CreatePostCommand(
-                userEmail,
+                userId,
                 postBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
-        when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
         // When
         sut.createPost(command);
@@ -58,7 +59,7 @@ public class CreatePostServiceTest {
         // Then
         verify(createPostPort).createNewPost(postCaptor.capture());
         assertNotNull(postCaptor.getValue());
-        assertEquals(userEmail, postCaptor.getValue().getUserEmail());
+        assertEquals(userId, postCaptor.getValue().getUserId());
         assertNotNull(postCaptor.getValue().getId());
         assertEquals(postBody, postCaptor.getValue().getBody());
     }
@@ -66,15 +67,15 @@ public class CreatePostServiceTest {
     @Test
     public void createPost_whenUserExistsAndRoleExistsAndPostMoreThanLimit_shouldThrowPostCharsLimitException() {
         // Given
-        String userEmail = "test@test.com";
+        UUID userId = UUID.randomUUID();
         String postBody = "testBody";
         CreatePostCommand command = new CreatePostCommand(
-                userEmail,
+                userId,
                 postBody
         );
 
         User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().withPostCharsLimit(1L).build()).build();
-        when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.of(user));
 
 
         // Then
@@ -84,14 +85,14 @@ public class CreatePostServiceTest {
     @Test
     public void createPost_whenUserDoesNotExist_shouldThrowUserNotFoundException() {
         // Given
-        String userEmail = "test@test.com";
+        UUID userId = UUID.randomUUID();
         String postBody = "testBody";
         CreatePostCommand command = new CreatePostCommand(
-                userEmail,
+                userId,
                 postBody
         );
 
-        when(loadUserUseCase.loadUserByEmail(userEmail)).thenReturn(Optional.empty());
+        when(loadUserUseCase.loadUserById(userId)).thenReturn(Optional.empty());
 
         // Then
         assertThrows(UserNotFoundException.class, () -> sut.createPost(command));

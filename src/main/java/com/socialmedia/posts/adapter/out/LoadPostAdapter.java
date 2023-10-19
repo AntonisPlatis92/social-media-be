@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class LoadPostAdapter implements LoadPostPort {
     private static final String LOAD_POST_BY_ID_STATEMENT = "SELECT * FROM posts WHERE id = '%s';";
-    private static final String LOAD_POST_BY_USER_EMAIL_STATEMENT = "SELECT * FROM posts WHERE user_email = '%s';";
+    private static final String LOAD_POST_BY_USER_ID_STATEMENT = "SELECT * FROM posts WHERE user_id = '%s';";
     private static final String LOAD_COMMENT_BY_POST_ID_STATEMENT = "SELECT * FROM comments WHERE post_id = '%s';";
 
 
@@ -28,7 +28,7 @@ public class LoadPostAdapter implements LoadPostPort {
 
             if (postResultSet.next()) {
                 UUID postId = (UUID) postResultSet.getObject("id");
-                String postUserEmail = postResultSet.getString("user_email");
+                UUID postUserId = (UUID) postResultSet.getObject("user_id");
                 String postBody = postResultSet.getString("body");
                 Instant postCreationTime = postResultSet.getTimestamp("creation_time").toInstant();
 
@@ -40,14 +40,14 @@ public class LoadPostAdapter implements LoadPostPort {
 
                 while (commentsResultSet.next()) {
                     UUID commentId = (UUID) commentsResultSet.getObject("id");
-                    String commentUserEmail = commentsResultSet.getString("user_email");
+                    UUID commentUserId = (UUID) commentsResultSet.getObject("user_id");
                     UUID commentPostId = (UUID) commentsResultSet.getObject("post_id");
                     String commentBody = commentsResultSet.getString("body");
                     Instant commentCreationTime = commentsResultSet.getTimestamp("creation_time").toInstant();
 
                     comments.add(new Comment(
                             commentId,
-                            commentUserEmail,
+                            commentUserId,
                             commentPostId,
                             commentBody,
                             commentCreationTime
@@ -56,7 +56,7 @@ public class LoadPostAdapter implements LoadPostPort {
 
                 return Optional.of(new Post(
                         postId,
-                        postUserEmail,
+                        postUserId,
                         postBody,
                         postCreationTime,
                         comments
@@ -67,17 +67,17 @@ public class LoadPostAdapter implements LoadPostPort {
     }
 
     @Override
-    public List<Post> loadPostsByUserEmail(String userEmail) {
+    public List<Post> loadPostsByUserId(UUID userId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             Statement postStatement = conn.createStatement();
-            String postQuery = String.format(LOAD_POST_BY_USER_EMAIL_STATEMENT, userEmail);
+            String postQuery = String.format(LOAD_POST_BY_USER_ID_STATEMENT, userId);
             ResultSet resultSet = postStatement.executeQuery(postQuery);
 
             ArrayList<Post> posts = new ArrayList<>();
 
             while (resultSet.next()) {
                 UUID postId = (UUID) resultSet.getObject("id");
-                String postUserEmail = resultSet.getString("user_email");
+                UUID postUserId = (UUID) resultSet.getObject("user_id");
                 String postBody = resultSet.getString("body");
                 Instant postCreationTime = resultSet.getTimestamp("creation_time").toInstant();
 
@@ -89,14 +89,14 @@ public class LoadPostAdapter implements LoadPostPort {
 
                 while (commentsResultSet.next()) {
                     UUID commentId = (UUID) commentsResultSet.getObject("id");
-                    String commentUserEmail = commentsResultSet.getString("user_email");
+                    UUID commentUserId = (UUID) commentsResultSet.getObject("user_id");
                     UUID commentPostId = (UUID) commentsResultSet.getObject("post_id");
                     String commentBody = commentsResultSet.getString("body");
                     Instant commentCreationTime = commentsResultSet.getTimestamp("creation_time").toInstant();
 
                     comments.add(new Comment(
                             commentId,
-                            commentUserEmail,
+                            commentUserId,
                             commentPostId,
                             commentBody,
                             commentCreationTime
@@ -105,7 +105,7 @@ public class LoadPostAdapter implements LoadPostPort {
 
                 posts.add(new Post(
                         postId,
-                        postUserEmail,
+                        postUserId,
                         postBody,
                         postCreationTime,
                         comments

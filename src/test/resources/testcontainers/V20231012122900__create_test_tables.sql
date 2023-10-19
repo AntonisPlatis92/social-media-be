@@ -34,10 +34,10 @@ create table posts
 (
     id            uuid                                not null
         primary key,
-    user_email    varchar(255)                        not null,
+    user_id       uuid                                not null,
     body          text                                not null,
     creation_time timestamp default CURRENT_TIMESTAMP not null,
-    FOREIGN KEY (user_email) REFERENCES users (email)
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 create table comments
@@ -45,10 +45,10 @@ create table comments
     id            uuid                                not null
         primary key,
     post_id       uuid                                not null,
-    user_email    varchar(255)                        not null,
+    user_id       uuid                                not null,
     body          text                                not null,
     creation_time timestamp default CURRENT_TIMESTAMP not null,
-    FOREIGN KEY (user_email) REFERENCES users (email),
+    FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 

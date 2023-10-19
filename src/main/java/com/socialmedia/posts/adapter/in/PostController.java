@@ -9,6 +9,8 @@ import com.socialmedia.posts.domain.commands.CreatePostCommand;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Handler;
 
+import java.util.UUID;
+
 public class PostController {
     private CreatePostUseCase createPostUseCase;
     private CreateCommentUseCase createCommentUseCase;
@@ -24,7 +26,7 @@ public class PostController {
         if (!JwtUtils.isTokenValid(authorizationToken)) {
             ctx.status(403).result("Token is invalid");
         }
-        String userEmail = JwtUtils.extractUserEmailFromToken(authorizationToken);
+        UUID userId = JwtUtils.extractUserIdFromToken(authorizationToken);
 
         CreatePostVM createPostVM = ctx.bodyAsClass(CreatePostVM.class);
         if (createPostVM == null) {
@@ -32,7 +34,7 @@ public class PostController {
         }
 
         CreatePostCommand command = new CreatePostCommand(
-                userEmail,
+                userId,
                 createPostVM.body()
         );
 
@@ -46,7 +48,7 @@ public class PostController {
         if (!JwtUtils.isTokenValid(authorizationToken)) {
             ctx.status(403).result("Token is invalid");
         }
-        String userEmail = JwtUtils.extractUserEmailFromToken(authorizationToken);
+        UUID userId = JwtUtils.extractUserIdFromToken(authorizationToken);
 
         CreateCommentVM createCommentVM = ctx.bodyAsClass(CreateCommentVM.class);
         if (createCommentVM == null) {
@@ -54,7 +56,7 @@ public class PostController {
         }
 
         CreateCommentCommand command = new CreateCommentCommand(
-                userEmail,
+                userId,
                 createCommentVM.postId(),
                 createCommentVM.body()
         );

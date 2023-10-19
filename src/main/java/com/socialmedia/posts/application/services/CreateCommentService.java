@@ -28,7 +28,7 @@ public class CreateCommentService implements CreateCommentUseCase {
     }
     @Override
     public void createComment(CreateCommentCommand command) {
-        User user = loadUserUseCase.loadUserByEmail(command.userEmail()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
 
         Role role = user.getRole();
 

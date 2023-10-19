@@ -197,12 +197,12 @@ class UserControllerTest {
     @Test
     void createNewFollow_whenValidInputAndServiceSuccessful_shouldReturn201() throws Exception {
         // Given
-        String userEmail = "test@test.com";
-        String token = JwtUtils.createToken(userEmail);
+        UUID userId = UUID.randomUUID();
+        String token = JwtUtils.createToken(userId);
         when(ctx.header("Authorization")).thenReturn(token);
         String followingUserEmail = "testFollowing@test.com";
         CreateFollowVM createFollowVM = new CreateFollowVM(followingUserEmail);
-        CreateFollowCommand command = new CreateFollowCommand(userEmail, followingUserEmail);
+        CreateFollowCommand command = new CreateFollowCommand(userId, followingUserEmail);
 
         when(ctx.bodyAsClass(CreateFollowVM.class)).thenReturn(createFollowVM);
         doNothing().when(createFollowUseCase).createNewFollow(command);
@@ -219,8 +219,8 @@ class UserControllerTest {
     @Test
     void createNewFollow_whenInvalidInput_shouldThrowException() {
         // Given
-        String userEmail = "test@test.com";
-        String token = JwtUtils.createToken(userEmail);
+        UUID userId = UUID.randomUUID();
+        String token = JwtUtils.createToken(userId);
         when(ctx.header("Authorization")).thenReturn(token);
         String followingUserEmail = null;
         CreateFollowVM createFollowVM = new CreateFollowVM(followingUserEmail);

@@ -20,7 +20,7 @@ public class CreatePostService implements CreatePostUseCase {
     }
     @Override
     public void createPost(CreatePostCommand command) {
-        User user = loadUserUseCase.loadUserByEmail(command.userEmail()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
 
         Role role = user.getRole();
 

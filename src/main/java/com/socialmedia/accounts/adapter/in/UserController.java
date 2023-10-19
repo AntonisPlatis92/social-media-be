@@ -14,6 +14,8 @@ import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Handler;
 
+import java.util.UUID;
+
 public class UserController {
     private CreateUserUseCase createUserUseCase;
     private VerifyUserUseCase verifyUserUseCase;
@@ -79,7 +81,7 @@ public class UserController {
         if (!JwtUtils.isTokenValid(authorizationToken)) {
             ctx.status(403).result("Token is invalid");
         }
-        String userEmail = JwtUtils.extractUserEmailFromToken(authorizationToken);
+        UUID userId = JwtUtils.extractUserIdFromToken(authorizationToken);
 
         CreateFollowVM createFollowVM = ctx.bodyAsClass(CreateFollowVM.class);
         if (createFollowVM == null) {
@@ -87,7 +89,7 @@ public class UserController {
         }
 
         CreateFollowCommand command = new CreateFollowCommand(
-                userEmail,
+                userId,
                 createFollowVM.followingUserEmail()
         );
         createFollowUseCase.createNewFollow(command);

@@ -20,8 +20,10 @@ import com.socialmedia.utils.exceptions.ExceptionHandler;
 import com.socialmedia.accounts.adapter.in.UserController;
 import com.socialmedia.posts.adapter.in.PostController;
 import com.socialmedia.views.adapter.in.ViewController;
-import com.socialmedia.views.application.port.in.ViewFollowingPostsUseCase;
-import com.socialmedia.views.application.services.ViewFollowingPostsService;
+import com.socialmedia.views.application.port.in.ViewFollowsUseCase;
+import com.socialmedia.views.application.port.in.ViewPostsUseCase;
+import com.socialmedia.views.application.services.ViewFollowsService;
+import com.socialmedia.views.application.services.ViewPostsService;
 import io.javalin.Javalin;
 
 
@@ -55,7 +57,8 @@ public class SocialMediaApplication {
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort);
         CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
         LoadPostUseCase loadPostUseCase = new LoadPostService(loadPostPort);
-        ViewFollowingPostsUseCase viewFollowingPostsUseCase = new ViewFollowingPostsService(loadUserUseCase, loadPostUseCase);
+        ViewPostsUseCase viewFollowingPostsUseCase = new ViewPostsService(loadUserUseCase, loadPostUseCase);
+        ViewFollowsUseCase viewFollowsUseCase = new ViewFollowsService(loadUserUseCase);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,
@@ -63,7 +66,7 @@ public class SocialMediaApplication {
                 loginUserUseCase,
                 createFollowUseCase);
         PostController postController = new PostController(createPostUseCase, createCommentUseCase);
-        ViewController viewController = new ViewController(viewFollowingPostsUseCase);
+        ViewController viewController = new ViewController(viewFollowingPostsUseCase, viewFollowsUseCase);
 
         // Define routes
         app.post("users", userController.createNewUser);
@@ -73,6 +76,10 @@ public class SocialMediaApplication {
         app.post("comments", postController.createNewComment);
         app.post("follows", userController.followUser);
         app.get("followingPosts", viewController.viewFollowingPosts);
+        app.get("ownPosts", viewController.viewOwnPosts);
+        app.get("commentsOnOwnPosts", viewController.viewCommentsOnOwnPosts);
+        app.get("commentsOnOwnAndFollowingPosts", viewController.viewCommentsOnOwnAndFollowingPosts);
+        app.get("ownFollows", viewController.viewOwnFollows);
 
         // Start the server
         app.start(8080);
