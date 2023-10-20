@@ -5,6 +5,7 @@ import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.in.*;
 import com.socialmedia.accounts.application.port.out.*;
 import com.socialmedia.accounts.application.services.*;
+import com.socialmedia.config.PropertiesManager;
 import com.socialmedia.posts.adapter.in.PostViewController;
 import com.socialmedia.posts.adapter.out.*;
 import com.socialmedia.posts.application.port.in.CreateCommentUseCase;
@@ -18,6 +19,7 @@ import com.socialmedia.posts.adapter.in.PostController;
 import com.socialmedia.posts.application.port.in.ViewPostsUseCase;
 import com.socialmedia.posts.application.services.ViewPostsService;
 import io.javalin.Javalin;
+import org.flywaydb.core.Flyway;
 
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
@@ -31,6 +33,14 @@ public class SocialMediaApplication {
 
         // Configure Javalin
         ExceptionHandler.setupExceptionHandler(app);
+
+        // Configure Flyway
+        Flyway flyway = Flyway.configure()
+                .locations("filesystem:sql/")
+                .dataSource(PropertiesManager.getProperty("jdbc.url"), PropertiesManager.getProperty("jdbc.username"), PropertiesManager.getProperty("jdbc.password")).load();
+
+        // Validate and run the migrations
+        flyway.migrate();
 
         // Initialize ports
         LoadUserPort loadUserPort = new LoadUserAdapter();
