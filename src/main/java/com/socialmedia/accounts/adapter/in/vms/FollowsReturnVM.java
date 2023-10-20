@@ -1,4 +1,4 @@
-package com.socialmedia.views.adapter.in.vms;
+package com.socialmedia.accounts.adapter.in.vms;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
 package com.socialmedia.posts.adapter.out;
 
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
 import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
 import com.socialmedia.posts.application.port.out.LoadOwnPostsPort;
@@ -9,31 +8,26 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.socialmedia.utils.formatters.DateFormatter.FORMATTER;
 
 public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
     private static final String LOAD_OWN_POSTS_BY_USER_ID_STATEMENT =
             "SELECT p.id post_id, p.body post_body," +
             "p.creation_time post_creation_time " +
             "FROM posts p " +
-            "JOIN users u on p.user_id = u.id " +
-            "WHERE u.id = '%s' " +
+            "WHERE p.user_id = '%s' " +
             "ORDER BY p.creation_time DESC;";
-    private static final String LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_STATEMENT =
-            "SELECT u.email comment_user_email," +
-            "c.body comment_body," +
-            "c.creation_time comment_creation_time " +
-            "FROM comments c " +
-            "JOIN posts p ON c.post_id = p.id " +
-            "JOIN users u on u.id = c.user_id " +
-            "WHERE c.post_id = '%s' " +
-            "ORDER BY c.creation_time DESC " +
+    private static final String LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT =
+            "SELECT post_id, comment_user_email, comment_body," +
+            "comment_creation_time " +
+            "FROM comments_on_own_posts " +
+            "WHERE post_id = '%s' " +
+            "ORDER BY comment_creation_time DESC " +
             "LIMIT 100;";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ClockConfig.utcZone());
 
     @Override
     public List<OwnPostsReturnVM> loadOwnPosts(UUID userId) {
@@ -50,7 +44,7 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
                 Instant postCreationTime = postResultSet.getTimestamp("post_creation_time").toInstant();
 
                 Statement commentsStatement = conn.createStatement();
-                String commentsQuery = String.format(LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_STATEMENT, postId);
+                String commentsQuery = String.format(LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT, postId);
                 ResultSet commentsResultSet = commentsStatement.executeQuery(commentsQuery);
 
                 ArrayList<CommentReturnVM> commentsOnOwnPosts = new ArrayList<>();

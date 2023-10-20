@@ -1,6 +1,5 @@
 package com.socialmedia.posts.adapter.out;
 
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
 import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
 import com.socialmedia.utils.database.DatabaseUtils;
@@ -8,16 +7,14 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.socialmedia.utils.formatters.DateFormatter.FORMATTER;
+
 public class LoadFollowingPostsAdapter implements LoadFollowingPostsPort {
     private static final String LOAD_FOLLOWING_POSTS_BY_USER_ID_STATEMENT = "SELECT * FROM following_posts WHERE user_id = '%s';";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ClockConfig.utcZone());
-
 
     @Override
     public List<FollowingPostsReturnVM> loadFollowingPosts(UUID userId) {
