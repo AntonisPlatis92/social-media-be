@@ -1,6 +1,6 @@
 package com.socialmedia;
 
-import com.socialmedia.accounts.adapter.in.FollowsViewController;
+import com.socialmedia.accounts.adapter.in.UsersViewController;
 import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.in.*;
 import com.socialmedia.accounts.application.port.out.*;
@@ -47,6 +47,7 @@ public class SocialMediaApplication {
         LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort = new LoadCommentsOnOwnPostsAdapter();
         LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort = new LoadCommentsOnOwnAndFollowingPostsAdapter();
         LoadFollowPort loadFollowPort = new LoadFollowAdapter();
+        SearchUserPort searchUserPort = new SearchUserAdapter();
         // Initialize services
         CreateUserUseCase createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
@@ -58,6 +59,7 @@ public class SocialMediaApplication {
         CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
         ViewPostsUseCase viewFollowingPostsUseCase = new ViewPostsService(loadFollowingPostsPort, loadOwnPostsPort, loadCommentsOnOwnPostsPort, loadCommentsOnOwnAndFollowingPostsPort);
         LoadFollowsUseCase loadFollowsUseCase = new LoadFollowsService(loadFollowPort);
+        SearchUsersUseCase searchUsersUseCase = new SearchUsersService(searchUserPort);
         // Initialize controllers
         UserController userController = new UserController(
                 createUserUseCase,
@@ -66,7 +68,7 @@ public class SocialMediaApplication {
                 createFollowUseCase,
                 removeFollowUseCase);
         PostController postController = new PostController(createPostUseCase, createCommentUseCase);
-        FollowsViewController followsViewController = new FollowsViewController(loadFollowsUseCase);
+        UsersViewController usersViewController = new UsersViewController(loadFollowsUseCase, searchUsersUseCase);
         PostViewController postViewController = new PostViewController(viewFollowingPostsUseCase);
 
         // Define routes
@@ -81,7 +83,8 @@ public class SocialMediaApplication {
         app.get("ownPosts", postViewController.viewOwnPosts);
         app.get("commentsOnOwnPosts", postViewController.viewCommentsOnOwnPosts);
         app.get("commentsOnOwnAndFollowingPosts", postViewController.viewCommentsOnOwnAndFollowingPosts);
-        app.get("ownFollows", followsViewController.viewOwnFollows);
+        app.get("ownFollows", usersViewController.viewOwnFollows);
+        app.get("users/{term}", usersViewController.searchUsers);
 
         // Start the server
         app.start(8080);
