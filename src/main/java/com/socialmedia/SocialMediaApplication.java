@@ -38,6 +38,7 @@ public class SocialMediaApplication {
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         LoadRolePort loadRolePort = new LoadRoleAdapter();
         CreateFollowPort createFollowPort = new CreateFollowAdapter();
+        RemoveFollowPort removeFollowPort = new RemoveFollowAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
         LoadPostPort loadPostPort = new LoadPostAdapter();
         CreateCommentPort createCommentPort = new CreateCommentAdapter();
@@ -51,6 +52,7 @@ public class SocialMediaApplication {
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
         CreateFollowUseCase createFollowUseCase = new CreateFollowService(loadUserPort, createFollowPort);
+        RemoveFollowUseCase removeFollowUseCase = new RemoveFollowService(loadUserPort, removeFollowPort);
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort);
         CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
@@ -61,7 +63,8 @@ public class SocialMediaApplication {
                 createUserUseCase,
                 verifyUserUseCase,
                 loginUserUseCase,
-                createFollowUseCase);
+                createFollowUseCase,
+                removeFollowUseCase);
         PostController postController = new PostController(createPostUseCase, createCommentUseCase);
         FollowsViewController followsViewController = new FollowsViewController(loadFollowsUseCase);
         PostViewController postViewController = new PostViewController(viewFollowingPostsUseCase);
@@ -73,6 +76,7 @@ public class SocialMediaApplication {
         app.post("posts", postController.createNewPost);
         app.post("comments", postController.createNewComment);
         app.post("follows", userController.followUser);
+        app.delete("follows", userController.unfollowUser);
         app.get("followingPosts", postViewController.viewFollowingPosts);
         app.get("ownPosts", postViewController.viewOwnPosts);
         app.get("commentsOnOwnPosts", postViewController.viewCommentsOnOwnPosts);

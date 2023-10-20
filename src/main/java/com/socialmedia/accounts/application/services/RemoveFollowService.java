@@ -19,8 +19,8 @@ public class RemoveFollowService implements RemoveFollowUseCase {
     }
     @Override
     public void removeFollow(RemoveFollowCommand command) {
-        User followerUser = loadUserPort.loadUserById(command.followerId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerId())));
-        User followingUser = loadUserPort.loadUserById(command.followingId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followingId())));
+        User followerUser = loadUserPort.loadUserById(command.followerUserId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerUserId())));
+        User followingUser = loadUserPort.loadUserByEmail(command.unfollowingUserEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.unfollowingUserEmail())));
 
         followerUser.unfollow(followingUser, removeFollowPort);
     }

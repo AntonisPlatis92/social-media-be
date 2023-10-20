@@ -7,13 +7,13 @@ import java.util.UUID;
 
 public record RemoveFollowCommand(
         @NotNull
-        UUID followerId,
+        UUID followerUserId,
         @NotNull
-        UUID followingId
+        String unfollowingUserEmail
 ) {
-    public RemoveFollowCommand(UUID followerId, UUID followingId) {
-        this.followerId = followerId;
-        this.followingId = followingId;
+    public RemoveFollowCommand(UUID followerUserId, String unfollowingUserEmail) {
+        this.followerUserId = followerUserId;
+        this.unfollowingUserEmail = unfollowingUserEmail;
         Validation.validate(this);
     }
 }

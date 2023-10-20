@@ -61,7 +61,7 @@ public class CreateCommentServiceTest {
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
+        User user = UserBuilder.aRandomUserBuilder().withUserId(USER_ID).withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
         String postBody = "postBody";
@@ -97,7 +97,7 @@ public class CreateCommentServiceTest {
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
+        User user = UserBuilder.aRandomUserBuilder().withUserId(USER_ID).withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
         String postBody = "postBody";
@@ -132,7 +132,7 @@ public class CreateCommentServiceTest {
                 commentBody
         );
 
-        User user = UserBuilder.aRandomUserBuilder().withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
+        User user = UserBuilder.aRandomUserBuilder().withUserId(USER_ID).withRole(RoleBuilder.aFreeUserRoleBuilder().build()).build();
         when(loadUserUseCase.loadUserById(USER_ID)).thenReturn(Optional.of(user));
 
 

@@ -4,10 +4,7 @@ import com.socialmedia.accounts.adapter.in.UserController;
 import com.socialmedia.accounts.adapter.in.vms.CreateFollowVM;
 import com.socialmedia.accounts.adapter.in.vms.CreateUserVM;
 import com.socialmedia.accounts.adapter.in.vms.LoginUserVM;
-import com.socialmedia.accounts.application.port.in.CreateFollowUseCase;
-import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
-import com.socialmedia.accounts.application.port.in.LoginUserUseCase;
-import com.socialmedia.accounts.application.port.in.VerifyUserUseCase;
+import com.socialmedia.accounts.application.port.in.*;
 import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
@@ -41,12 +38,14 @@ class UserControllerTest {
     @Mock
     private CreateFollowUseCase createFollowUseCase;
     @Mock
+    private RemoveFollowUseCase removeFollowUseCase;
+    @Mock
     private Context ctx;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new UserController(createUserUseCase, verifyUserUseCase, loginUserUseCase, createFollowUseCase);
+        sut = new UserController(createUserUseCase, verifyUserUseCase, loginUserUseCase, createFollowUseCase, removeFollowUseCase);
     }
 
     @Test
