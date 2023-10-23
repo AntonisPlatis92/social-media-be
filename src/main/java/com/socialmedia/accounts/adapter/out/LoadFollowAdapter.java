@@ -5,8 +5,8 @@ import com.socialmedia.accounts.domain.Follow;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadFollowPort;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +14,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class LoadFollowAdapter implements LoadFollowPort {
-    private static final String LOAD_FOLLOW_BY_PK_STATEMENT = "SELECT * FROM follows WHERE follower_id = '%s' AND following_id = '%s';";
-    private static final String LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.following_id WHERE follower_id = '%s';";
-    private static final String LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.follower_id WHERE following_id = '%s';";
+    private static final String LOAD_FOLLOW_BY_PK_STATEMENT = "SELECT * FROM follows WHERE follower_id = ? AND following_id = ?;";
+    private static final String LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.following_id WHERE follower_id = ?;";
+    private static final String LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.follower_id WHERE following_id = ?;";
 
     @Override
     public Optional<Follow> loadFollowByPk(UUID followerId, UUID followingId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
-            Statement statement = conn.createStatement();
-            String query = String.format(LOAD_FOLLOW_BY_PK_STATEMENT, followerId, followingId);
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement preparedStatement = conn.prepareStatement(LOAD_FOLLOW_BY_PK_STATEMENT);
+            preparedStatement.setObject(1, followerId);
+            preparedStatement.setObject(2, followingId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 UUID resultFollowerId = (UUID) resultSet.getObject("follower_id");
@@ -47,18 +48,18 @@ public class LoadFollowAdapter implements LoadFollowPort {
             List<String> following = new ArrayList<>();
 
 
-            Statement followerStatement = conn.createStatement();
-            String followerQuery = String.format(LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT, userId);
-            ResultSet followerResultSet = followerStatement.executeQuery(followerQuery);
+            PreparedStatement followerPreparedStatement = conn.prepareStatement(LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT);
+            followerPreparedStatement.setObject(1, userId);
+            ResultSet followerResultSet = followerPreparedStatement.executeQuery();
 
             while (followerResultSet.next()) {
                 String followerEmail = followerResultSet.getString("email");
                 followers.add(followerEmail);
             }
 
-            Statement followingStatement = conn.createStatement();
-            String followingQuery = String.format(LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT, userId);
-            ResultSet followingResultSet = followingStatement.executeQuery(followingQuery);
+            PreparedStatement followingPreparedStatement = conn.prepareStatement(LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT);
+            followingPreparedStatement.setObject(1, userId);
+            ResultSet followingResultSet = followingPreparedStatement.executeQuery();
 
             while (followingResultSet.next()) {
                 String followingEmail = followingResultSet.getString("email");

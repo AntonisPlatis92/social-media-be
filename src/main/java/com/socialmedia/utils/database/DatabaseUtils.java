@@ -1,6 +1,7 @@
 package com.socialmedia.utils.database;
 
 import com.socialmedia.config.HikariCPDataSource;
+import com.socialmedia.config.PropertiesManager;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;

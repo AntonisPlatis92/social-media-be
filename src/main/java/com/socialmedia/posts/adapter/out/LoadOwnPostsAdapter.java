@@ -5,8 +5,8 @@ import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
 import com.socialmedia.posts.application.port.out.LoadOwnPostsPort;
 import com.socialmedia.utils.database.DatabaseUtils;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,13 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
             "SELECT p.id post_id, p.body post_body," +
             "p.creation_time post_creation_time " +
             "FROM posts p " +
-            "WHERE p.user_id = '%s' " +
+            "WHERE p.user_id = ? " +
             "ORDER BY p.creation_time DESC;";
     private static final String LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT =
-            "SELECT post_id, comment_user_email, comment_body," +
+            "SELECT post_id, comment_user_email, comment_body, " +
             "comment_creation_time " +
             "FROM comments_on_own_posts " +
-            "WHERE post_id = '%s' " +
+            "WHERE post_id = ? " +
             "ORDER BY comment_creation_time DESC " +
             "LIMIT 100;";
 
@@ -34,18 +34,18 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
             List<OwnPostsReturnVM> ownPosts = new ArrayList<>();
 
-            Statement postStatement = conn.createStatement();
-            String postQuery = String.format(LOAD_OWN_POSTS_BY_USER_ID_STATEMENT, userId);
-            ResultSet postResultSet = postStatement.executeQuery(postQuery);
+            PreparedStatement postPreparedStatement = conn.prepareStatement(LOAD_OWN_POSTS_BY_USER_ID_STATEMENT);
+            postPreparedStatement.setObject(1, userId);
+            ResultSet postResultSet = postPreparedStatement.executeQuery();
 
             while (postResultSet.next()) {
-                String postId = postResultSet.getString("post_id");
+                UUID postId = (UUID) postResultSet.getObject("post_id");
                 String postBody = postResultSet.getString("post_body");
                 Instant postCreationTime = postResultSet.getTimestamp("post_creation_time").toInstant();
 
-                Statement commentsStatement = conn.createStatement();
-                String commentsQuery = String.format(LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT, postId);
-                ResultSet commentsResultSet = commentsStatement.executeQuery(commentsQuery);
+                PreparedStatement commentsPreparedStatement = conn.prepareStatement(LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT);
+                commentsPreparedStatement.setObject(1, postId);
+                ResultSet commentsResultSet = commentsPreparedStatement.executeQuery();
 
                 ArrayList<CommentReturnVM> commentsOnOwnPosts = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
                     Instant commentCreationTime = commentsResultSet.getTimestamp("comment_creation_time").toInstant();
 
                     commentsOnOwnPosts.add(new CommentReturnVM(
-                            postId,
+                            postId.toString(),
                             commentUserEmail,
                             commentBody,
                             FORMATTER.format(commentCreationTime)
@@ -63,7 +63,7 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
                 }
 
                 ownPosts.add(new OwnPostsReturnVM(
-                        postId,
+                        postId.toString(),
                         postBody,
                         FORMATTER.format(postCreationTime),
                         commentsOnOwnPosts));
