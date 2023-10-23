@@ -5,6 +5,7 @@ import com.socialmedia.accounts.domain.User;
 import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,5 +23,10 @@ public class LoadUserService implements LoadUserUseCase {
     @Override
     public Optional<User> loadUserByEmail(String email) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(email));
+    }
+
+    @Override
+    public List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold) {
+        return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUsersByFollowingMoreThan(followingUsersThreshold));
     }
 }

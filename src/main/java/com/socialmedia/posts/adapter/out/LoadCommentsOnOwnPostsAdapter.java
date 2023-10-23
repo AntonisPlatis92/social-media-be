@@ -18,7 +18,8 @@ public class LoadCommentsOnOwnPostsAdapter implements LoadCommentsOnOwnPostsPort
             "SELECT * " +
             "FROM comments_on_own_posts " +
             "WHERE user_id = ? " +
-            "ORDER BY comment_creation_time DESC;";
+            "ORDER BY comment_creation_time DESC " +
+            "LIMIT 1000;";
 
     @Override
     public List<CommentReturnVM> loadCommentsOnOwnPosts(UUID userId) {

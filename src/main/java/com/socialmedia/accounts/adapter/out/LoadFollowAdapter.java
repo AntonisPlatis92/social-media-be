@@ -17,6 +17,7 @@ public class LoadFollowAdapter implements LoadFollowPort {
     private static final String LOAD_FOLLOW_BY_PK_STATEMENT = "SELECT * FROM follows WHERE follower_id = ? AND following_id = ?;";
     private static final String LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.following_id WHERE follower_id = ?;";
     private static final String LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.follower_id WHERE following_id = ?;";
+    private static final String LOAD_FOLLOWING_USER_IDS_BY_USER_ID_STATEMENT = "SELECT following_id FROM follows WHERE follower_id = ?;";
 
     @Override
     public Optional<Follow> loadFollowByPk(UUID followerId, UUID followingId) {
@@ -70,6 +71,24 @@ public class LoadFollowAdapter implements LoadFollowPort {
                     followers,
                     following
             );
+        });
+    }
+
+    @Override
+    public List<UUID> loadFollowingUserIdsByUserId(UUID userId) {
+        return DatabaseUtils.doInTransactionAndReturn((conn) -> {
+            List<UUID> followingIds = new ArrayList<>();
+
+            PreparedStatement followerPreparedStatement = conn.prepareStatement(LOAD_FOLLOWING_USER_IDS_BY_USER_ID_STATEMENT);
+            followerPreparedStatement.setObject(1, userId);
+            ResultSet followerResultSet = followerPreparedStatement.executeQuery();
+
+            while (followerResultSet.next()) {
+                UUID followingUserId = (UUID) followerResultSet.getObject("following_id");
+                followingIds.add(followingUserId);
+            }
+
+            return followingIds;
         });
     }
 }

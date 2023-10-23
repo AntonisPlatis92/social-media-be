@@ -4,6 +4,7 @@ import com.socialmedia.accounts.adapter.in.vms.FollowsReturnVM;
 import com.socialmedia.accounts.application.port.in.LoadFollowsUseCase;
 import com.socialmedia.accounts.application.port.out.LoadFollowPort;
 
+import java.util.List;
 import java.util.UUID;
 
 public class LoadFollowsService implements LoadFollowsUseCase {
@@ -17,5 +18,10 @@ public class LoadFollowsService implements LoadFollowsUseCase {
     public FollowsReturnVM loadFollowsByUserId(UUID userId) {
 
         return loadFollowPort.loadFollowsByUserId(userId);
+    }
+
+    @Override
+    public List<UUID> loadFollowingUserIds(UUID userId) {
+        return loadFollowPort.loadFollowingUserIdsByUserId(userId);
     }
 }

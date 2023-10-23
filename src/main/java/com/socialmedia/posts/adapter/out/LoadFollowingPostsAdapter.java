@@ -8,35 +8,44 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static com.socialmedia.utils.formatters.DateFormatter.FORMATTER;
 
 public class LoadFollowingPostsAdapter implements LoadFollowingPostsPort {
-    private static final String LOAD_FOLLOWING_POSTS_BY_USER_ID_STATEMENT = "SELECT * FROM following_posts WHERE user_id = ?;";
 
     @Override
-    public List<FollowingPostsReturnVM> loadFollowingPosts(UUID userId) {
+    public List<FollowingPostsReturnVM> loadFollowingPostsByFollowingUserIds(List<UUID> userIds) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
-            List<FollowingPostsReturnVM> followingPosts = new ArrayList<>();
+            List<FollowingPostsReturnVM> followingPostsReturnVM = new ArrayList<>();
 
-            PreparedStatement preparedStatement = conn.prepareStatement(LOAD_FOLLOWING_POSTS_BY_USER_ID_STATEMENT);
-            preparedStatement.setObject(1, userId);
+            String uuidPlaceholders = String.join(",", Collections.nCopies(userIds.size(), "?"));
+            String sqlQuery = "SELECT * FROM posts WHERE user_id IN (" + uuidPlaceholders + ");";
+
+            PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery);
+            int parameterIndex = 1;
+             {preparedStatement.setString(parameterIndex, "1");}
+            for (UUID userId : userIds) {
+                preparedStatement.setObject(parameterIndex++, userId);
+            }
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                UUID postId = (UUID) resultSet.getObject("post_id");
-                String post_user_email = resultSet.getString("post_user_email");
-                String postBody = resultSet.getString("post_body");
-                Instant postCreationTime = resultSet.getTimestamp("post_creation_time").toInstant();
+                UUID postId = (UUID) resultSet.getObject("id");
+                UUID userId = (UUID) resultSet.getObject("user_id");
+                String postBody = resultSet.getString("body");
+                Instant postCreationTime = resultSet.getTimestamp("creation_time").toInstant();
 
-                followingPosts.add(new FollowingPostsReturnVM(
+                followingPostsReturnVM.add(new FollowingPostsReturnVM(
                         postId.toString(),
-                        post_user_email,
+                        userId.toString(),
                         postBody,
-                        FORMATTER.format(postCreationTime)));
+                        FORMATTER.format(postCreationTime)
+                ));
             }
-            return followingPosts;
+
+            return followingPostsReturnVM;
         });
     }
 }

@@ -11,6 +11,11 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
+import com.socialmedia.posts.adapter.out.LoadFollowingPostsAdapter;
+import com.socialmedia.posts.application.memory.FollowingPostsMemory;
+import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
+import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
+import com.socialmedia.posts.application.services.FollowingPostsMemoryService;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import com.socialmedia.posts.adapter.out.CreatePostAdapter;
 import com.socialmedia.posts.adapter.out.LoadPostAdapter;
@@ -38,6 +43,9 @@ public class CreatePostServiceIT {
     private LoadRolePort loadRolePort;
     private CreatePostPort createPostPort;
     private LoadPostPort loadPostPort;
+    private FollowingPostsMemory followingPostsMemory;
+    private LoadFollowingPostsPort loadFollowingPostsPort;
+    private FollowingPostsMemoryUseCase followingPostsCacheUseCase;
 
 
     @BeforeEach
@@ -49,7 +57,10 @@ public class CreatePostServiceIT {
         createUserPort = new CreateUserAdapter();
         createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
-        createPostService = new CreatePostService(loadUserUseCase, createPostPort);
+        loadFollowingPostsPort = new LoadFollowingPostsAdapter();
+        followingPostsMemory = new FollowingPostsMemory();
+        followingPostsCacheUseCase = new FollowingPostsMemoryService(loadFollowingPostsPort, followingPostsMemory, loadUserUseCase);
+        createPostService = new CreatePostService(loadUserUseCase, createPostPort, followingPostsCacheUseCase);
     }
 
     @Test

@@ -7,13 +7,11 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import lombok.NoArgsConstructor;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @NoArgsConstructor
 public class LoadUserAdapter implements LoadUserPort {
@@ -23,6 +21,12 @@ public class LoadUserAdapter implements LoadUserPort {
     private static final String LOAD_ROLE_BY_ID_STATEMENT = "SELECT * FROM roles WHERE id = '%s';";
     private static final String LOAD_FOLLOWS_BY_FOLLOWING_ID_STATEMENT = "SELECT * FROM follows WHERE following_id = '%s';";
     private static final String LOAD_FOLLOWS_BY_FOLLOWER_ID_STATEMENT = "SELECT * FROM follows WHERE follower_id = '%s';";
+    private static final String LOAD_USERS_BY_FOLLOWING_MORE_OR_EQUAL_TO_STATEMENT =
+            "SELECT u.id " +
+            "FROM users u " +
+            "JOIN follows f ON f.follower_id = u.id " +
+            "GROUP BY u.id " +
+            "HAVING COUNT(f.follower_id) > ?;";
 
     @Override
     public Optional<User> loadUserByEmail(String email) {
@@ -198,6 +202,27 @@ public class LoadUserAdapter implements LoadUserPort {
                 else {return Optional.empty();}
             }
             else {return Optional.empty();}
+        });
+    }
+
+    @Override
+    public List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold) {
+        return DatabaseUtils.doInTransactionAndReturn((conn) -> {
+            List<User> users = new ArrayList<>();
+
+            PreparedStatement preparedStatement = conn.prepareStatement(LOAD_USERS_BY_FOLLOWING_MORE_OR_EQUAL_TO_STATEMENT);
+            preparedStatement.setLong(1, followingUsersThreshold);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                UUID userId = (UUID) resultSet.getObject("id");
+
+                User user = loadUserById(userId).get();
+
+                users.add(user);
+
+            }
+            return users;
         });
     }
 }

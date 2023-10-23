@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface LoadFollowPort {
     Optional<Follow> loadFollowByPk(UUID followerId, UUID followingId);
     FollowsReturnVM loadFollowsByUserId(UUID userId);
+    List<UUID> loadFollowingUserIdsByUserId(UUID userId);
 }

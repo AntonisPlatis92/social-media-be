@@ -3,6 +3,7 @@ package unit.com.socialmedia.content.application.services;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
 import com.socialmedia.posts.application.services.CreatePostService;
 import com.socialmedia.posts.domain.Post;
@@ -31,13 +32,15 @@ public class CreatePostServiceTest {
     private LoadUserUseCase loadUserUseCase;
     @Mock
     private CreatePostPort createPostPort;
+    @Mock
+    private FollowingPostsMemoryUseCase followingPostsCacheUseCase;
     @Captor
     ArgumentCaptor<Post> postCaptor;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        sut = new CreatePostService(loadUserUseCase, createPostPort);
+        sut = new CreatePostService(loadUserUseCase, createPostPort, followingPostsCacheUseCase);
     }
 
     @Test

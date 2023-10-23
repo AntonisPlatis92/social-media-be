@@ -8,16 +8,12 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class LoadPostAdapter implements LoadPostPort {
     private static final String LOAD_POST_BY_ID_STATEMENT = "SELECT * FROM posts WHERE id = '%s';";
     private static final String LOAD_POST_BY_USER_ID_STATEMENT = "SELECT * FROM posts WHERE user_id = '%s';";
     private static final String LOAD_COMMENT_BY_POST_ID_STATEMENT = "SELECT * FROM comments WHERE post_id = '%s';";
-
 
     @Override
     public Optional<Post> loadPostById(UUID id) {
