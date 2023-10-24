@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchUserAdapter implements SearchUserPort {
-    private static final String SEARCH_USER_BY_EMAIL_LIKE_STATEMENT = "SELECT email FROM users WHERE email ILIKE ?;";;
+    private static final String SEARCH_USER_BY_EMAIL_LIKE_STATEMENT = "SELECT email FROM users WHERE email ILIKE ? LIMIT 1000;";;
 
     @Override
     public SearchUsersReturnVM searchUsers(String termToSearch) {

@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class LoadFollowAdapter implements LoadFollowPort {
     private static final String LOAD_FOLLOW_BY_PK_STATEMENT = "SELECT * FROM follows WHERE follower_id = ? AND following_id = ?;";
-    private static final String LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.following_id WHERE follower_id = ?;";
-    private static final String LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.follower_id WHERE following_id = ?;";
+    private static final String LOAD_FOLLOW_BY_FOLLOWER_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.following_id WHERE follower_id = ? LIMIT 1000;";
+    private static final String LOAD_FOLLOW_BY_FOLLOWING_ID_STATEMENT = "SELECT users.email FROM follows JOIN users ON users.id = follows.follower_id WHERE following_id = ? LIMIT 1000;";
     private static final String LOAD_FOLLOWING_USER_IDS_BY_USER_ID_STATEMENT = "SELECT following_id FROM follows WHERE follower_id = ?;";
 
     @Override

@@ -20,7 +20,8 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
             "p.creation_time post_creation_time " +
             "FROM posts p " +
             "WHERE p.user_id = ? " +
-            "ORDER BY p.creation_time DESC;";
+            "ORDER BY p.creation_time DESC " +
+            "LIMIT 1000;";
     private static final String LOAD_COMMENTS_ON_OWN_POSTS_BY_POST_ID_LIMIT_100_STATEMENT =
             "SELECT post_id, comment_user_email, comment_body, " +
             "comment_creation_time " +

@@ -15,7 +15,7 @@ import static com.socialmedia.utils.formatters.DateFormatter.FORMATTER;
 
 public class LoadCommentsOnOwnAndFollowingPostsAdapter implements LoadCommentsOnOwnAndFollowingPostsPort {
     private static final String LOAD_COMMENTS_ON_OWN_AND_FOLLOWING_POSTS_BY_USER_ID_STATEMENT =
-            "SELECT * FROM comments_on_own_and_following_posts WHERE user_id = ?;";
+            "SELECT * FROM comments_on_own_and_following_posts WHERE user_id = ? LIMIT 1000;";
 
 
     @Override
