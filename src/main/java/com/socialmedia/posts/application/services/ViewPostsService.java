@@ -1,7 +1,12 @@
 package com.socialmedia.posts.application.services;
 
 import com.socialmedia.accounts.application.port.in.LoadFollowsUseCase;
-import com.socialmedia.posts.application.memory.FollowingPostsMemory;
+import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
+import com.socialmedia.accounts.domain.Follow;
+import com.socialmedia.accounts.domain.User;
+import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.config.ClockConfig;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.LoadCommentsOnOwnAndFollowingPostsPort;
 import com.socialmedia.posts.application.port.out.LoadCommentsOnOwnPostsPort;
 import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
@@ -11,11 +16,12 @@ import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
 import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
 import com.socialmedia.posts.application.port.in.ViewPostsUseCase;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.socialmedia.posts.application.services.FollowingPostsMemoryService.FOLLOWING_USERS_THRESHOLD;
+import static com.socialmedia.posts.application.services.FollowingPostsCacheService.FOLLOWING_USERS_THRESHOLD;
 
 public class ViewPostsService implements ViewPostsUseCase {
 
@@ -23,27 +29,29 @@ public class ViewPostsService implements ViewPostsUseCase {
     private final LoadOwnPostsPort loadOwnPostsPort;
     private final LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort;
     private final LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort;
-    private final LoadFollowsUseCase loadFollowsUseCase;
-    private final FollowingPostsMemory followingPostsMemory;
+    private final LoadUserUseCase loadUserUseCase;
+    private final FollowingPostsCacheUseCase followingPostsCacheUseCase;
 
     public ViewPostsService(LoadFollowingPostsPort loadFollowingPostsPort,
                             LoadOwnPostsPort loadOwnPostsPort,
                             LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort,
                             LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort,
-                            LoadFollowsUseCase loadFollowsUseCase,
-                            FollowingPostsMemory followingPostsMemory) {
+                            LoadUserUseCase loadUserUseCase,
+                            FollowingPostsCacheUseCase followingPostsCacheUseCase) {
         this.loadFollowingPostsPort = loadFollowingPostsPort;
         this.loadOwnPostsPort = loadOwnPostsPort;
         this.loadCommentsOnOwnPostsPort = loadCommentsOnOwnPostsPort;
         this.loadCommentsOnOwnAndFollowingPostsPort = loadCommentsOnOwnAndFollowingPostsPort;
-        this.loadFollowsUseCase = loadFollowsUseCase;
-        this.followingPostsMemory = followingPostsMemory;
+        this.loadUserUseCase = loadUserUseCase;
+        this.followingPostsCacheUseCase = followingPostsCacheUseCase;
     }
 
     @Override
     public List<FollowingPostsReturnVM> viewFollowingPostsInDescendingOrder(UUID userId) {
         List<FollowingPostsReturnVM> followingPostsReturnVM = new ArrayList<>();
-        List<UUID> followingIds = loadFollowsUseCase.loadFollowingUserIds(userId);
+
+        User user = loadUserUseCase.loadUserById(userId).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        List<UUID> followingIds = user.getFollowing().stream().map(Follow::getFollowingId).toList();
 
         if (followingIds.isEmpty()) {return followingPostsReturnVM;}
 
@@ -51,7 +59,7 @@ public class ViewPostsService implements ViewPostsUseCase {
             followingPostsReturnVM.addAll(loadFollowingPostsPort.loadFollowingPostsByFollowingUserIds(followingIds));
         }
         else {
-            followingPostsReturnVM.addAll(followingPostsMemory.getPostsForUser(userId));
+            followingPostsReturnVM.addAll(followingPostsCacheUseCase.getUserFollowingPostsFromCache(user));
         }
 
         return followingPostsReturnVM;

@@ -72,5 +72,9 @@ public class ExceptionHandler {
             ctx.status(400);
             ctx.result(e.getMessage());
         });
+        app.exception(RuntimeException.class, (e, ctx) -> {
+            ctx.status(500);
+            ctx.result(e.getMessage());
+        });
     }
 }

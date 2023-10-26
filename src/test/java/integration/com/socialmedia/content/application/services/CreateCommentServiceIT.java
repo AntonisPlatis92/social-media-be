@@ -12,19 +12,15 @@ import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.posts.adapter.out.LoadFollowingPostsAdapter;
-import com.socialmedia.posts.application.memory.FollowingPostsMemory;
-import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
-import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
-import com.socialmedia.posts.application.services.FollowingPostsMemoryService;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
+import com.socialmedia.posts.application.port.out.*;
+import com.socialmedia.posts.application.services.FollowingPostsCacheService;
 import com.socialmedia.posts.domain.Post;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import com.socialmedia.posts.adapter.out.CreateCommentAdapter;
 import com.socialmedia.posts.adapter.out.CreatePostAdapter;
 import com.socialmedia.posts.adapter.out.LoadPostAdapter;
 import com.socialmedia.posts.application.port.in.CreatePostUseCase;
-import com.socialmedia.posts.application.port.out.CreateCommentPort;
-import com.socialmedia.posts.application.port.out.CreatePostPort;
-import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.application.services.CreateCommentService;
 import com.socialmedia.posts.application.services.CreatePostService;
 import com.socialmedia.posts.domain.commands.CreateCommentCommand;
@@ -51,9 +47,9 @@ public class CreateCommentServiceIT {
     private CreatePostPort createPostPort;
     private LoadPostPort loadPostPort;
     private CreateCommentPort createCommentPort;
-    private FollowingPostsMemory followingPostsMemory;
+    private FollowingPostsCachePort followingPostsCachePort;
+    private FollowingPostsCacheUseCase followingPostsCacheUseCase;
     private LoadFollowingPostsPort loadFollowingPostsPort;
-    private FollowingPostsMemoryUseCase followingPostsCacheUseCase;
 
 
     @BeforeEach
@@ -66,9 +62,8 @@ public class CreateCommentServiceIT {
         createCommentPort = new CreateCommentAdapter();
         createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
-        followingPostsMemory = new FollowingPostsMemory();
         loadFollowingPostsPort = new LoadFollowingPostsAdapter();
-        followingPostsCacheUseCase = new FollowingPostsMemoryService(loadFollowingPostsPort, followingPostsMemory, loadUserUseCase);
+        followingPostsCacheUseCase = new FollowingPostsCacheService(loadFollowingPostsPort, followingPostsCachePort, loadUserUseCase);
         createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort, followingPostsCacheUseCase);
         createCommentService = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
     }

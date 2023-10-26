@@ -8,14 +8,13 @@ import com.socialmedia.accounts.application.services.*;
 import com.socialmedia.config.PropertiesManager;
 import com.socialmedia.posts.adapter.in.PostViewController;
 import com.socialmedia.posts.adapter.out.*;
-import com.socialmedia.posts.application.memory.FollowingPostsMemory;
 import com.socialmedia.posts.application.port.in.CreateCommentUseCase;
 import com.socialmedia.posts.application.port.in.CreatePostUseCase;
-import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.*;
 import com.socialmedia.posts.application.services.CreateCommentService;
 import com.socialmedia.posts.application.services.CreatePostService;
-import com.socialmedia.posts.application.services.FollowingPostsMemoryService;
+import com.socialmedia.posts.application.services.FollowingPostsCacheService;
 import com.socialmedia.utils.exceptions.ExceptionHandler;
 import com.socialmedia.accounts.adapter.in.UserController;
 import com.socialmedia.posts.adapter.in.PostController;
@@ -46,7 +45,6 @@ public class SocialMediaApplication {
         flyway.migrate();
 
         // Initialize memory
-        FollowingPostsMemory followingPostsMemory = new FollowingPostsMemory();
 
         // Initialize ports
         LoadUserPort loadUserPort = new LoadUserAdapter();
@@ -64,9 +62,10 @@ public class SocialMediaApplication {
         LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort = new LoadCommentsOnOwnAndFollowingPostsAdapter();
         LoadFollowPort loadFollowPort = new LoadFollowAdapter();
         SearchUserPort searchUserPort = new SearchUserAdapter();
+        FollowingPostsCachePort followingPostsCachePort = new FollowingPostsRedisAdapter();
         // Initialize services
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
-        FollowingPostsMemoryUseCase followingPostsCacheUseCase = new FollowingPostsMemoryService(loadFollowingPostsPort, followingPostsMemory, loadUserUseCase);
+        FollowingPostsCacheUseCase followingPostsCacheUseCase = new FollowingPostsCacheService(loadFollowingPostsPort, followingPostsCachePort, loadUserUseCase);
         CreateUserUseCase createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         VerifyUserUseCase verifyUserUseCase = new VerifyUserService(loadUserPort, verifyUserPort);
         LoginUserUseCase loginUserUseCase = new LoginUserService(loadUserPort);
@@ -75,7 +74,7 @@ public class SocialMediaApplication {
         CreatePostUseCase createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort, followingPostsCacheUseCase);
         CreateCommentUseCase createCommentUseCase = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);
         LoadFollowsUseCase loadFollowsUseCase = new LoadFollowsService(loadFollowPort);
-        ViewPostsUseCase viewFollowingPostsUseCase = new ViewPostsService(loadFollowingPostsPort, loadOwnPostsPort, loadCommentsOnOwnPostsPort, loadCommentsOnOwnAndFollowingPostsPort, loadFollowsUseCase, followingPostsMemory);
+        ViewPostsUseCase viewFollowingPostsUseCase = new ViewPostsService(loadFollowingPostsPort, loadOwnPostsPort, loadCommentsOnOwnPostsPort, loadCommentsOnOwnAndFollowingPostsPort, loadUserUseCase, followingPostsCacheUseCase);
         SearchUsersUseCase searchUsersUseCase = new SearchUsersService(searchUserPort);
         // Initialize controllers
         UserController userController = new UserController(
@@ -87,9 +86,6 @@ public class SocialMediaApplication {
         PostController postController = new PostController(createPostUseCase, createCommentUseCase);
         UsersViewController usersViewController = new UsersViewController(loadFollowsUseCase, searchUsersUseCase);
         PostViewController postViewController = new PostViewController(viewFollowingPostsUseCase);
-
-        //
-        followingPostsCacheUseCase.addUsersInFollowingPostsMemoryOnStartup();
 
         // Define routes
         app.post("users", userController.createNewUser);

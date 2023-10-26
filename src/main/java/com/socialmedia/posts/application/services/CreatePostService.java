@@ -6,7 +6,7 @@ import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
-import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.domain.exceptions.PostCharsLimitException;
 import com.socialmedia.posts.application.port.in.CreatePostUseCase;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
@@ -16,12 +16,14 @@ import com.socialmedia.posts.domain.commands.CreatePostCommand;
 import java.util.List;
 import java.util.UUID;
 
+import static com.socialmedia.posts.application.services.FollowingPostsCacheService.FOLLOWING_USERS_THRESHOLD;
+
 public class CreatePostService implements CreatePostUseCase {
     private final LoadUserUseCase loadUserUseCase;
     private final CreatePostPort createPostPort;
-    private final FollowingPostsMemoryUseCase followingPostsCacheUseCase;
+    private final FollowingPostsCacheUseCase followingPostsCacheUseCase;
 
-    public CreatePostService(LoadUserUseCase loadUserUseCase, CreatePostPort createPostPort, FollowingPostsMemoryUseCase followingPostsCacheUseCase) {
+    public CreatePostService(LoadUserUseCase loadUserUseCase, CreatePostPort createPostPort, FollowingPostsCacheUseCase followingPostsCacheUseCase) {
         this.loadUserUseCase = loadUserUseCase;
         this.createPostPort = createPostPort;
         this.followingPostsCacheUseCase = followingPostsCacheUseCase;
@@ -46,7 +48,9 @@ public class CreatePostService implements CreatePostUseCase {
                 .toList();
         followerIds.forEach(followerId -> {
             User followerUser = loadUserUseCase.loadUserById(followerId).get();
-            followingPostsCacheUseCase.addPostForUserInFollowingPostsMemoryIfNeeded(followerUser, followingPostsReturnVM);
+            if (followerUser.getFollowing().size() > FOLLOWING_USERS_THRESHOLD) {
+                followingPostsCacheUseCase.addPostForUserInFollowingPostsMemory(followerUser, followingPostsReturnVM);
+            }
         });
     }
 

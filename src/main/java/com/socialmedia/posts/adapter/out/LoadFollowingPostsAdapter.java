@@ -22,7 +22,7 @@ public class LoadFollowingPostsAdapter implements LoadFollowingPostsPort {
             List<FollowingPostsReturnVM> followingPostsReturnVM = new ArrayList<>();
 
             String uuidPlaceholders = String.join(",", Collections.nCopies(userIds.size(), "?"));
-            String sqlQuery = "SELECT * FROM posts WHERE user_id IN (" + uuidPlaceholders + ");";
+            String sqlQuery = "SELECT * FROM posts WHERE user_id IN (" + uuidPlaceholders + ") ORDER BY creation_time DESC LIMIT 1000;";
 
             PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery);
             int parameterIndex = 1;

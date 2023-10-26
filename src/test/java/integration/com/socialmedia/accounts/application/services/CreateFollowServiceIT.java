@@ -11,11 +11,12 @@ import com.socialmedia.accounts.application.services.CreateFollowService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
+import com.socialmedia.posts.adapter.out.FollowingPostsRedisAdapter;
 import com.socialmedia.posts.adapter.out.LoadFollowingPostsAdapter;
-import com.socialmedia.posts.application.memory.FollowingPostsMemory;
-import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
+import com.socialmedia.posts.application.port.out.FollowingPostsCachePort;
 import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
-import com.socialmedia.posts.application.services.FollowingPostsMemoryService;
+import com.socialmedia.posts.application.services.FollowingPostsCacheService;
 import integration.com.socialmedia.config.IntegrationTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,10 +34,10 @@ public class CreateFollowServiceIT {
     private LoadUserPort loadUserPort;
     private CreateUserPort createUserPort;
     private CreateFollowPort createFollowPort;
-    private FollowingPostsMemory followingPostsMemory;
+    private FollowingPostsCachePort followingPostsCachePort;
     private LoadFollowingPostsPort  loadFollowingPostsPort;
     private LoadUserUseCase loadUserUseCase;
-    private FollowingPostsMemoryUseCase followingPostsCacheUseCase;
+    private FollowingPostsCacheUseCase followingPostsCacheUseCase;
 
 
     @BeforeEach
@@ -45,9 +46,9 @@ public class CreateFollowServiceIT {
         loadUserPort = new LoadUserAdapter();
         createFollowPort = new CreateFollowAdapter();
         loadFollowingPostsPort = new LoadFollowingPostsAdapter();
-        followingPostsMemory = new FollowingPostsMemory();
+        followingPostsCachePort = new FollowingPostsRedisAdapter();
         loadUserUseCase = new LoadUserService(loadUserPort);
-        followingPostsCacheUseCase = new FollowingPostsMemoryService(loadFollowingPostsPort, followingPostsMemory, loadUserUseCase);
+        followingPostsCacheUseCase = new FollowingPostsCacheService(loadFollowingPostsPort, followingPostsCachePort, loadUserUseCase);
         sut = new CreateFollowService(loadUserPort, createFollowPort, followingPostsCacheUseCase);
     }
 

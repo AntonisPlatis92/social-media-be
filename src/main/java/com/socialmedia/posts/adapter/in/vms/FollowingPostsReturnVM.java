@@ -1,7 +1,6 @@
 package com.socialmedia.posts.adapter.in.vms;
 
 import com.socialmedia.posts.domain.Post;
-import com.socialmedia.utils.formatters.DateFormatter;
 
 import static com.socialmedia.utils.formatters.DateFormatter.FORMATTER;
 

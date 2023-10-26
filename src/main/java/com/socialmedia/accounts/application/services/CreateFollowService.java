@@ -6,18 +6,20 @@ import com.socialmedia.accounts.application.port.out.CreateFollowPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.in.CreateFollowUseCase;
 import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
-import com.socialmedia.posts.application.port.in.FollowingPostsMemoryUseCase;
+import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
+
+import static com.socialmedia.posts.application.services.FollowingPostsCacheService.FOLLOWING_USERS_THRESHOLD;
 
 
 public class CreateFollowService implements CreateFollowUseCase {
     private LoadUserPort loadUserPort;
     private CreateFollowPort createFollowPort;
-    private FollowingPostsMemoryUseCase followingPostsCacheUseCase;
+    private FollowingPostsCacheUseCase followingPostsCacheUseCase;
 
     public CreateFollowService(
             LoadUserPort loadUserPort,
             CreateFollowPort createFollowPort,
-            FollowingPostsMemoryUseCase followingPostsCacheUseCase) {
+            FollowingPostsCacheUseCase followingPostsCacheUseCase) {
         this.loadUserPort = loadUserPort;
         this.createFollowPort = createFollowPort;
         this.followingPostsCacheUseCase = followingPostsCacheUseCase;
@@ -30,6 +32,8 @@ public class CreateFollowService implements CreateFollowUseCase {
 
         followerUser.follow(followingUser, createFollowPort);
 
-        followingPostsCacheUseCase.addUserInFollowingPostsMemoryIfNeeded(followerUser);
+        if (followerUser.getFollowing().size() >= FOLLOWING_USERS_THRESHOLD) {
+            followingPostsCacheUseCase.addUserInFollowingPostsCache(followerUser);
+        }
     }
 }
