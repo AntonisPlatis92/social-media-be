@@ -1,10 +1,10 @@
 package integration.com.socialmedia.accounts.application.services;
 
 
+import com.socialmedia.accounts.adapter.out.CreateUserJpaAdapter;
 import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import integration.com.socialmedia.config.IntegrationTestConfig;
-import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
 import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.domain.User;
@@ -32,7 +32,7 @@ class CreateUserServiceIT {
     @BeforeEach
     public void setup() {
         loadUserPort = new LoadUserAdapter();
-        createUserPort = new CreateUserAdapter();
+        createUserPort = new CreateUserJpaAdapter();
         loadRolePort = new LoadRoleAdapter();
         sut = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
     }

@@ -26,11 +26,8 @@ public class CreateUserService implements CreateUserUseCase {
     public void createUser(CreateUserCommand command) {
         checkIfUserAlreadyCreated(command.email());
 
-        DatabaseUtils.doInTransaction((conn) -> {
-                    Role role = loadRolePort.loadRoleById(command.roleId()).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
-                    createUserPort.createUser(User.createUserFromCommandAndRole(command,role));
-                }
-        );
+        Role role = loadRolePort.loadRoleById(command.roleId()).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
+        createUserPort.createUser(User.createUserFromCommandAndRole(command,role));
     }
 
     private void checkIfUserAlreadyCreated(String email) {

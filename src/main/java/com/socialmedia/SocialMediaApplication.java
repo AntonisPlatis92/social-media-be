@@ -48,7 +48,7 @@ public class SocialMediaApplication {
 
         // Initialize ports
         LoadUserPort loadUserPort = new LoadUserAdapter();
-        CreateUserPort createUserPort = new CreateUserAdapter();
+        CreateUserPort createUserPort = new CreateUserJpaAdapter();
         VerifyUserPort verifyUserPort = new VerifyUserAdapter();
         LoadRolePort loadRolePort = new LoadRoleAdapter();
         CreateFollowPort createFollowPort = new CreateFollowAdapter();
