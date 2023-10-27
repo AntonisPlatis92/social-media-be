@@ -3,7 +3,7 @@ package com.socialmedia.accounts.adapter.out;
 import com.socialmedia.accounts.adapter.out.jpa.FollowJpa;
 import com.socialmedia.accounts.adapter.out.jpa.RoleJpa;
 import com.socialmedia.accounts.adapter.out.jpa.UserJpa;
-import com.socialmedia.accounts.adapter.out.mappers.JpaMapper;
+import com.socialmedia.accounts.adapter.out.mappers.AccountsJpaMapper;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.utils.database.JpaDatabaseUtils;
@@ -44,7 +44,7 @@ public class LoadUserJpaAdapter implements LoadUserPort {
             followingQuery.setParameter("userId", userJpa.getId());
             List<FollowJpa> followingEntities = followingQuery.getResultList();
 
-            return Optional.of(JpaMapper.mapFromJpaEntitiesToUser(userJpa, roleJpa, followerEntities, followingEntities));
+            return Optional.of(AccountsJpaMapper.mapFromJpaEntitiesToUser(userJpa, roleJpa, followerEntities, followingEntities));
         });
     }
 
@@ -70,7 +70,7 @@ public class LoadUserJpaAdapter implements LoadUserPort {
             followingQuery.setParameter("userId", userJpa.getId());
             List<FollowJpa> followingEntities = followingQuery.getResultList();
 
-            return Optional.of(JpaMapper.mapFromJpaEntitiesToUser(userJpa, roleJpa, followerEntities, followingEntities));
+            return Optional.of(AccountsJpaMapper.mapFromJpaEntitiesToUser(userJpa, roleJpa, followerEntities, followingEntities));
         });
     }
 }

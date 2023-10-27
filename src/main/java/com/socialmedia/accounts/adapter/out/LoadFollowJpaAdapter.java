@@ -3,7 +3,7 @@ package com.socialmedia.accounts.adapter.out;
 import com.socialmedia.accounts.adapter.in.vms.FollowsReturnVM;
 import com.socialmedia.accounts.adapter.out.jpa.FollowId;
 import com.socialmedia.accounts.adapter.out.jpa.FollowJpa;
-import com.socialmedia.accounts.adapter.out.mappers.JpaMapper;
+import com.socialmedia.accounts.adapter.out.mappers.AccountsJpaMapper;
 import com.socialmedia.accounts.application.port.out.LoadFollowPort;
 import com.socialmedia.accounts.domain.Follow;
 import com.socialmedia.utils.database.JpaDatabaseUtils;
@@ -38,7 +38,7 @@ public class LoadFollowJpaAdapter implements LoadFollowPort {
             return query.getResultList();
         });
 
-        return JpaMapper.mapFromFollowJpaEntitiesToFollowsReturnVM(followerEntities, followingEntities);
+        return AccountsJpaMapper.mapFromFollowJpaEntitiesToFollowsReturnVM(followerEntities, followingEntities);
     }
 
     @Override

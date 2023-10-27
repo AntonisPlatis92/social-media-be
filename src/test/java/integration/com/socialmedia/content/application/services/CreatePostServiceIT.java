@@ -1,8 +1,6 @@
 package integration.com.socialmedia.content.application.services;
 
-import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.LoadRoleAdapter;
-import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
+import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.in.CreateUserUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
@@ -11,15 +9,12 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.services.CreateUserService;
 import com.socialmedia.accounts.application.services.LoadUserService;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
-import com.socialmedia.posts.adapter.out.FollowingPostsRedisAdapter;
-import com.socialmedia.posts.adapter.out.LoadFollowingPostsAdapter;
+import com.socialmedia.posts.adapter.out.*;
 import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.FollowingPostsCachePort;
 import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
 import com.socialmedia.posts.application.services.FollowingPostsCacheService;
 import integration.com.socialmedia.config.IntegrationTestConfig;
-import com.socialmedia.posts.adapter.out.CreatePostAdapter;
-import com.socialmedia.posts.adapter.out.LoadPostAdapter;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
 import com.socialmedia.posts.application.port.out.LoadPostPort;
 import com.socialmedia.posts.application.services.CreatePostService;
@@ -51,11 +46,11 @@ public class CreatePostServiceIT {
 
     @BeforeEach
     public void setup() {
-        loadUserPort = new LoadUserAdapter();
-        loadRolePort = new LoadRoleAdapter();
-        createPostPort = new CreatePostAdapter();
-        loadPostPort = new LoadPostAdapter();
-        createUserPort = new CreateUserAdapter();
+        loadUserPort = new LoadUserJpaAdapter();
+        loadRolePort = new LoadRoleJpaAdapter();
+        createPostPort = new CreatePostJpaAdapter();
+        loadPostPort = new LoadPostJpaAdapter();
+        createUserPort = new CreateUserJpaAdapter();
         createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
         loadFollowingPostsPort = new LoadFollowingPostsAdapter();

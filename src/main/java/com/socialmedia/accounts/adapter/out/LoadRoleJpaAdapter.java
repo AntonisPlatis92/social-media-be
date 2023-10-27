@@ -1,7 +1,7 @@
 package com.socialmedia.accounts.adapter.out;
 
 import com.socialmedia.accounts.adapter.out.jpa.RoleJpa;
-import com.socialmedia.accounts.adapter.out.mappers.JpaMapper;
+import com.socialmedia.accounts.adapter.out.mappers.AccountsJpaMapper;
 import com.socialmedia.accounts.application.port.out.LoadRolePort;
 import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.utils.database.JpaDatabaseUtils;
@@ -14,6 +14,6 @@ public class LoadRoleJpaAdapter implements LoadRolePort {
         Optional<RoleJpa> maybeRoleJpa = JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> {
             return Optional.ofNullable(entityManager.find(RoleJpa.class, roleId));
         });
-        return maybeRoleJpa.map(JpaMapper::mapFromRoleJpaToRoleEntity);
+        return maybeRoleJpa.map(AccountsJpaMapper::mapFromRoleJpaToRoleEntity);
     }
 }

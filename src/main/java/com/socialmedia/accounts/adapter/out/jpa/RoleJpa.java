@@ -19,16 +19,16 @@ public class RoleJpa {
     @Id
     private Long id;
 
-    @Column(name = "role_name", nullable = false)
+    @Column(name = "role_name")
     private String roleName;
 
-    @Column(name = "has_post_chars_limit", nullable = false)
+    @Column(name = "has_post_chars_limit")
     private boolean hasPostCharsLimit;
 
     @Column(name = "post_chars_limit")
     private Long postCharsLimit;
 
-    @Column(name = "has_comments_limit", nullable = false)
+    @Column(name = "has_comments_limit")
     private boolean hasCommentsLimit;
 
     @Column(name = "comments_limit")

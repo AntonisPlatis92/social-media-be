@@ -11,7 +11,7 @@ import com.socialmedia.accounts.domain.User;
 
 import java.util.List;
 
-public class JpaMapper {
+public class AccountsJpaMapper {
     public static UserJpa mapFromUserToUserJpaEntity(User user) {
         return new UserJpa(
                 user.getUserId(),

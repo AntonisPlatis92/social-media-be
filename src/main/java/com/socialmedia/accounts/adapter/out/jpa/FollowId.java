@@ -14,9 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class FollowId implements Serializable {
-    @Column(name = "follower_id")
+    @Column(name = "follower_id", nullable = false)
     private UUID followerId;
-    @Column(name = "following_id")
+    @Column(name = "following_id", nullable = false)
     private UUID followingId;
 }
 
