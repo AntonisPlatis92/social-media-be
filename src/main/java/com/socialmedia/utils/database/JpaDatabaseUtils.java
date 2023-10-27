@@ -1,10 +1,14 @@
 package com.socialmedia.utils.database;
 
+import com.socialmedia.config.HikariCPConfig;
+import com.socialmedia.config.HikariCPDataSource;
 import com.socialmedia.config.PropertiesManager;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+
+import javax.sql.DataSource;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

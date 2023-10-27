@@ -9,5 +9,4 @@ import java.util.UUID;
 public interface LoadUserUseCase {
     Optional<User> loadUserById(UUID userId);
     Optional<User> loadUserByEmail(String email);
-    List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold);
 }

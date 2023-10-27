@@ -7,7 +7,6 @@ import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import lombok.NoArgsConstructor;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
@@ -202,27 +201,6 @@ public class LoadUserAdapter implements LoadUserPort {
                 else {return Optional.empty();}
             }
             else {return Optional.empty();}
-        });
-    }
-
-    @Override
-    public List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold) {
-        return DatabaseUtils.doInTransactionAndReturn((conn) -> {
-            List<User> users = new ArrayList<>();
-
-            PreparedStatement preparedStatement = conn.prepareStatement(LOAD_USERS_BY_FOLLOWING_MORE_OR_EQUAL_TO_STATEMENT);
-            preparedStatement.setLong(1, followingUsersThreshold);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                UUID userId = (UUID) resultSet.getObject("id");
-
-                User user = loadUserById(userId).get();
-
-                users.add(user);
-
-            }
-            return users;
         });
     }
 }

@@ -44,15 +44,13 @@ public class SocialMediaApplication {
         // Validate and run the migrations
         flyway.migrate();
 
-        // Initialize memory
-
         // Initialize ports
         LoadUserPort loadUserPort = new LoadUserAdapter();
         CreateUserPort createUserPort = new CreateUserJpaAdapter();
-        VerifyUserPort verifyUserPort = new VerifyUserAdapter();
-        LoadRolePort loadRolePort = new LoadRoleAdapter();
-        CreateFollowPort createFollowPort = new CreateFollowAdapter();
-        RemoveFollowPort removeFollowPort = new RemoveFollowAdapter();
+        VerifyUserPort verifyUserPort = new VerifyUserJpaAdapter();
+        LoadRolePort loadRolePort = new LoadRoleJpaAdapter();
+        CreateFollowPort createFollowPort = new CreateFollowJpaAdapter();
+        RemoveFollowPort removeFollowPort = new RemoveFollowJpaAdapter();
         CreatePostPort createPostPort = new CreatePostAdapter();
         LoadPostPort loadPostPort = new LoadPostAdapter();
         CreateCommentPort createCommentPort = new CreateCommentAdapter();
@@ -60,7 +58,7 @@ public class SocialMediaApplication {
         LoadOwnPostsPort loadOwnPostsPort = new LoadOwnPostsAdapter();
         LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort = new LoadCommentsOnOwnPostsAdapter();
         LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort = new LoadCommentsOnOwnAndFollowingPostsAdapter();
-        LoadFollowPort loadFollowPort = new LoadFollowAdapter();
+        LoadFollowPort loadFollowPort = new LoadFollowJpaAdapter();
         SearchUserPort searchUserPort = new SearchUserAdapter();
         FollowingPostsCachePort followingPostsCachePort = new FollowingPostsRedisAdapter();
         // Initialize services

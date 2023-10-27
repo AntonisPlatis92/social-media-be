@@ -24,9 +24,4 @@ public class LoadUserService implements LoadUserUseCase {
     public Optional<User> loadUserByEmail(String email) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(email));
     }
-
-    @Override
-    public List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold) {
-        return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUsersByFollowingMoreThan(followingUsersThreshold));
-    }
 }

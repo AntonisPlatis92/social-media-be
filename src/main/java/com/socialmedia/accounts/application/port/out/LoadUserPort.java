@@ -9,5 +9,4 @@ import java.util.UUID;
 public interface LoadUserPort {
     Optional<User> loadUserByEmail(String email);
     Optional<User> loadUserById(UUID userId);
-    List<User> loadUsersByFollowingMoreThan(Integer followingUsersThreshold);
 }

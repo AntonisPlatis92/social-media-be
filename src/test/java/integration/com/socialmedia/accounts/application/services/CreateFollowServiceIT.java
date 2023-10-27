@@ -1,8 +1,6 @@
 package integration.com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.adapter.out.CreateFollowAdapter;
-import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
+import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.application.port.out.CreateFollowPort;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
@@ -42,9 +40,9 @@ public class CreateFollowServiceIT {
 
     @BeforeEach
     public void setup() {
-        createUserPort = new CreateUserAdapter();
-        loadUserPort = new LoadUserAdapter();
-        createFollowPort = new CreateFollowAdapter();
+        createUserPort = new CreateUserJpaAdapter();
+        loadUserPort = new LoadUserJpaAdapter();
+        createFollowPort = new CreateFollowJpaAdapter();
         loadFollowingPostsPort = new LoadFollowingPostsAdapter();
         followingPostsCachePort = new FollowingPostsRedisAdapter();
         loadUserUseCase = new LoadUserService(loadUserPort);

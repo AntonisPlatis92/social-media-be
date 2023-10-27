@@ -1,8 +1,6 @@
 package integration.com.socialmedia.accounts.application.services;
 
-import com.socialmedia.accounts.adapter.out.CreateUserAdapter;
-import com.socialmedia.accounts.adapter.out.LoadUserAdapter;
-import com.socialmedia.accounts.adapter.out.VerifyUserAdapter;
+import com.socialmedia.accounts.adapter.out.*;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
@@ -33,9 +31,9 @@ public class VerifyUserServiceIT {
 
     @BeforeEach
     public void setup() {
-        createUserPort = new CreateUserAdapter();
-        loadUserPort = new LoadUserAdapter();
-        verifyUserPort = new VerifyUserAdapter();
+        createUserPort = new CreateUserJpaAdapter();
+        loadUserPort = new LoadUserJpaAdapter();
+        verifyUserPort = new VerifyUserJpaAdapter();
         verifyUserService = new VerifyUserService(loadUserPort, verifyUserPort);
         loadUserService = new LoadUserService(loadUserPort);
     }
