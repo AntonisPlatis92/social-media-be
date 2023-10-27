@@ -1,11 +1,9 @@
 package com.socialmedia.posts.application.services;
 
-import com.socialmedia.accounts.application.port.in.LoadFollowsUseCase;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.Follow;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
-import com.socialmedia.config.ClockConfig;
 import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.LoadCommentsOnOwnAndFollowingPostsPort;
 import com.socialmedia.posts.application.port.out.LoadCommentsOnOwnPostsPort;
@@ -13,10 +11,9 @@ import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
 import com.socialmedia.posts.application.port.out.LoadOwnPostsPort;
 import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
-import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
+import com.socialmedia.posts.adapter.in.vms.OwnPostReturnVM;
 import com.socialmedia.posts.application.port.in.ViewPostsUseCase;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -66,7 +63,7 @@ public class ViewPostsService implements ViewPostsUseCase {
     }
 
     @Override
-    public List<OwnPostsReturnVM> viewOwnPostsLimitedToHundredComments(UUID userId) {
+    public List<OwnPostReturnVM> viewOwnPostsLimitedToHundredComments(UUID userId) {
 
         return loadOwnPostsPort.loadOwnPosts(userId);
     }

@@ -1,7 +1,7 @@
 package com.socialmedia.posts.adapter.out;
 
 import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
-import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
+import com.socialmedia.posts.adapter.in.vms.OwnPostReturnVM;
 import com.socialmedia.posts.application.port.out.LoadOwnPostsPort;
 import com.socialmedia.utils.database.DatabaseUtils;
 
@@ -31,9 +31,9 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
             "LIMIT 100;";
 
     @Override
-    public List<OwnPostsReturnVM> loadOwnPosts(UUID userId) {
+    public List<OwnPostReturnVM> loadOwnPosts(UUID userId) {
         return DatabaseUtils.doInTransactionAndReturn((conn) -> {
-            List<OwnPostsReturnVM> ownPosts = new ArrayList<>();
+            List<OwnPostReturnVM> ownPosts = new ArrayList<>();
 
             PreparedStatement postPreparedStatement = conn.prepareStatement(LOAD_OWN_POSTS_BY_USER_ID_STATEMENT);
             postPreparedStatement.setObject(1, userId);
@@ -63,7 +63,7 @@ public class LoadOwnPostsAdapter implements LoadOwnPostsPort {
                     ));
                 }
 
-                ownPosts.add(new OwnPostsReturnVM(
+                ownPosts.add(new OwnPostReturnVM(
                         postId.toString(),
                         postBody,
                         FORMATTER.format(postCreationTime),

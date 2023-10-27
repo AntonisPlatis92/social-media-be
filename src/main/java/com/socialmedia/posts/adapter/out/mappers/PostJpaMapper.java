@@ -1,9 +1,13 @@
 package com.socialmedia.posts.adapter.out.mappers;
 
+import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
+import com.socialmedia.posts.adapter.in.vms.OwnPostReturnVM;
 import com.socialmedia.posts.adapter.out.jpa.CommentJpa;
+import com.socialmedia.posts.adapter.out.jpa.CommentOnOwnPostsViewJpa;
 import com.socialmedia.posts.adapter.out.jpa.PostJpa;
 import com.socialmedia.posts.domain.Comment;
 import com.socialmedia.posts.domain.Post;
+import com.socialmedia.utils.formatters.DateFormatter;
 
 import java.util.List;
 
@@ -40,6 +44,22 @@ public class PostJpaMapper {
                                 commentJpa.getPostId(),
                                 commentJpa.getBody(),
                                 commentJpa.getCreationTime()
+                        ))
+                        .toList()
+        );
+    }
+
+    public static OwnPostReturnVM mapFromJpaEntitiesToOwnPostReturnVM(PostJpa postJpa, List<CommentOnOwnPostsViewJpa> commentsOnOwnPostsJpa) {
+        return new OwnPostReturnVM(
+                postJpa.getId().toString(),
+                postJpa.getBody(),
+                DateFormatter.FORMATTER.format(postJpa.getCreationTime()),
+                commentsOnOwnPostsJpa.stream()
+                        .map(commentOnOwnPostsJpa -> new CommentReturnVM(
+                                commentOnOwnPostsJpa.getPostId().toString(),
+                                commentOnOwnPostsJpa.getCommentUserEmail(),
+                                commentOnOwnPostsJpa.getCommentBody(),
+                                DateFormatter.FORMATTER.format(commentOnOwnPostsJpa.getCommentCreationTime())
                         ))
                         .toList()
         );

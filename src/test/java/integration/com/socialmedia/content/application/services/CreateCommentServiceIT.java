@@ -55,10 +55,10 @@ public class CreateCommentServiceIT {
         loadPostPort = new LoadPostJpaAdapter();
         createUserPort = new CreateUserJpaAdapter();
         createCommentPort = new CreateCommentJpaAdapter();
+        loadFollowingPostsPort = new LoadFollowingPostsJpaAdapter();
         followingPostsCachePort = new FollowingPostsRedisAdapter();
         createUserUseCase = new CreateUserService(loadUserPort, loadRolePort, createUserPort);
         loadUserUseCase = new LoadUserService(loadUserPort);
-        loadFollowingPostsPort = new LoadFollowingPostsAdapter();
         followingPostsCacheUseCase = new FollowingPostsCacheService(loadFollowingPostsPort, followingPostsCachePort, loadUserUseCase);
         createPostUseCase = new CreatePostService(loadUserUseCase, createPostPort, followingPostsCacheUseCase);
         createCommentService = new CreateCommentService(loadUserUseCase, loadPostPort, createCommentPort);

@@ -11,6 +11,7 @@ import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 import com.socialmedia.posts.adapter.out.FollowingPostsRedisAdapter;
 import com.socialmedia.posts.adapter.out.LoadFollowingPostsAdapter;
+import com.socialmedia.posts.adapter.out.LoadFollowingPostsJpaAdapter;
 import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.FollowingPostsCachePort;
 import com.socialmedia.posts.application.port.out.LoadFollowingPostsPort;
@@ -43,7 +44,7 @@ public class CreateFollowServiceIT {
         createUserPort = new CreateUserJpaAdapter();
         loadUserPort = new LoadUserJpaAdapter();
         createFollowPort = new CreateFollowJpaAdapter();
-        loadFollowingPostsPort = new LoadFollowingPostsAdapter();
+        loadFollowingPostsPort = new LoadFollowingPostsJpaAdapter();
         followingPostsCachePort = new FollowingPostsRedisAdapter();
         loadUserUseCase = new LoadUserService(loadUserPort);
         followingPostsCacheUseCase = new FollowingPostsCacheService(loadFollowingPostsPort, followingPostsCachePort, loadUserUseCase);

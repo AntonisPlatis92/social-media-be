@@ -2,7 +2,7 @@ package com.socialmedia.posts.adapter.in;
 
 import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
-import com.socialmedia.posts.adapter.in.vms.OwnPostsReturnVM;
+import com.socialmedia.posts.adapter.in.vms.OwnPostReturnVM;
 import com.socialmedia.posts.application.port.in.ViewPostsUseCase;
 import com.socialmedia.utils.authentication.JwtUtils;
 import io.javalin.http.Handler;
@@ -36,7 +36,7 @@ public class PostViewController {
         }
         UUID userId = JwtUtils.extractUserIdFromToken(authorizationToken);
 
-        List<OwnPostsReturnVM> ownPostsReturnVM = viewPostsUseCase.viewOwnPostsLimitedToHundredComments(userId);
+        List<OwnPostReturnVM> ownPostsReturnVM = viewPostsUseCase.viewOwnPostsLimitedToHundredComments(userId);
 
         ctx.status(200).json(ownPostsReturnVM);;
     };

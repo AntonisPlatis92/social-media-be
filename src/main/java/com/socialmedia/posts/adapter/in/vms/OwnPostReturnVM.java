@@ -2,7 +2,7 @@ package com.socialmedia.posts.adapter.in.vms;
 
 import java.util.List;
 
-public record OwnPostsReturnVM(
+public record OwnPostReturnVM(
         String postId,
         String postBody,
         String postCreationTime,

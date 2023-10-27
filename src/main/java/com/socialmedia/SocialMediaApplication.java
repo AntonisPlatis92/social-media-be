@@ -45,21 +45,22 @@ public class SocialMediaApplication {
         flyway.migrate();
 
         // Initialize ports
-        LoadUserPort loadUserPort = new LoadUserAdapter();
+        LoadUserPort loadUserPort = new LoadUserJpaAdapter();
         CreateUserPort createUserPort = new CreateUserJpaAdapter();
         VerifyUserPort verifyUserPort = new VerifyUserJpaAdapter();
         LoadRolePort loadRolePort = new LoadRoleJpaAdapter();
         CreateFollowPort createFollowPort = new CreateFollowJpaAdapter();
         RemoveFollowPort removeFollowPort = new RemoveFollowJpaAdapter();
-        CreatePostPort createPostPort = new CreatePostAdapter();
-        LoadPostPort loadPostPort = new LoadPostAdapter();
-        CreateCommentPort createCommentPort = new CreateCommentAdapter();
-        LoadFollowingPostsPort loadFollowingPostsPort = new LoadFollowingPostsAdapter();
-        LoadOwnPostsPort loadOwnPostsPort = new LoadOwnPostsAdapter();
-        LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort = new LoadCommentsOnOwnPostsAdapter();
-        LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort = new LoadCommentsOnOwnAndFollowingPostsAdapter();
+        CreatePostPort createPostPort = new CreatePostJpaAdapter();
+        LoadPostPort loadPostPort = new LoadPostJpaAdapter();
+        CreateCommentPort createCommentPort = new CreateCommentJpaAdapter();
+        LoadFollowingPostsPort loadFollowingPostsPort = new LoadFollowingPostsJpaAdapter();
+        LoadOwnPostsPort loadOwnPostsPort = new LoadOwnPostsJpaAdapter();
+        LoadCommentsOnOwnPostsPort loadCommentsOnOwnPostsPort = new LoadCommentsOnOwnPostsJpaAdapter();
+        LoadCommentsOnOwnAndFollowingPostsPort loadCommentsOnOwnAndFollowingPostsPort = new LoadCommentsOnOwnAndFollowingPostsJpaAdapter();
         LoadFollowPort loadFollowPort = new LoadFollowJpaAdapter();
-        SearchUserPort searchUserPort = new SearchUserAdapter();
+        SearchUserPort searchUserPort = new SearchUserJpaAdapter();
+        // Initialize Redis Adapter
         FollowingPostsCachePort followingPostsCachePort = new FollowingPostsRedisAdapter();
         // Initialize services
         LoadUserUseCase loadUserUseCase = new LoadUserService(loadUserPort);
