@@ -36,20 +36,8 @@ public class CreateCommentService implements CreateCommentUseCase {
 
         Post post = loadPostPort.loadPostById(command.postId()).orElseThrow(() -> new PostNotFoundException("Post doesn't exist."));
 
-        boolean shouldCheckCommentsLimit = role.isHasCommentsLimit();
-        if (shouldCheckCommentsLimit) {
-            checkCommentsLimit(user.getUserId(), post, role);
-        }
-
-        post.addComment(command, createCommentPort);
+        post.addComment(command, role, createCommentPort);
     }
 
-    private void checkCommentsLimit(UUID userId, Post post, Role role) {
-        long commentsOnPostByUser = post.getComments().stream()
-                .filter(comment -> userId.equals(comment.getUserId()))
-                .count();
-        if (commentsOnPostByUser >= role.getCommentsLimit()) {
-            throw new CommentsLimitException(String.format("Current role is restricted to %d comments per post.", role.getCommentsLimit()));
-        }
-    }
+
 }
