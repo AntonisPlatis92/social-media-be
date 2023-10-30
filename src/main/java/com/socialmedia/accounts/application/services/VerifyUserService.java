@@ -5,9 +5,9 @@ import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.commands.VerifyUserCommand;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyVerifiedException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
-import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.out.VerifyUserPort;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 import java.util.Optional;
 
@@ -22,16 +22,18 @@ public class VerifyUserService implements VerifyUserUseCase {
 
     public void verifyUser(VerifyUserCommand command) {
 
-        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(command.email()));
+        JpaDatabaseUtils.doInTransaction(entityManager -> {
+            Optional<User> maybeUserInDb = loadUserPort.loadUserByEmail(command.email());
 
-        if (maybeUserInDb.isEmpty()) {
-            throw new UserNotFoundException("User doesn't exist.");
-        }
+            if (maybeUserInDb.isEmpty()) {
+                throw new UserNotFoundException("User doesn't exist.");
+            }
 
-        if (maybeUserInDb.get().isVerified()) {
-            throw new UserAlreadyVerifiedException(String.format("User %s is already verified",command.email()));
-        }
+            if (maybeUserInDb.get().isVerified()) {
+                throw new UserAlreadyVerifiedException(String.format("User %s is already verified",command.email()));
+            }
 
-        DatabaseUtils.doInTransaction((conn) -> verifyUserPort.verifyUser(command.email()));
+            verifyUserPort.verifyUser(command.email());
+        });
     }
 }

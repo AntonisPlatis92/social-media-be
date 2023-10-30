@@ -3,6 +3,7 @@ package com.socialmedia.accounts.application.services;
 import com.socialmedia.accounts.adapter.in.vms.FollowsReturnVM;
 import com.socialmedia.accounts.application.port.in.LoadFollowsUseCase;
 import com.socialmedia.accounts.application.port.out.LoadFollowPort;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,12 +17,11 @@ public class LoadFollowsService implements LoadFollowsUseCase {
 
     @Override
     public FollowsReturnVM loadFollowsByUserId(UUID userId) {
-
-        return loadFollowPort.loadFollowsByUserId(userId);
+        return JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> loadFollowPort.loadFollowsByUserId(userId));
     }
 
     @Override
     public List<UUID> loadFollowingUserIds(UUID userId) {
-        return loadFollowPort.loadFollowingUserIdsByUserId(userId);
+        return JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> loadFollowPort.loadFollowingUserIdsByUserId(userId));
     }
 }

@@ -3,6 +3,7 @@ package unit.com.socialmedia.content.application.services;
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
+import com.socialmedia.config.PropertiesManager;
 import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
 import com.socialmedia.posts.application.port.out.CreatePostPort;
 import com.socialmedia.posts.application.services.CreatePostService;

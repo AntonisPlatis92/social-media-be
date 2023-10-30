@@ -2,10 +2,9 @@ package com.socialmedia.accounts.application.services;
 
 import com.socialmedia.accounts.application.port.in.LoadUserUseCase;
 import com.socialmedia.accounts.domain.User;
-import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,11 +16,11 @@ public class LoadUserService implements LoadUserUseCase {
     }
 
     public Optional<User> loadUserById(UUID userId) {
-        return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserById(userId));
+        return JpaDatabaseUtils.doInTransactionAndReturn((entityManager) -> loadUserPort.loadUserById(userId));
     }
 
     @Override
     public Optional<User> loadUserByEmail(String email) {
-        return DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(email));
+        return JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> loadUserPort.loadUserByEmail(email));
     }
 }

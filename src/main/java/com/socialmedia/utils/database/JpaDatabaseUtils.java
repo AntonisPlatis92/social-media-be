@@ -1,11 +1,9 @@
 package com.socialmedia.utils.database;
 
 import com.socialmedia.config.PropertiesManager;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 
+import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -20,7 +18,7 @@ public class JpaDatabaseUtils {
             transaction.begin();
             action.accept(entityManager);
             transaction.commit();
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -40,7 +38,7 @@ public class JpaDatabaseUtils {
             T result = action.apply(entityManager);
             transaction.commit();
             return result;
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

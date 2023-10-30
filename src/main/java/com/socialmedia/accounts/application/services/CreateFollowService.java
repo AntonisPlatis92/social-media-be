@@ -7,6 +7,7 @@ import com.socialmedia.accounts.application.port.out.LoadUserPort;
 import com.socialmedia.accounts.application.port.in.CreateFollowUseCase;
 import com.socialmedia.accounts.domain.commands.CreateFollowCommand;
 import com.socialmedia.posts.application.port.in.FollowingPostsCacheUseCase;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 import static com.socialmedia.posts.application.services.FollowingPostsCacheService.FOLLOWING_USERS_THRESHOLD;
 
@@ -27,13 +28,15 @@ public class CreateFollowService implements CreateFollowUseCase {
 
     @Override
     public void createNewFollow(CreateFollowCommand command) {
-        User followerUser = loadUserPort.loadUserById(command.followerUserId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerUserId())));
-        User followingUser = loadUserPort.loadUserByEmail(command.followingUserEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followingUserEmail())));
+        JpaDatabaseUtils.doInTransaction(entityManager -> {
+            User followerUser = loadUserPort.loadUserById(command.followerUserId()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followerUserId())));
+            User followingUser = loadUserPort.loadUserByEmail(command.followingUserEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", command.followingUserEmail())));
 
-        followerUser.follow(followingUser, createFollowPort);
+            followerUser.follow(followingUser, createFollowPort);
 
-        if (followerUser.getFollowing().size() >= FOLLOWING_USERS_THRESHOLD) {
-            followingPostsCacheUseCase.addUserInFollowingPostsCache(followerUser);
-        }
+            if (followerUser.getFollowing().size() >= FOLLOWING_USERS_THRESHOLD) {
+                followingPostsCacheUseCase.addUserInFollowingPostsCache(followerUser);
+            }
+        });
     }
 }

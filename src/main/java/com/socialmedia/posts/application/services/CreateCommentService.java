@@ -5,15 +5,12 @@ import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.User;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.posts.domain.Post;
-import com.socialmedia.posts.domain.exceptions.CommentsLimitException;
 import com.socialmedia.posts.domain.exceptions.PostNotFoundException;
 import com.socialmedia.posts.application.port.in.CreateCommentUseCase;
 import com.socialmedia.posts.application.port.out.CreateCommentPort;
 import com.socialmedia.posts.application.port.out.LoadPostPort;
-import com.socialmedia.posts.domain.Comment;
 import com.socialmedia.posts.domain.commands.CreateCommentCommand;
-
-import java.util.UUID;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 public class CreateCommentService implements CreateCommentUseCase {
     private final LoadUserUseCase loadUserUseCase;
@@ -30,13 +27,15 @@ public class CreateCommentService implements CreateCommentUseCase {
     }
     @Override
     public void createComment(CreateCommentCommand command) {
-        User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        JpaDatabaseUtils.doInTransaction(entityManager -> {
+            User user = loadUserUseCase.loadUserById(command.userId()).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
 
-        Role role = user.getRole();
+            Role role = user.getRole();
 
-        Post post = loadPostPort.loadPostById(command.postId()).orElseThrow(() -> new PostNotFoundException("Post doesn't exist."));
+            Post post = loadPostPort.loadPostById(command.postId()).orElseThrow(() -> new PostNotFoundException("Post doesn't exist."));
 
-        post.addComment(command, role, createCommentPort);
+            post.addComment(command, role, createCommentPort);
+        });
     }
 
 

@@ -13,6 +13,7 @@ import com.socialmedia.posts.adapter.in.vms.CommentReturnVM;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
 import com.socialmedia.posts.adapter.in.vms.OwnPostReturnVM;
 import com.socialmedia.posts.application.port.in.ViewPostsUseCase;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,38 +46,40 @@ public class ViewPostsService implements ViewPostsUseCase {
 
     @Override
     public List<FollowingPostsReturnVM> viewFollowingPostsInDescendingOrder(UUID userId) {
-        List<FollowingPostsReturnVM> followingPostsReturnVM = new ArrayList<>();
+        return JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> {
+            List<FollowingPostsReturnVM> followingPostsReturnVM = new ArrayList<>();
 
-        User user = loadUserUseCase.loadUserById(userId).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
-        List<UUID> followingIds = user.getFollowing().stream().map(Follow::getFollowingId).toList();
+            User user = loadUserUseCase.loadUserById(userId).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+            List<UUID> followingIds = user.getFollowing().stream().map(Follow::getFollowingId).toList();
 
-        if (followingIds.isEmpty()) {return followingPostsReturnVM;}
+            if (followingIds.isEmpty()) {return followingPostsReturnVM;}
 
-        if (followingIds.size() <= FOLLOWING_USERS_THRESHOLD) {
-            followingPostsReturnVM.addAll(loadFollowingPostsPort.loadFollowingPostsByFollowingUserIds(followingIds));
-        }
-        else {
-            followingPostsReturnVM.addAll(followingPostsCacheUseCase.getUserFollowingPostsFromCache(user));
-        }
+            if (followingIds.size() <= FOLLOWING_USERS_THRESHOLD) {
+                followingPostsReturnVM.addAll(loadFollowingPostsPort.loadFollowingPostsByFollowingUserIds(followingIds));
+            }
+            else {
+                followingPostsReturnVM.addAll(followingPostsCacheUseCase.getUserFollowingPostsFromCache(user));
+            }
 
-        return followingPostsReturnVM;
+            return followingPostsReturnVM;
+        });
     }
 
     @Override
     public List<OwnPostReturnVM> viewOwnPostsLimitedToHundredComments(UUID userId) {
 
-        return loadOwnPostsPort.loadOwnPosts(userId);
+        return JpaDatabaseUtils.doInTransactionAndReturn((entityManager -> loadOwnPostsPort.loadOwnPosts(userId)));
     }
 
     @Override
     public List<CommentReturnVM> viewCommentsOnOwnPosts(UUID userId) {
 
-        return loadCommentsOnOwnPostsPort.loadCommentsOnOwnPosts(userId);
+        return JpaDatabaseUtils.doInTransactionAndReturn((entityManager -> loadCommentsOnOwnPostsPort.loadCommentsOnOwnPosts(userId)));
     }
 
     @Override
     public List<CommentReturnVM> viewCommentsOnOwnAndFollowingPosts(UUID userId) {
 
-        return loadCommentsOnOwnAndFollowingPostsPort.loadCommentsOnOwnAndFollowingPosts(userId);
+        return JpaDatabaseUtils.doInTransactionAndReturn((entityManager -> loadCommentsOnOwnAndFollowingPostsPort.loadCommentsOnOwnAndFollowingPosts(userId)));
     }
 }

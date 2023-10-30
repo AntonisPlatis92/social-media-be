@@ -6,7 +6,7 @@ import com.socialmedia.accounts.domain.commands.LoginUserCommand;
 import com.socialmedia.accounts.domain.exceptions.LoginFailedException;
 import com.socialmedia.accounts.domain.exceptions.UserNotFoundException;
 import com.socialmedia.utils.authentication.JwtUtils;
-import com.socialmedia.utils.database.DatabaseUtils;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 import com.socialmedia.utils.encoders.PasswordEncoder;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
 
@@ -21,17 +21,18 @@ public class LoginUserService implements LoginUserUseCase {
     }
 
     public String loginUser(LoginUserCommand command) {
+        return JpaDatabaseUtils.doInTransactionAndReturn(entityManager -> {
+            Optional<User> maybeUserInDb = loadUserPort.loadUserByEmail(command.email());
 
-        Optional<User> maybeUserInDb = DatabaseUtils.doInTransactionAndReturn((conn) -> loadUserPort.loadUserByEmail(command.email()));
+            if (maybeUserInDb.isEmpty()) {
+                throw new UserNotFoundException("User doesn't exist.");
+            }
 
-        if (maybeUserInDb.isEmpty()) {
-            throw new UserNotFoundException("User doesn't exist.");
-        }
+            boolean passwordMatch = PasswordEncoder.checkIfMatch(command.password(), maybeUserInDb.get().getHashedPassword());
 
-        boolean passwordMatch = PasswordEncoder.checkIfMatch(command.password(), maybeUserInDb.get().getHashedPassword());
+            if (!passwordMatch) {throw new LoginFailedException("Wrong credentials. User login failed.");}
 
-        if (!passwordMatch) {throw new LoginFailedException("Wrong credentials. User login failed.");}
-
-        return JwtUtils.createToken(maybeUserInDb.get().getUserId());
+            return JwtUtils.createToken(maybeUserInDb.get().getUserId());
+        });
     }
 }

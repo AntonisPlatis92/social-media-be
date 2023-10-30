@@ -7,9 +7,9 @@ import com.socialmedia.accounts.domain.Role;
 import com.socialmedia.accounts.domain.commands.CreateUserCommand;
 import com.socialmedia.accounts.domain.exceptions.RoleNotFoundException;
 import com.socialmedia.accounts.domain.exceptions.UserAlreadyCreatedException;
-import com.socialmedia.utils.database.DatabaseUtils;
 import com.socialmedia.accounts.application.port.out.CreateUserPort;
 import com.socialmedia.accounts.application.port.out.LoadUserPort;
+import com.socialmedia.utils.database.JpaDatabaseUtils;
 
 public class CreateUserService implements CreateUserUseCase {
     private final LoadUserPort loadUserPort;
@@ -24,10 +24,12 @@ public class CreateUserService implements CreateUserUseCase {
     }
 
     public void createUser(CreateUserCommand command) {
-        checkIfUserAlreadyCreated(command.email());
+        JpaDatabaseUtils.doInTransaction(entityManager -> {
+            checkIfUserAlreadyCreated(command.email());
 
-        Role role = loadRolePort.loadRoleById(command.roleId()).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
-        createUserPort.createUser(User.createUserFromCommandAndRole(command,role));
+            Role role = loadRolePort.loadRoleById(command.roleId()).orElseThrow(() -> new RoleNotFoundException("Role doesn't exist."));
+            createUserPort.createUser(User.createUserFromCommandAndRole(command,role));
+        });
     }
 
     private void checkIfUserAlreadyCreated(String email) {
