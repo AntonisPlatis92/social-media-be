@@ -52,6 +52,7 @@ public class CreateFollowServiceIT {
     }
 
     @Test
+    @ExtendWith(IntegrationTestConfig.class)
     public void createFollow_whenLoadUser_shouldGetFollowersAndFollowing() {
         //  Given
         UUID followerUserId = UUID.randomUUID();
