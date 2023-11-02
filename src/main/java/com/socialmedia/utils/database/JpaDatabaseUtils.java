@@ -1,14 +1,14 @@
 package com.socialmedia.utils.database;
 
+import com.socialmedia.config.JpaConfiguration;
 import com.socialmedia.config.PropertiesManager;
 import jakarta.persistence.*;
 
-import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class JpaDatabaseUtils {
-    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PropertiesManager.getProperty("persistence.unit.name"));
+    private static final EntityManagerFactory entityManagerFactory = JpaConfiguration.getPersistenceProvider().createEntityManagerFactory(PropertiesManager.getProperty("persistence.unit.name"), JpaConfiguration.getJpaProperties());
 
     public static void doInTransaction(Consumer<EntityManager> action) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();

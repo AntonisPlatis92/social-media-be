@@ -1,6 +1,5 @@
 package unit.com.socialmedia.utils.cache;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.socialmedia.posts.adapter.in.vms.FollowingPostsReturnVM;
 import com.socialmedia.posts.adapter.out.FollowingPostsRedisAdapter;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +19,7 @@ public class FollowingUsersRedisAdapterTest {
     }
 
     @Test
-    void test1() throws JsonProcessingException {
+    void setFollowingPostsReturnVMInRedis_whenGetFollowingPostsReturnVMFromRedis_shouldBeEqual() {
         // Given
         UUID userId = UUID.fromString("b8546f43-3c9f-41d7-9f37-c165aa434549");
         List<FollowingPostsReturnVM> followingPostsReturnVM = List.of(

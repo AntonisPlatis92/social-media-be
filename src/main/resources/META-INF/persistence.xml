@@ -3,30 +3,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
-  <persistence-unit name="PersistenceUnit">
-      <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-      <class>com.socialmedia.accounts.adapter.out.jpa.UserJpa</class>
-      <class>com.socialmedia.accounts.adapter.out.jpa.RoleJpa</class>
-      <class>com.socialmedia.accounts.adapter.out.jpa.FollowJpa</class>
-      <class>com.socialmedia.posts.adapter.out.jpa.PostJpa</class>
-      <class>com.socialmedia.posts.adapter.out.jpa.CommentJpa</class>
-      <class>com.socialmedia.posts.adapter.out.jpa.CommentOnOwnPostsViewJpa</class>
-      <class>com.socialmedia.posts.adapter.out.jpa.CommentOnOwnAndFollowingPostsViewJpa</class>
-      <class>com.socialmedia.posts.adapter.out.jpa.FollowingPostViewJpa</class>
-      <properties>
-          <property name="hibernate.connection.provider_class" value="com.zaxxer.hikari.hibernate.HikariConnectionProvider" />
-          <property name="hibernate.hikari.dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
-          <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgres" />
-          <property name="hibernate.hikari.dataSource.user" value="postgres" />
-          <property name="hibernate.hikari.dataSource.password" value="password" />
+    <persistence-unit name="PersistenceUnit">
 
-          <!-- Connection Pool Size -->
-          <property name="hibernate.hikari.maximumPoolSize" value="10" /> <!-- Maximum pool size -->
-          <property name="hibernate.hikari.minimumIdle" value="5" /> <!-- Minimum idle connections -->
-
-          <!-- Additional HikariCP properties -->
-          <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-
-      </properties>
-  </persistence-unit>
+    </persistence-unit>
 </persistence>
