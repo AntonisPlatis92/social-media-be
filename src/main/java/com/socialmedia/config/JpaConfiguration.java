@@ -38,7 +38,7 @@ public class JpaConfiguration {
         return ProxyDataSourceBuilder.create(hikariDataSource)
                 .name("ProxyDataSource")
                 .multiline()
-                .logQueryByLog4j(Log4jLogLevel.INFO, "net.ttddyy.dsproxy.proxy")
+                .logQueryByLog4j(Log4jLogLevel.INFO)
                 .build();
     }
 
